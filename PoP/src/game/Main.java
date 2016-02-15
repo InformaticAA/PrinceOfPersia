@@ -9,6 +9,11 @@ import java.awt.event.KeyListener;
 public class Main extends Applet implements Runnable, KeyListener {
 
 	private static final long serialVersionUID = 1L;
+	
+	/* Game loop atributes */
+	final static int FRAMES_PER_SECOND = 30;
+	final static int SKIP_TICKS = 1000 / FRAMES_PER_SECOND;
+	public static boolean game_is_running;
 
 	@Override
 	public void init() {
@@ -46,20 +51,38 @@ public class Main extends Applet implements Runnable, KeyListener {
 
 	@Override
 	public void run() {
+		
+		long next_game_tick = System.currentTimeMillis();
+	    // GetTickCount() returns the current number of milliseconds
+	    // that have elapsed since the system was started
 
-		while (true) {
+	    long sleep_time = 0;
 
-			/* Frame work */
-			repaint();
+	    game_is_running = true;
+	    
+	    while( game_is_running ) {
+	        
+	    	repaint();
+	    	
+	    	//update_game();
+	        
+	    	//display_game();
 
-			try {
-				Thread.sleep(17);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-		}
-
+	        next_game_tick += SKIP_TICKS;
+	        sleep_time = next_game_tick - System.currentTimeMillis();
+	        if( sleep_time >= 0 ) {
+	        	
+	        	try{
+	        		Thread.sleep(sleep_time);
+	        	} catch (InterruptedException e){
+	        		e.printStackTrace();
+	        	}
+	        }
+	        else {
+	        	System.out.println("Running slow");
+	            // Shit, we are running behind!
+	        }
+	    }
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Main extends Applet implements Runnable, KeyListener {
+public class Game extends Applet implements Runnable, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	

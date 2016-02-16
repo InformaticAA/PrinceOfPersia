@@ -5,12 +5,14 @@ import java.util.ArrayList;
 
 public class Animation {
 
+	private String id;
 	private ArrayList<Frame> frames;
 	private int currentFrame;
 	private long animTime;
 	private long totalDuration;
 	
-	public Animation() {
+	public Animation(String id) {
+		this.id = id;
 		frames = new ArrayList<Frame>();
 		currentFrame = 0;
 		animTime = 0;
@@ -45,4 +47,9 @@ public class Animation {
 			
 		}
 	}
+
+	public String getId() {
+		return id;
+	}
+
 }

@@ -3,10 +3,8 @@ package game;
 import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-public class Game extends Applet implements Runnable, KeyListener {
+public class Game extends Applet implements Runnable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -24,7 +22,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		setSize(800, 480);
 		setBackground(Color.BLACK);
 		setFocusable(true);
-		addKeyListener(this);
+		addKeyListener(new Listener());
 		Frame frame = (Frame) this.getParent().getParent();
 		frame.setTitle("Prince of Persia");
 	}
@@ -84,56 +82,4 @@ public class Game extends Applet implements Runnable, KeyListener {
 	        }
 	    }
 	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-
-		switch (e.getKeyCode()) {
-
-		case KeyEvent.VK_UP:
-			break;
-
-		case KeyEvent.VK_DOWN:
-			break;
-
-		case KeyEvent.VK_LEFT:
-			break;
-
-		case KeyEvent.VK_RIGHT:
-			break;
-
-		case KeyEvent.VK_SHIFT:
-			break;
-
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-
-		switch (e.getKeyCode()) {
-
-		case KeyEvent.VK_UP:
-			break;
-
-		case KeyEvent.VK_DOWN:
-			break;
-
-		case KeyEvent.VK_LEFT:
-			break;
-
-		case KeyEvent.VK_RIGHT:
-			break;
-
-		case KeyEvent.VK_SHIFT:
-			break;
-
-		}
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-
-	}
-
 }

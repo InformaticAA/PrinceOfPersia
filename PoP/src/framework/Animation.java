@@ -8,13 +8,15 @@ public class Animation {
 	private String id;
 	private ArrayList<Frame> frames;
 	private int currentFrame;
+	private boolean infinite;
 	private long animTime;
 	private long totalDuration;
 	
-	public Animation(String id) {
+	public Animation(String id, boolean infinite) {
 		this.id = id;
 		frames = new ArrayList<Frame>();
 		currentFrame = 0;
+		this.infinite = infinite;
 		animTime = 0;
 		totalDuration = 0;
 	}
@@ -40,16 +42,23 @@ public class Animation {
 				animTime = animTime % totalDuration;
 				currentFrame = 0;
 			}
-			
-//			while (animTime > getFrame(currentFrame).getEndtime()) {
-			currentFrame = (currentFrame + 1) % 9;
-//			}
-			
+
+			if (currentFrame < frames.size() - 1) {
+				currentFrame++;
+			}
 		}
 	}
 
+	public boolean isOver() {
+		return (currentFrame == frames.size() - 1) && !infinite;
+	}
+	
 	public String getId() {
 		return id;
+	}
+	
+	public int getCurrentFrame() {
+		return currentFrame;
 	}
 
 }

@@ -10,8 +10,6 @@ import javax.imageio.ImageIO;
 public class Loader {
 
 	private long frameTime;
-	private String finalPath;
-	private String firePath = "/Resources/Sprites_400/Objects/fire";
 	
 	public Loader(long frameTime) {
 		this.frameTime = frameTime;
@@ -19,9 +17,6 @@ public class Loader {
 	
 	public Set<Animation> loadCharacterAnimations(String characterPath) {
 		Set<Animation> animations = new HashSet<Animation>();
-		
-		characterPath = firePath;
-		finalPath = characterPath;
 		
 		/* Searches for .png files for each folder of characterPath */
 		File dir = new File(characterPath);
@@ -33,7 +28,7 @@ public class Loader {
 					if (f.isDirectory()) {
 						
 						/* folder f contains .png files */
-						Animation anim = loadAnimation(f);
+						Animation anim = loadAnimation(f,false);
 						animations.add(anim);
 					}
 					else {
@@ -55,10 +50,8 @@ public class Loader {
 	 * one animation
 	 * @return new animation loaded
 	 */
-	public Animation loadAnimation(File f) {
-		Animation animation = new Animation(f.getName());
-		
-		System.out.println("Animation: " + animation.getId());
+	public Animation loadAnimation(File f, boolean infinite) {
+		Animation animation = new Animation(f.getName(), infinite);
 		
 		File[] images = f.listFiles();
 		for(File image : images) {
@@ -66,8 +59,6 @@ public class Loader {
 			/* Loads one image as a frame of the animation */
 			String name = image.getName();
 			if (name.substring(name.length() - 4, name.length()).equals(".png")) {
-				
-				System.out.println(name);
 				
 				Frame frame = loadFrame(image);
 				animation.addFrame(frame, frameTime);

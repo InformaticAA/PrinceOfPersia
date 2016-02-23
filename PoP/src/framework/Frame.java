@@ -1,23 +1,23 @@
 package framework;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 public class Frame {
 
-	private Image image;
+	private BufferedImage image;
 	private long endtime;
 	
-	public Frame(Image image, long endtime) {
+	public Frame(BufferedImage image, long endtime) {
 		super();
 		this.image = image;
 		this.endtime = endtime;
 	}
 
-	public Image getImage() {
+	public BufferedImage getImage() {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	public void setImage(BufferedImage image) {
 		this.image = image;
 	}
 

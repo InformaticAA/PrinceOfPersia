@@ -1,5 +1,6 @@
 package game;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -76,7 +77,7 @@ public class Game extends JPanel implements Runnable{
 			
 			start =  System.nanoTime();
 			
-			update();
+			update(targetTime);
 			draw();
 			drawToScreen();
 			
@@ -96,8 +97,8 @@ public class Game extends JPanel implements Runnable{
 		}
 	}
 	
-	private void update(){
-		gsm.update();
+	private void update(long elapsedTime){
+		gsm.update(elapsedTime);
 	}
 	
 	private void draw(){

@@ -42,7 +42,7 @@ public class MenuState extends State{
 	}
 
 	@Override
-	public void update() {
+	public void update(long elapsedTime) {
 		// TODO Auto-generated method stub
 		
 	}

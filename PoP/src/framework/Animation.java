@@ -1,6 +1,6 @@
 package framework;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Animation {
@@ -19,12 +19,12 @@ public class Animation {
 		totalDuration = 0;
 	}
 	
-	public void addFrame(Image frame, long duration) {
+	public void addFrame(Frame frame, long duration) {
 		totalDuration += duration;
-		frames.add(new Frame(frame, totalDuration));
+		frames.add(frame);
 	}
 	
-	public Image getImage() {
+	public BufferedImage getImage() {
 		return frames.get(currentFrame).getImage();
 	}
 	
@@ -41,9 +41,9 @@ public class Animation {
 				currentFrame = 0;
 			}
 			
-			while (animTime > getFrame(currentFrame).getEndtime()) {
-				currentFrame++;
-			}
+//			while (animTime > getFrame(currentFrame).getEndtime()) {
+			currentFrame = (currentFrame + 1) % 9;
+//			}
 			
 		}
 	}

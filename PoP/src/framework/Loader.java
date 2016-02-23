@@ -1,26 +1,27 @@
 package framework;
 
-import java.applet.Applet;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 public class Loader {
 
 	private long frameTime;
-	private Applet applet;
-	private URL base;
+	private String finalPath;
+	private String firePath = "/Resources/Sprites_400/Objects/fire";
 	
-	public Loader(Applet applet, long frameTime) {
-		this.applet = applet;
+	public Loader(long frameTime) {
 		this.frameTime = frameTime;
-		this.base = applet.getDocumentBase();
 	}
 	
 	public Set<Animation> loadCharacterAnimations(String characterPath) {
 		Set<Animation> animations = new HashSet<Animation>();
+		
+		characterPath = firePath;
+		finalPath = characterPath;
 		
 		/* Searches for .png files for each folder of characterPath */
 		File dir = new File(characterPath);
@@ -48,25 +49,52 @@ public class Loader {
 		return animations;
 	}
 	
-	private Animation loadAnimation(File f) {
+	/**
+	 * 
+	 * @param f directory containing all frames of
+	 * one animation
+	 * @return new animation loaded
+	 */
+	public Animation loadAnimation(File f) {
 		Animation animation = new Animation(f.getName());
+		
+		System.out.println("Animation: " + animation.getId());
 		
 		File[] images = f.listFiles();
 		for(File image : images) {
 			
+			/* Loads one image as a frame of the animation */
 			String name = image.getName();
 			if (name.substring(name.length() - 4, name.length()).equals(".png")) {
 				
-				String path = image.getAbsolutePath();
-				String[] paths = path.split("data");
-				String finalPath = "../data" + paths[1];
+				System.out.println(name);
 				
-				Image img = applet.getImage(base, finalPath);
-				animation.addFrame(img, frameTime);
+				Frame frame = loadFrame(image);
+				animation.addFrame(frame, frameTime);
 			}
 		}
 		
 		return animation;
+	}
+	
+	/**
+	 * 
+	 * @param image
+	 * @return a new frame loaded from file image
+	 */
+	public Frame loadFrame(File image) {
+		Frame frame = null;
+		BufferedImage img = null;
+		
+		try{
+			img = ImageIO.read(image);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		frame = new Frame(img, frameTime);
+		return frame;
 	}
 	
 }

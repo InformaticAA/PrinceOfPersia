@@ -7,7 +7,7 @@ public abstract class State {
 	protected GameStateManager gsm;
 	
 	public abstract void init();
-	public abstract void update();
+	public abstract void update(long elapsedTime);
 	public abstract void draw(Graphics2D g);
 
 }

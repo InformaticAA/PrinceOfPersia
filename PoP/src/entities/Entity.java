@@ -8,10 +8,10 @@ public abstract class Entity {
 	
 	private int x, y;
 	private Hashtable<String,Animation> animations;
-	public Entity(int x, int y, Hashtable<String, Animation> animations) {
+	
+	public Entity(int x, int y, Hashtable<String,Animation> animations) {
 		this.x = x;
 		this.y = y;
-		this.animations = animations;
 	}
 	/**
 	 * @return the x

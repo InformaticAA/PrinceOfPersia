@@ -110,6 +110,7 @@ public class Game extends JPanel implements Runnable{
 	}
 	
 	private void draw(){
+		g.clearRect(0, 0, getWidth(), getHeight());
 		gsm.draw(g);
 	}
 	

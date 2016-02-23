@@ -1,26 +1,36 @@
 package states;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
 import game.Game;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.Sound;
+import kuusisto.tinysound.TinySound;
 import map.Background;
+import types.Key;
 
 public class MenuState extends State{
 	
 	private Background bg;
 	private BufferedImage title;
 	private BufferedImage sword;
-	
 	private BufferedImage[] options;
 	
 	private int currentChoice = 0;
 	
-	public MenuState(GameStateManager gsm){
+	private Sound moving;
+	private Sound choosing;
+	private Music menu;
+	
+	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys){
 		this.gsm = gsm;
+		this.keys = keys;
 		
 		try{
 			bg = new Background("/Sprites_400/Menu/room_won.png");
@@ -31,6 +41,10 @@ public class MenuState extends State{
 			options[2] = ImageIO.read(new File("resources/Sprites_400/Menu/settings.png"));
 			options[3] = ImageIO.read(new File("resources/Sprites_400/Menu/exit.png"));
 			sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
+			moving = TinySound.loadSound(new File("resources/Sounds/1/sword moving.wav"));
+			choosing = TinySound.loadSound(new File("resources/Sounds/1/sword vs sword.wav"));
+			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
+			
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -38,11 +52,12 @@ public class MenuState extends State{
 
 	@Override
 	public void init() {
-		
+		menu.play(true);
 	}
 
 	@Override
 	public void update(long elapsedTime) {
+		manageKeys();
 		// TODO Auto-generated method stub
 		
 	}
@@ -62,12 +77,6 @@ public class MenuState extends State{
 		g.drawImage(sword, 
 				Game.WIDTH/2 - options[currentChoice].getWidth()/2 - sword.getWidth() - 10*Game.SCALE,
 				Game.HEIGHT/2 - 47*Game.SCALE + currentChoice*20*Game.SCALE,null);
-		
-//		g.drawImage(campaign, Game.WIDTH/2 - campaign.getWidth()/2, Game.HEIGHT/2,null);
-//		g.drawImage(campaign, Game.WIDTH/2 - campaign.getWidth()/2, 
-//				Game.HEIGHT/2 + campaign.getHeight() + 10*Game.SCALE, null);
-//		g.drawImage(sword, Game.WIDTH/2 - sword.getWidth() - 10*Game.SCALE, 
-//				Game.HEIGHT/2 - sword.getHeight()/2,null);
 	}
 	
 	public void select(){
@@ -85,4 +94,45 @@ public class MenuState extends State{
 		}
 	}
 
+	@Override
+	public void manageKeys() {
+		Object[] keys_used = keys.toArray();
+		keys.clear();
+		Key e;
+		if(keys_used.length!=0){
+			for (int i = 0; i < keys_used.length; i++) {
+				e = (Key)keys_used[i];
+				if(e.isPressed()){
+					
+					/* Key released */
+					switch (e.getEvent().getKeyCode()) {
+	
+					case KeyEvent.VK_UP:
+						moving.play();
+						currentChoice = (currentChoice + 3)%4;
+						break;
+	
+					case KeyEvent.VK_DOWN:
+						moving.play();
+						currentChoice = (currentChoice + 1)%4;
+						break;
+	
+					case KeyEvent.VK_LEFT:
+						break;
+	
+					case KeyEvent.VK_RIGHT:
+						break;
+	
+					case KeyEvent.VK_SHIFT:
+						break;
+					
+					case KeyEvent.VK_ENTER:
+						choosing.play();
+						select();
+						break;
+					}
+				}
+			}
+		}
+	}
 }

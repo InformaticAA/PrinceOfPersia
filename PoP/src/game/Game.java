@@ -1,14 +1,17 @@
 package game;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
 
+import kuusisto.tinysound.TinySound;
 import states.GameStateManager;
+import types.Key;
 
 public class Game extends JPanel implements Runnable{
 
@@ -35,6 +38,9 @@ public class Game extends JPanel implements Runnable{
 	/* Game State Manager */
 	private GameStateManager gsm;
 	
+	/* Key Queue*/
+	private ConcurrentLinkedQueue<Key> keys;
+	
 	
 	public Game(){
 		super();
@@ -47,7 +53,8 @@ public class Game extends JPanel implements Runnable{
 		super.addNotify();
 		if(gameLoop == null){
 			gameLoop = new Thread(this);
-			addKeyListener(new Listener());
+			keys = new ConcurrentLinkedQueue<Key>();
+			addKeyListener(new Listener(keys));
 			//Listener
 			gameLoop.start();
 		}
@@ -55,12 +62,13 @@ public class Game extends JPanel implements Runnable{
 	
 	private void init(){
 		
+		TinySound.init();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_INDEXED);
 		g = (Graphics2D) image.getGraphics();
 		
 		running = true;
 		
-		gsm = new GameStateManager();
+		gsm = new GameStateManager(keys);
 		gsm.setState(0);
 	}
 	

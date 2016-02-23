@@ -82,5 +82,11 @@ public class Test extends State {
 		g.drawImage(princessImg, princess.getX(), princess.getY(), null);
 		g.drawImage(img, dastan.getX(), dastan.getY(), null);
 	}
+
+	@Override
+	public void manageKeys() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

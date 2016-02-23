@@ -5,12 +5,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-import entities.Entity;
+import entities.Character;
 import framework.Animation;
 import framework.Loader;
 import states.GameStateManager;
 import states.State;
+import types.Key;
 
 public class Test extends State {
 
@@ -23,12 +25,11 @@ public class Test extends State {
 	private Set<Animation> animations;
 	private Animation animation;
 	private Animation princessAnimation;
-	private Entity princess;
-	private Entity dastan;
-	private GameStateManager gsm;
+	private Character princess;
+	private Character dastan;
 	
-	public Test(GameStateManager gsm) {
-		this.gsm = gsm;
+	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys) {
+		super(gsm,keys);
 	}
 	
 	@Override
@@ -37,8 +38,8 @@ public class Test extends State {
 		Loader loader = new Loader(FRAME_TIME);
 		
 		/* Characters in scene */
-		princess = new Entity(50,50);
-		dastan = new Entity(500,50);
+		princess = new Character(50,50);
+		dastan = new Character(500,50);
 		
 		/* Animations in scene */
 		princessAnimation = loader.loadAnimation(new File(testPrincessPath), false);

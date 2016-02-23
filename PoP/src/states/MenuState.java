@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
+import framework.Animation;
 import game.Game;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
@@ -29,8 +30,7 @@ public class MenuState extends State{
 	private Music menu;
 	
 	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys){
-		this.gsm = gsm;
-		this.keys = keys;
+		super(gsm, keys);
 		
 		try{
 			bg = new Background("/Sprites_400/Menu/room_won.png");

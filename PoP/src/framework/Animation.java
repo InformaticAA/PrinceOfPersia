@@ -80,8 +80,17 @@ public class Animation {
 		}
 	}
 
-	public boolean isOver() {
-		return (currentFrame == frames.size() - 1) && !infinite;
+	public boolean isOver(boolean reverse) {
+		boolean over = false;
+		
+		if (!reverse) {
+			over = (currentFrame == frames.size() - 1) && !infinite;
+		}
+		else {
+			over = (currentFrame == 0) && !infinite;
+		}
+		
+		return over;
 	}
 	
 	public String getId() {

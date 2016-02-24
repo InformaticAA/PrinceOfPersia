@@ -297,14 +297,6 @@ public class Character extends Entity {
 		this.maxFallSpeed = maxFallSpeed;
 	}
 
-	public Animation getCurrentAnimation() {
-		return currentAnimation;
-	}
-
-	public void setCurrentAnimation(Animation currentAnimation) {
-		this.currentAnimation = currentAnimation;
-	}
-
 	public boolean isFacingRight() {
 		return facingRight;
 	}

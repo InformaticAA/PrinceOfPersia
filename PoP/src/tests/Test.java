@@ -24,6 +24,8 @@ public class Test extends State {
 	private Character princess;
 	private Character dastan;
 	
+	private boolean reverse = false;
+	
 	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys) {
 		super(gsm,keys);
 	}
@@ -35,21 +37,25 @@ public class Test extends State {
 		
 		/* Characters in scene */
 		princess = new Character(50,50);
-		dastan = new Character(250,200);
+		dastan = new Character(200,400);
 		
 		/* Animations in scene */
 		princessAnimation = loader.loadAnimation(new File(testPrincessPath), false);
 
 		animations = loader.loadCharacterAnimations(testDastanPath);
 		dastan.setAnimations(animations);
-		dastan.setCurrentAnimation("running jump");
+		dastan.setCurrentAnimation("clipping");
 		animation = dastan.getCurrentAnimation();
 	}
 
 	@Override
 	public void update(long elapsedTime) {
 
-		dastan.update(elapsedTime);
+		dastan.getCurrentAnimation().update(elapsedTime, reverse);
+		
+		if (dastan.getCurrentAnimation().isOver(reverse)) {
+			reverse = !reverse;
+		}
 		
 		/* Updates dastan's animation */
 //		if (animation.isOver()) {

@@ -28,7 +28,7 @@ public abstract class Entity {
 	 */
 	public void drawSelf(Graphics g) {
 		BufferedImage img = currentAnimation.getImage();
-		g.drawImage(img, x, y - img.getWidth(), null);
+		g.drawImage(img, x - img.getWidth(), y - img.getHeight(), null);
 	}
 	
 	/**

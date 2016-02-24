@@ -27,7 +27,7 @@ public class Game extends JPanel implements Runnable{
 	/* Game Thread */
 	private Thread gameLoop;
 	private boolean running;
-	private int FPS = 30;
+	private int FPS = 14;
 	private long targetTime = 1000/FPS;
 	
 	/* Image */

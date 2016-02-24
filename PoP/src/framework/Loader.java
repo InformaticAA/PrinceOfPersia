@@ -2,7 +2,9 @@ package framework;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
@@ -82,4 +84,68 @@ public class Loader {
 		return frame;
 	}
 	
+	/**
+	 * 
+	 * @return a new level with its content loaded
+	 */
+	public Level loadLevel(int numLevel) {
+		Level level = new Level(numLevel);
+		String levelPath = "resources/Levels/level" + numLevel + ".txt";
+		String roomContent = "";
+		int row = 1;
+		int col = 1;
+		
+		/* Reads the file that describes the level */
+		File levelFile = new File(levelPath);
+		Scanner readLevel;
+		
+		try {
+			
+			readLevel = new Scanner(levelFile);
+			while (readLevel.hasNextLine()) {
+				
+				String line = readLevel.nextLine();
+				
+				if (line.contains("room")) {
+					
+					Scanner readLine = new Scanner(line);
+					readLine.next();
+					row = readLine.nextInt();
+					col = readLine.nextInt();
+					readLine.close();
+					
+					/* Reads the info of the new room (4 lines) */
+					roomContent += readLevel.nextLine() + "\n";
+					roomContent += readLevel.nextLine() + "\n";
+					roomContent += readLevel.nextLine() + "\n";
+					roomContent += readLevel.nextLine();
+					
+					Room newRoom = loadRoom(row, col, roomContent);
+					level.addRoom(newRoom);
+					
+					roomContent = "";
+				}
+				
+			}
+			
+			readLevel.close();
+		
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return level;
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public Room loadRoom(int row, int col, String roomContent) {
+		Room room = new Room(row, col);
+		
+		
+		
+		return room;
+	}
 }

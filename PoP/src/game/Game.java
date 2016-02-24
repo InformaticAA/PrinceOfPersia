@@ -119,5 +119,9 @@ public class Game extends JPanel implements Runnable{
 		g2.dispose();
 		
 	}
+	
+	public boolean isRunning(){
+		return this.running;
+	}
 
 }

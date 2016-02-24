@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
-import framework.Animation;
 import game.Game;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;

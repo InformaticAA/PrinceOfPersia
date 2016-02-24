@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import tests.Test;
 import types.Key;
 
 public class GameStateManager {
@@ -19,7 +20,8 @@ public class GameStateManager {
 		
 		gameStates = new ArrayList<State>();
 		
-		currentState = MENUSTATE;
+		currentState = TESTSTATE;
+		gameStates.add(new Test(this, keys));
 		gameStates.add(new MenuState(this,keys));
 	}
 	

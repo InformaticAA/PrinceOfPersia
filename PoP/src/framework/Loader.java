@@ -2,8 +2,7 @@ package framework;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
@@ -15,8 +14,8 @@ public class Loader {
 		this.frameTime = frameTime;
 	}
 	
-	public Set<Animation> loadCharacterAnimations(String characterPath) {
-		Set<Animation> animations = new HashSet<Animation>();
+	public Hashtable<String, Animation> loadCharacterAnimations(String characterPath) {
+		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
 		
 		/* Searches for .png files for each folder of characterPath */
 		File dir = new File(characterPath);
@@ -29,12 +28,7 @@ public class Loader {
 						
 						/* folder f contains .png files */
 						Animation anim = loadAnimation(f,false);
-						animations.add(anim);
-					}
-					else {
-						
-						/* f is a .png file */
-						
+						animations.put(anim.getId(), anim);
 					}
 				}
 			}

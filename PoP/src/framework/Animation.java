@@ -48,6 +48,37 @@ public class Animation {
 			}
 		}
 	}
+	
+	public void update(long elapsedTime, boolean reverse) {
+		if (frames.size() > 1) {
+			animTime += elapsedTime;
+			
+			if (!reverse) {
+				
+				if (animTime >= totalDuration) {
+					animTime = animTime % totalDuration;
+					currentFrame = 0;
+				}
+	
+				if (currentFrame < frames.size() - 1) {
+					currentFrame++;
+				}
+			}
+			else {
+				
+				/* Inverse animation */
+				if (animTime >= totalDuration) {
+					animTime = animTime % totalDuration;
+					currentFrame = frames.size() - 1;
+				}
+	
+				if (currentFrame > 0) {
+					currentFrame--;
+				}
+			}
+			
+		}
+	}
 
 	public boolean isOver() {
 		return (currentFrame == frames.size() - 1) && !infinite;

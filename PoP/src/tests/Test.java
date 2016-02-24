@@ -1,10 +1,8 @@
 package tests;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import entities.Character;
@@ -17,12 +15,10 @@ import types.Key;
 public class Test extends State {
 
 	private final long FRAME_TIME = 1000/14;
-	private final String testPath = "resources/Sprites_400/Objects/fire/";
 	private final String testPrincessPath = "resources/Sprites_400/Cutscenes/Princess/winning/";
 	private final String testDastanPath = "resources/Sprites_400/Dastan/";
 	
-	private Iterator<Animation> iter;
-	private Set<Animation> animations;
+	private Hashtable<String, Animation> animations;
 	private Animation animation;
 	private Animation princessAnimation;
 	private Character princess;
@@ -39,49 +35,51 @@ public class Test extends State {
 		
 		/* Characters in scene */
 		princess = new Character(50,50);
-		dastan = new Character(500,50);
+		dastan = new Character(250,200);
 		
 		/* Animations in scene */
 		princessAnimation = loader.loadAnimation(new File(testPrincessPath), false);
-		
+
 		animations = loader.loadCharacterAnimations(testDastanPath);
 		dastan.setAnimations(animations);
-		iter = animations.iterator();
-		animation = iter.next();
-		
+		dastan.setCurrentAnimation("running jump");
+		animation = dastan.getCurrentAnimation();
 	}
 
 	@Override
 	public void update(long elapsedTime) {
 
-		/* Updates dastan animation */
-		if (animation.isOver()) {
-			if (iter.hasNext()) {
-				animation = iter.next();
-			}
-		}
-		else {
-			animation.update(elapsedTime);
-		}
+		dastan.update(elapsedTime);
+		
+		/* Updates dastan's animation */
+//		if (animation.isOver()) {
+//			
+//		}
+//		else {
+//			animation.update(elapsedTime);
+//		}
 		
 		/* Updates princess winning animation */
-		if (!princessAnimation.isOver()) {
-			princessAnimation.update(elapsedTime);
-		}
-		
-		if (princessAnimation.getCurrentFrame() < 12) {
-			princess.setX(princess.getX() + 8);
-		}
+//		if (!princessAnimation.isOver()) {
+//			princessAnimation.update(elapsedTime);
+//		}
+//		
+//		if (princessAnimation.getCurrentFrame() < 12) {
+//			princess.setX(princess.getX() + 8);
+//		}
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
 		
-		BufferedImage princessImg = princessAnimation.getImage();
-		BufferedImage img = animation.getImage();
+//		BufferedImage princessImg = princessAnimation.getImage();
+//		BufferedImage img = animation.getImage();
+//		
+//		g.drawImage(princessImg, princess.getX(), princess.getY(), null);
+//		g.drawImage(img, dastan.getX(), dastan.getY(), null);
 		
-		g.drawImage(princessImg, princess.getX(), princess.getY(), null);
-		g.drawImage(img, dastan.getX(), dastan.getY(), null);
+		dastan.drawSelf(g);
+		
 	}
 
 	@Override

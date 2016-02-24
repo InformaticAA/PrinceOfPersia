@@ -5,7 +5,7 @@ import java.util.Set;
 
 import framework.Animation;
 
-public class Character {
+public class Character extends Entity {
 
 	/* Attributes */
 	private int hp;
@@ -60,8 +60,7 @@ public class Character {
 	private boolean facingRight;
 	
 	public Character(int x, int y) {
-		this.x = x;
-		this.y = y;
+		super(x,y, null);
 	}
 	
 	/**
@@ -296,14 +295,6 @@ public class Character {
 
 	public void setMaxFallSpeed(double maxFallSpeed) {
 		this.maxFallSpeed = maxFallSpeed;
-	}
-
-	public Set<Animation> getAnimations() {
-		return animations;
-	}
-
-	public void setAnimations(Set<Animation> animations) {
-		this.animations = animations;
 	}
 
 	public Animation getCurrentAnimation() {

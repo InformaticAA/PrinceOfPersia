@@ -3,10 +3,13 @@ package framework;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+
+import entities.Entity;
 
 public class Loader {
 
@@ -138,14 +141,62 @@ public class Loader {
 	}
 	
 	/**
-	 * TODO
-	 * @return
+	 * 
+	 * @return a new room with all the entities contained loaded
 	 */
 	public Room loadRoom(int row, int col, String roomContent) {
 		Room room = new Room(row, col);
+		int x = 0;
+		int y = 0;
+		Scanner readContent = new Scanner(roomContent);
 		
+		while (readContent.hasNextLine()) {
+			
+			/* Loads one floor in a room */
+			String floor = readContent.nextLine();
+			Scanner readFloor = new Scanner(floor);
+			
+			while (readFloor.hasNext()) {
+				
+				/* Loads each square in a floor */
+				String squareContent = readFloor.next();
+				Square square = new Square();
+				square.setEntities(loadEntities(squareContent));
+				room.setSquare(x, y, square);
+				
+				x++;
+			}
+			
+			readFloor.close();
+			y++;
+		}
 		
+		readContent.close();
 		
 		return room;
+	}
+	
+	/**
+	 * TODO
+	 * @param squareContent
+	 * @return a list of the entities defined by squareContent
+	 */
+	public ArrayList<Entity> loadEntities(String squareContent) {
+		ArrayList<Entity> entities = new ArrayList<Entity>();
+		
+		Scanner readSquare = new Scanner(squareContent);
+		readSquare.useDelimiter("|");
+		
+		while (readSquare.hasNext()) {
+			
+			/* Loads each entity described in squareContent */
+			String entity = readSquare.next();
+			
+			
+		}
+		
+		readSquare.close();
+		
+		return entities;
 	}
 }

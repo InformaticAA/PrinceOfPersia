@@ -7,6 +7,7 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
+import entities.Player;
 import framework.Loader;
 import input.Key;
 

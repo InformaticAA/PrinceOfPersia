@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import entities.Character;
 import framework.Animation;
 import framework.Loader;
+import input.Key;
 import states.GameStateManager;
 import states.State;
-import types.Key;
 
 public class Test extends State {
 
@@ -26,8 +26,8 @@ public class Test extends State {
 	
 	private boolean reverse = false;
 	
-	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys) {
-		super(gsm,keys);
+	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String, Integer> keys_mapped) {
+		super(gsm,keys, keys_mapped);
 	}
 	
 	@Override

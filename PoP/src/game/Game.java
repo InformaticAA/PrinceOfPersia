@@ -8,9 +8,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
 
+import input.Key;
+import input.Listener;
 import kuusisto.tinysound.TinySound;
 import states.GameStateManager;
-import types.Key;
 
 public class Game extends JPanel implements Runnable{
 
@@ -40,7 +41,6 @@ public class Game extends JPanel implements Runnable{
 	/* Key Queue*/
 	private ConcurrentLinkedQueue<Key> keys;
 	
-	
 	public Game(){
 		super();
 		setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
@@ -68,7 +68,7 @@ public class Game extends JPanel implements Runnable{
 		running = true;
 		
 		gsm = new GameStateManager(keys);
-		gsm.setState(0);
+		gsm.setState(1);
 	}
 	
 	public void run(){

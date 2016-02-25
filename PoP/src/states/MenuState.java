@@ -4,16 +4,17 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
 import game.Game;
+import input.Key;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 import map.Background;
-import types.Key;
 
 public class MenuState extends State{
 	
@@ -28,8 +29,8 @@ public class MenuState extends State{
 	private Sound choosing;
 	private Music menu;
 	
-	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys){
-		super(gsm, keys);
+	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped){
+		super(gsm, keys, keys_mapped);
 		
 		try{
 			bg = new Background("/Sprites_400/Menu/room_won.png");
@@ -103,32 +104,22 @@ public class MenuState extends State{
 				e = (Key)keys_used[i];
 				if(e.isPressed()){
 					
-					/* Key released */
-					switch (e.getEvent().getKeyCode()) {
-	
-					case KeyEvent.VK_UP:
+					/* key pressed */
+					int key_pressed = e.getKeycode();
+					
+					if(key_pressed == keys_mapped.get(Key.UP)){
 						moving.play();
 						currentChoice = (currentChoice + 3)%4;
-						break;
-	
-					case KeyEvent.VK_DOWN:
+					} else if(key_pressed == keys_mapped.get(Key.DOWN)){
 						moving.play();
 						currentChoice = (currentChoice + 1)%4;
-						break;
-	
-					case KeyEvent.VK_LEFT:
-						break;
-	
-					case KeyEvent.VK_RIGHT:
-						break;
-	
-					case KeyEvent.VK_SHIFT:
-						break;
-					
-					case KeyEvent.VK_ENTER:
+					} else if(key_pressed == keys_mapped.get(Key.LEFT)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.ENTER)){
 						choosing.play();
 						select();
-						break;
 					}
 				}
 			}

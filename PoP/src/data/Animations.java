@@ -6,10 +6,19 @@ import framework.Animation;
 
 public class Animations {
 
-	private Hashtable<String, Hashtable<String,Animation>> animations;
+	private Hashtable<String, Hashtable<String, Animation>> animations;
 	
 	public Animations() {
-		animations = new Hashtable<String, Hashtable<String,Animation>>();
+		this.animations = new Hashtable<String, Hashtable<String,Animation>>();
+	}
+	
+	/**
+	 * 
+	 * @param entityName
+	 * @param entityAnimations
+	 */
+	public void addEntityAnimations(String entityName, Hashtable<String, Animation> entityAnimations) {
+		this.animations.put(entityName, entityAnimations);
 	}
 
 	public Hashtable<String, Hashtable<String, Animation>> getAllAnimations() {

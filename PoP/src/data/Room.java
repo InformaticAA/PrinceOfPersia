@@ -1,4 +1,4 @@
-package framework;
+package data;
 
 public class Room {
 

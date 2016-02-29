@@ -42,7 +42,7 @@ public class Test extends State {
 		/* Animations in scene */
 		princessAnimation = loader.loadAnimation(new File(testPrincessPath), false);
 
-		animations = loader.loadCharacterAnimations(testDastanPath);
+		animations = loader.loadEntityAnimations(testDastanPath);
 		dastan.setAnimations(animations);
 		dastan.setCurrentAnimation("clipping");
 		animation = dastan.getCurrentAnimation();

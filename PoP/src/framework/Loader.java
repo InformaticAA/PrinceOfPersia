@@ -9,21 +9,63 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
+import data.Animations;
+import data.Level;
+import data.Room;
+import data.Square;
 import entities.Entity;
+import entities.Fire;
+import entities.LooseFloor;
 
 public class Loader {
 
 	private long frameTime;
+	private Animations animations;
 	
 	public Loader(long frameTime) {
 		this.frameTime = frameTime;
 	}
 	
-	public Hashtable<String, Animation> loadCharacterAnimations(String characterPath) {
+	/**
+	 * 
+	 * Loads every animation of each entity in the resources folder
+	 */
+	public void loadAllAnimations() {
+		Hashtable<String, Animation> entityAnimations = null;
+		
+		/* Initialize animations estructure */
+		animations = new Animations();
+		
+		/* Loads the animations in each folder */
+		File dir = new File("resources/");
+		if (dir.isDirectory()) {
+			File[] files = dir.listFiles();
+			
+			if (files != null) {
+				for(File f : files) {
+					if (f.isDirectory()) {
+						
+						/* Folder f contains the animations of entity f */
+						entityAnimations = loadEntityAnimations("resources/" + f.getName());
+						animations.addEntityAnimations(f.getName(), entityAnimations);
+					}
+				}
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param entityPath
+	 * @return a list with every animation of an entity
+	 */
+	public Hashtable<String, Animation> loadEntityAnimations(String entityPath) {
 		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
 		
 		/* Searches for .png files for each folder of characterPath */
-		File dir = new File(characterPath);
+		File dir = new File(entityPath);
 		if (dir.isDirectory()) {
 			File[] files = dir.listFiles();
 			
@@ -161,7 +203,7 @@ public class Loader {
 				/* Loads each square in a floor */
 				String squareContent = readFloor.next();
 				Square square = new Square();
-				square.setEntities(loadEntities(squareContent));
+				square.setEntities(loadEntities(x, y, squareContent));
 				room.setSquare(x, y, square);
 				
 				x++;
@@ -177,11 +219,13 @@ public class Loader {
 	}
 	
 	/**
-	 * TODO
+	 * TODO generate more types of entities
+	 * @param x
+	 * @param y
 	 * @param squareContent
 	 * @return a list of the entities defined by squareContent
 	 */
-	public ArrayList<Entity> loadEntities(String squareContent) {
+	public ArrayList<Entity> loadEntities(int x, int y, String squareContent) {
 		ArrayList<Entity> entities = new ArrayList<Entity>();
 		
 		Scanner readSquare = new Scanner(squareContent);
@@ -191,12 +235,24 @@ public class Loader {
 			
 			/* Loads each entity described in squareContent */
 			String entity = readSquare.next();
+			Entity newEntity = null;
+			Hashtable<String, Animation> entityAnimations = null;
 			
+			if (entity.equals("torch")) {
+				entityAnimations = animations.getAnimations("fire");
+				newEntity = new Fire(x, y, entityAnimations);
+			}
+			else if (entity.equals("loose_floor")) {
+				entityAnimations = animations.getAnimations("loose_floor");
+				newEntity = new LooseFloor(x, y, entityAnimations);
+			}
 			
+			entities.add(newEntity);
 		}
 		
 		readSquare.close();
 		
 		return entities;
 	}
+	
 }

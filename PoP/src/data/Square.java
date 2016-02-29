@@ -1,4 +1,4 @@
-package framework;
+package data;
 
 import java.util.ArrayList;
 

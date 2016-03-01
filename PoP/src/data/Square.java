@@ -25,6 +25,5 @@ public class Square {
 	public void setEntities(ArrayList<Entity> entities) {
 		this.entities = entities;
 	}
-	
-	
+
 }

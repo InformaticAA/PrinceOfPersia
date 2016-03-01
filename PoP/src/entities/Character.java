@@ -59,8 +59,8 @@ public class Character extends Entity {
 	private Animation currentAnimation;
 	private boolean facingRight;
 	
-	public Character(int x, int y) {
-		super(x,y, null);
+	public Character(int x, int y, boolean back) {
+		super(x,y, back, null);
 	}
 	
 	/**

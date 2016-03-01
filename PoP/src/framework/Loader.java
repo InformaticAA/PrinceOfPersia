@@ -30,19 +30,22 @@ public class Loader {
 	 * 
 	 * Loads every animation of each entity in the resources folder
 	 */
-	public void loadAllAnimations() {
+	public void loadAllAnimations(String path) {
 		Hashtable<String, Animation> entityAnimations = null;
 		
 		/* Initialize animations estructure */
 		animations = new Animations();
 		
 		/* Loads the animations in each folder */
-		File dir = new File("resources/");
+		File dir = new File("resources/" + path);
 		if (dir.isDirectory()) {
 			File[] files = dir.listFiles();
 			
 			if (files != null) {
 				for(File f : files) {
+					
+					entityAnimations = null;
+					
 					if (f.isDirectory()) {
 						
 						/* Folder f contains the animations of entity f */
@@ -51,7 +54,6 @@ public class Loader {
 					}
 				}
 			}
-			
 		}
 		
 	}
@@ -140,26 +142,27 @@ public class Loader {
 		int row = 1;
 		int col = 1;
 		
-		/* Reads the file that describes the level */
+		/* Reads the files that describes the level */
 		File levelFile = new File(levelPath);
 		Scanner readLevel;
 		
 		try {
 			
 			readLevel = new Scanner(levelFile);
+			
 			while (readLevel.hasNextLine()) {
 				
 				String line = readLevel.nextLine();
 				
 				if (line.contains("room")) {
 					
+					/* Reads all room content */
 					Scanner readLine = new Scanner(line);
 					readLine.next();
 					row = readLine.nextInt();
 					col = readLine.nextInt();
 					readLine.close();
 					
-					/* Reads the info of the new room (4 lines) */
 					roomContent += readLevel.nextLine() + "\n";
 					roomContent += readLevel.nextLine() + "\n";
 					roomContent += readLevel.nextLine() + "\n";
@@ -170,7 +173,6 @@ public class Loader {
 					
 					roomContent = "";
 				}
-				
 			}
 			
 			readLevel.close();
@@ -184,9 +186,11 @@ public class Loader {
 	
 	/**
 	 * 
-	 * @return a new room with all the entities contained loaded
+	 * @return a new room with all the entities contained and
+	 * background loaded
 	 */
-	public Room loadRoom(int row, int col, String roomContent) {
+	public Room loadRoom(int row, int col,
+			String roomContent) {
 		Room room = new Room(row, col);
 		int x = 0;
 		int y = 0;
@@ -194,13 +198,14 @@ public class Loader {
 		
 		while (readContent.hasNextLine()) {
 			
-			/* Loads one floor in a room */
+			/* Loads one floor's entities in a room */
 			String floor = readContent.nextLine();
 			Scanner readFloor = new Scanner(floor);
+			readFloor.useDelimiter(";");
 			
 			while (readFloor.hasNext()) {
 				
-				/* Loads each square in a floor */
+				/* Loads each square's entities in a floor */
 				String squareContent = readFloor.next();
 				Square square = new Square();
 				square.setEntities(loadEntities(x, y, squareContent));
@@ -227,9 +232,8 @@ public class Loader {
 	 */
 	public ArrayList<Entity> loadEntities(int x, int y, String squareContent) {
 		ArrayList<Entity> entities = new ArrayList<Entity>();
-		
 		Scanner readSquare = new Scanner(squareContent);
-		readSquare.useDelimiter("|");
+		boolean back = false;
 		
 		while (readSquare.hasNext()) {
 			
@@ -240,11 +244,11 @@ public class Loader {
 			
 			if (entity.equals("torch")) {
 				entityAnimations = animations.getAnimations("fire");
-				newEntity = new Fire(x, y, entityAnimations);
+				newEntity = new Fire(x, y, true, entityAnimations);
 			}
 			else if (entity.equals("loose_floor")) {
 				entityAnimations = animations.getAnimations("loose_floor");
-				newEntity = new LooseFloor(x, y, entityAnimations);
+				newEntity = new LooseFloor(x, y, true, entityAnimations);
 			}
 			
 			entities.add(newEntity);

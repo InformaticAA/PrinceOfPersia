@@ -9,12 +9,15 @@ import framework.Animation;
 public abstract class Entity {
 	
 	private int x, y;
+	private boolean back;
 	private Hashtable<String,Animation> animations;
 	private Animation currentAnimation;
 	
-	public Entity(int x, int y, Hashtable<String,Animation> animations) {
+	public Entity(int x, int y, boolean back,
+			Hashtable<String,Animation> animations) {
 		this.x = x;
 		this.y = y;
+		this.back = back;
 		currentAnimation = null;
 	}
 	

@@ -18,13 +18,11 @@ public class GameStateManager {
 	public static final int MENUSTATE = 0;
 	public static final int MAINGAMESTATE = 1;
 	
-	
-	
 	public GameStateManager(ConcurrentLinkedQueue<Key> keys){
 		
 		gameStates = new ArrayList<State>();
 		
-		currentState = MENUSTATE;
+		currentState = TESTSTATE;
 		
 		Hashtable<String, Integer> keys_mapped = new Hashtable<String, Integer>();
 		KeyMapper key_mapper = new KeyMapper(keys_mapped);

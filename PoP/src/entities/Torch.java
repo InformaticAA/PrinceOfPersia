@@ -4,12 +4,14 @@ import java.util.Hashtable;
 
 import framework.Animation;
 
-public class Fire extends Entity {
+public class Torch extends Entity {
 
-	public Fire(int x, int y, boolean back,
+	public Torch(int x, int y, boolean back,
 			Hashtable<String,Animation> animations) {
 		super(x, y, back, animations);
 		
+		currentAnimation = animations.get("fire");
+		currentAnimation.setRandomCurrentFrame();
 	}
 	
 }

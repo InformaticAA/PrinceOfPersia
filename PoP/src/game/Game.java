@@ -68,7 +68,7 @@ public class Game extends JPanel implements Runnable{
 		running = true;
 		
 		gsm = new GameStateManager(keys);
-		gsm.setState(1);
+		gsm.setState(0);
 	}
 	
 	public void run(){

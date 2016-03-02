@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import data.Level;
+import data.Room;
 import entities.Character;
 import framework.Animation;
 import framework.Loader;
@@ -23,6 +25,7 @@ public class Test extends State {
 	private Animation princessAnimation;
 	private Character princess;
 	private Character dastan;
+	private Room currentRoom;
 	
 	private boolean reverse = false;
 	
@@ -34,28 +37,34 @@ public class Test extends State {
 	public void init() {
 	
 		Loader loader = new Loader(FRAME_TIME);
+		loader.loadAllSprites();
+		Level level1 = loader.loadLevel(1);
+		currentRoom = level1.getRoom(1, 7);
 		
 		/* Characters in scene */
-		princess = new Character(50,50);
-		dastan = new Character(200,400);
+//		princess = new Character(50,50);
+//		dastan = new Character(200,400);
 		
 		/* Animations in scene */
-		princessAnimation = loader.loadAnimation(new File(testPrincessPath), false);
-
-		animations = loader.loadEntityAnimations(testDastanPath);
-		dastan.setAnimations(animations);
-		dastan.setCurrentAnimation("clipping");
-		animation = dastan.getCurrentAnimation();
+//		princessAnimation = loader.loadAnimation(new File(testPrincessPath), false);
+//
+//		animations = loader.loadEntityAnimations(testDastanPath);
+//		dastan.setAnimations(animations);
+//		dastan.setCurrentAnimation("clipping");
+//		animation = dastan.getCurrentAnimation();
 	}
 
 	@Override
 	public void update(long elapsedTime) {
-
-		dastan.getCurrentAnimation().update(elapsedTime, reverse);
 		
-		if (dastan.getCurrentAnimation().isOver(reverse)) {
-			reverse = !reverse;
-		}
+		
+		currentRoom.update(elapsedTime);
+
+//		dastan.getCurrentAnimation().update(elapsedTime, reverse);
+//		
+//		if (dastan.getCurrentAnimation().isOver(reverse)) {
+//			reverse = !reverse;
+//		}
 		
 		/* Updates dastan's animation */
 //		if (animation.isOver()) {
@@ -84,7 +93,9 @@ public class Test extends State {
 //		g.drawImage(princessImg, princess.getX(), princess.getY(), null);
 //		g.drawImage(img, dastan.getX(), dastan.getY(), null);
 		
-		dastan.drawSelf(g);
+		currentRoom.draw(g);
+		
+//		dastan.drawSelf(g);
 		
 	}
 

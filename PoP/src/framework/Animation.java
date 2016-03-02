@@ -2,6 +2,7 @@ package framework;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Animation {
 
@@ -99,6 +100,16 @@ public class Animation {
 	
 	public int getCurrentFrame() {
 		return currentFrame;
+	}
+	
+	public void setCurrentFrame(int numFrame) {
+		this.currentFrame = numFrame;
+	}
+	
+	public void setRandomCurrentFrame() {
+		Random gen = new Random();
+		gen.setSeed(System.currentTimeMillis());
+		currentFrame = gen.nextInt(frames.size());
 	}
 
 }

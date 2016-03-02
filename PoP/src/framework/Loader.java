@@ -14,30 +14,37 @@ import data.Level;
 import data.Room;
 import data.Square;
 import entities.Entity;
-import entities.Fire;
-import entities.LooseFloor;
+import entities.Torch;
 
 public class Loader {
 
 	private long frameTime;
-	private Animations animations;
+	private Animations totalAnimations;
 	
 	public Loader(long frameTime) {
 		this.frameTime = frameTime;
+		this.totalAnimations = new Animations();
+	}
+	
+	/**
+	 * Loads every sprite needed in the game
+	 */
+	public void loadAllSprites() {
+//		loadAnimations("resources/Cutscenes/");
+		loadAnimations("resources/Sprites_400/Dungeon/");
+		loadAnimations("resources/Sprites_400/Objects/");
+//		loadAnimations("resources/Characters/");
 	}
 	
 	/**
 	 * 
-	 * Loads every animation of each entity in the resources folder
+	 * Loads every animation of each entity in the folder path
 	 */
-	public void loadAllAnimations(String path) {
+	public void loadAnimations(String path) {
 		Hashtable<String, Animation> entityAnimations = null;
 		
-		/* Initialize animations estructure */
-		animations = new Animations();
-		
 		/* Loads the animations in each folder */
-		File dir = new File("resources/" + path);
+		File dir = new File(path);
 		if (dir.isDirectory()) {
 			File[] files = dir.listFiles();
 			
@@ -49,8 +56,11 @@ public class Loader {
 					if (f.isDirectory()) {
 						
 						/* Folder f contains the animations of entity f */
-						entityAnimations = loadEntityAnimations("resources/" + f.getName());
-						animations.addEntityAnimations(f.getName(), entityAnimations);
+						entityAnimations = loadEntityAnimations(path + f.getName());
+						if (entityAnimations != null) {
+							totalAnimations.addEntityAnimations(f.getName(), entityAnimations);
+							System.out.println("ENTITY: " + f.getName());
+						}
 					}
 				}
 			}
@@ -136,11 +146,11 @@ public class Loader {
 	 * @return a new level with its content loaded
 	 */
 	public Level loadLevel(int numLevel) {
-		Level level = new Level(numLevel);
+		Level level = null;
 		String levelPath = "resources/Levels/level" + numLevel + ".txt";
 		String roomContent = "";
-		int row = 1;
-		int col = 1;
+		int row = 0;
+		int col = 0;
 		
 		/* Reads the files that describes the level */
 		File levelFile = new File(levelPath);
@@ -149,6 +159,9 @@ public class Loader {
 		try {
 			
 			readLevel = new Scanner(levelFile);
+			int rows = readLevel.nextInt();
+			int cols = readLevel.nextInt();
+			level = new Level(numLevel, rows, cols);
 			
 			while (readLevel.hasNextLine()) {
 				
@@ -168,7 +181,7 @@ public class Loader {
 					roomContent += readLevel.nextLine() + "\n";
 					roomContent += readLevel.nextLine();
 					
-					Room newRoom = loadRoom(row, col, roomContent);
+					Room newRoom = loadRoom(row - 1, col - 1, roomContent);
 					level.addRoom(newRoom);
 					
 					roomContent = "";
@@ -196,26 +209,32 @@ public class Loader {
 		int y = 0;
 		Scanner readContent = new Scanner(roomContent);
 		
-		while (readContent.hasNextLine()) {
+		while (readContent.hasNextLine() && x < 4) {
+		
+			y = 0;
 			
 			/* Loads one floor's entities in a room */
 			String floor = readContent.nextLine();
 			Scanner readFloor = new Scanner(floor);
 			readFloor.useDelimiter(";");
 			
-			while (readFloor.hasNext()) {
+			while (readFloor.hasNext() && y < 10) {
 				
 				/* Loads each square's entities in a floor */
 				String squareContent = readFloor.next();
-				Square square = new Square();
-				square.setEntities(loadEntities(x, y, squareContent));
+				
+				if (squareContent.contains("t")) {
+					System.out.println(squareContent);
+				}
+				
+				Square square = loadEntities(x, y, squareContent);
 				room.setSquare(x, y, square);
 				
-				x++;
+				y++;
 			}
 			
 			readFloor.close();
-			y++;
+			x++;
 		}
 		
 		readContent.close();
@@ -228,12 +247,20 @@ public class Loader {
 	 * @param x
 	 * @param y
 	 * @param squareContent
-	 * @return a list of the entities defined by squareContent
+	 * @return a new square with its content loaded
 	 */
-	public ArrayList<Entity> loadEntities(int x, int y, String squareContent) {
+	public Square loadEntities(int x, int y, String squareContent) {
+		ArrayList<Entity> background = new ArrayList<Entity>();
 		ArrayList<Entity> entities = new ArrayList<Entity>();
+		ArrayList<Entity> foreground = new ArrayList<Entity>();
+		Square square = new Square();
 		Scanner readSquare = new Scanner(squareContent);
 		boolean back = false;
+		
+		int px = 64 + y * 64;
+		int py = 4 + x * 94;
+		
+		System.out.println("coords: (" + px + ", " + py + ")");
 		
 		while (readSquare.hasNext()) {
 			
@@ -242,21 +269,28 @@ public class Loader {
 			Entity newEntity = null;
 			Hashtable<String, Animation> entityAnimations = null;
 			
-			if (entity.equals("torch")) {
-				entityAnimations = animations.getAnimations("fire");
-				newEntity = new Fire(x, y, true, entityAnimations);
+			if (entity.equals("t")) {
+				entityAnimations = totalAnimations.getAnimations("torch");
+				newEntity = new Torch(px, py, true, entityAnimations);
+				background.add(newEntity);
 			}
-			else if (entity.equals("loose_floor")) {
-				entityAnimations = animations.getAnimations("loose_floor");
-				newEntity = new LooseFloor(x, y, true, entityAnimations);
-			}
+//			else if (entity.equals("loose_floor")) {
+//				entityAnimations = animations.getAnimations("loose_floor");
+//				newEntity = new LooseFloor(x, y, true, entityAnimations);
+//			}
+//			else if (entity.equals("loose_floor")) {
+//				entityAnimations = animations.getAnimations("loose_floor");
+//				newEntity = new LooseFloor(x, y, true, entityAnimations);
+//			}
 			
-			entities.add(newEntity);
 		}
+		square.setBackground(background);
+		square.setEntities(entities);
+		square.setForeground(foreground);
 		
 		readSquare.close();
 		
-		return entities;
+		return square;
 	}
 	
 }

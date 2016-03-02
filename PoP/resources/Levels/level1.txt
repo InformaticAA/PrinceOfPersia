@@ -1,0 +1,44 @@
+3 9
+room 1 1
+b;b;b;b;b;b;b;b;b;b
+rs d2(2,0.5) d2(3,0.25) nb;fs prt;-;bricks(3);-;pl nb-prm fl potion1 nb;fr fl nb;fr fl t nb;fr fl bricks(1) nb
+fs pl b;prm prt;-;bricks(3);-;ls(mark(3)) d2(2,0.4,mark(1)) b;cs d2(2,0.5) d1(3,0.1) b;cs d1(2,0.5,mark(3)) d2(3,0.1) b;cs d1(2,0.5) d1(3,0.1) b;cs d2(2,0.4) d2(3,0.1) b
+fs pl b;prm prt;-;bricks(3);-;ls d2(2,0.5,mark(2)) b;cs d2(2,0.5) d1(3,0.1) b;cs d1(2,0.3) d1(3,0.2) b;cs d1(2,0.4) d2(3,0.3) random b;cs d2(2,0.4) d2(3 0.1) b
+
+room 1 7
+b;b;b;b;b;b;b;b;b;b
+rf fst;-;-;lf b;lf rf b;lf rf bricks(1) b;lf rf b; lf rf bricks(1) b;ls(d1(2,0.3,mark(1)) b;cs d1(2,0.3) d2(3,0.2) b;
+fsm lf b;lf rf t b;lf rf t b;pl bricks(1) b; prm fst;ls d2(2,0.5,mark(2)) b;cs random d2(2,0.5) d1(3,0.1) b;cs d2(2,0.5,mark(1)) d1(3,01) b;cs d1(2,0.5) d2(3,0.1) b;cs random d1(2,0.5) d1(3,0.1) b
+cs d2(2,0.5) d2(3,0.2) b;cs d2(2,0.5) d1(0.4) b;cs d2(2,0.4,mark(1)) d1(3,0.3) b;rs d1(2,0.5) d2(3,0.3) b;fs lf bl b;br prm b;pl loosel b;looser lf b;rf lf bricks(1) b;ls d1(2,0.5) b;
+
+
+
+
+- = nothing
+b = base
+nb = normal base
+rs = right stack
+fs = face stack
+ls = left stack
+cs = centre stack
+ss = single stack
+fst = face stack top
+fsm = face stack main
+d1(x,y) = thin divider (stack row, position from the start of the column)
+d2(x,y) = fat divider (stack row, position from the start of the column)
+prt = pillar right top
+pl = pillar left
+prm = pillar right main
+potion1 = 1 life potion
+fl = floor left
+fr = floor right
+t = torch
+bricks(x) = bricks x of background
+mark(x) = marks x of a divider/stack
+random = random block
+rf = right floor
+lf = left floor
+bl = broken left
+br = broken right
+loosel = loose left
+looser = loose right

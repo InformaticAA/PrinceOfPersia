@@ -1,7 +1,11 @@
 package data;
 
+import java.awt.Graphics2D;
+
 public class Room {
 
+	private final int rows = 4;
+	private final int cols = 10;
 	private int row;
 	private int col;
 	private Square[][] grid;
@@ -9,7 +13,33 @@ public class Room {
 	public Room(int row, int col) {
 		this.row = row;
 		this.col = col;
-		this.grid = new Square[row][col];
+		this.grid = new Square[rows][cols];
+	}
+	
+	/**
+	 * Updates all squares in the room
+	 */
+	public void update(long elapsedTime) {
+		for (int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid.length; j++) {
+				if (grid[i][j] !=  null) {
+					grid[i][j].update(elapsedTime);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Draws room's content
+	 */
+	public void draw(Graphics2D g) {
+		for (int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid.length; j++) {
+				if (grid[i][j] !=  null) {
+					grid[i][j].draw(g);
+				}
+			}
+		}
 	}
 	
 	/**

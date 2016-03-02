@@ -7,10 +7,10 @@ public class Level {
 	private int cols;
 	private Room[][] rooms;
 	
-	public Level(int numLevel) {
+	public Level(int numLevel, int rows, int cols) {
 		this.numLevel = numLevel;
-		this.rows = 0;
-		this.cols = 0;
+		this.rows = rows;
+		this.cols = cols;
 		this.rooms = new Room[rows][cols];
 	}
 	
@@ -19,7 +19,7 @@ public class Level {
 	}
 	
 	public Room getRoom(int row, int col) {
-		return rooms[row][col];
+		return rooms[row - 1][col - 1];
 	}
 
 	/**

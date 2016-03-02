@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
 import framework.Animation;
+import framework.Loader;
 
 public abstract class Entity {
 	
@@ -12,12 +13,13 @@ public abstract class Entity {
 	protected boolean back;
 	protected Hashtable<String,Animation> animations;
 	protected Animation currentAnimation;
+	protected Loader loader;
 	
-	public Entity(int x, int y, boolean back,
-			Hashtable<String,Animation> animations) {
+	public Entity(int x, int y, boolean back, Loader loader) {
 		this.x = x;
 		this.y = y;
 		this.back = back;
+		this.loader = loader;
 		currentAnimation = null;
 	}
 	

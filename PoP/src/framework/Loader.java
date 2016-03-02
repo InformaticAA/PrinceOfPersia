@@ -9,7 +9,8 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-import data.Animations;
+import data.FrameList;
+import data.FrameLists;
 import data.Level;
 import data.Room;
 import data.Square;
@@ -19,11 +20,11 @@ import entities.Torch;
 public class Loader {
 
 	private long frameTime;
-	private Animations totalAnimations;
+	private FrameLists totalAnimations;
 	
 	public Loader(long frameTime) {
 		this.frameTime = frameTime;
-		this.totalAnimations = new Animations();
+		this.totalAnimations = new FrameLists();
 	}
 	
 	/**
@@ -41,7 +42,7 @@ public class Loader {
 	 * Loads every animation of each entity in the folder path
 	 */
 	public void loadAnimations(String path) {
-		Hashtable<String, Animation> entityAnimations = null;
+		Hashtable<String, FrameList> entityAnimations = null;
 		
 		/* Loads the animations in each folder */
 		File dir = new File(path);
@@ -58,7 +59,7 @@ public class Loader {
 						/* Folder f contains the animations of entity f */
 						entityAnimations = loadEntityAnimations(path + f.getName());
 						if (entityAnimations != null) {
-							totalAnimations.addEntityAnimations(f.getName(), entityAnimations);
+							totalAnimations.addEntityFrameLists(f.getName(), entityAnimations);
 							System.out.println("ENTITY: " + f.getName());
 						}
 					}
@@ -73,8 +74,8 @@ public class Loader {
 	 * @param entityPath
 	 * @return a list with every animation of an entity
 	 */
-	public Hashtable<String, Animation> loadEntityAnimations(String entityPath) {
-		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
+	public Hashtable<String, FrameList> loadEntityAnimations(String entityPath) {
+		Hashtable<String, FrameList> animations = new Hashtable<String, FrameList>();
 		
 		/* Searches for .png files for each folder of characterPath */
 		File dir = new File(entityPath);
@@ -86,7 +87,7 @@ public class Loader {
 					if (f.isDirectory()) {
 						
 						/* folder f contains .png files */
-						Animation anim = loadAnimation(f,false);
+						FrameList anim = loadFrameList(f,false);
 						animations.put(anim.getId(), anim);
 					}
 				}
@@ -103,8 +104,8 @@ public class Loader {
 	 * one animation
 	 * @return new animation loaded
 	 */
-	public Animation loadAnimation(File f, boolean infinite) {
-		Animation animation = new Animation(f.getName(), infinite);
+	public FrameList loadFrameList(File f, boolean infinite) {
+		FrameList animation = new FrameList(f.getName());
 		
 		File[] images = f.listFiles();
 		for(File image : images) {
@@ -114,7 +115,7 @@ public class Loader {
 			if (name.substring(name.length() - 4, name.length()).equals(".png")) {
 				
 				Frame frame = loadFrame(image);
-				animation.addFrame(frame, frameTime);
+				animation.addFrame(frame);
 			}
 		}
 		
@@ -264,11 +265,9 @@ public class Loader {
 			/* Loads each entity described in squareContent */
 			String entity = readSquare.next();
 			Entity newEntity = null;
-			Hashtable<String, Animation> entityAnimations = null;
 			
 			if (entity.equals("t")) {
-				entityAnimations = totalAnimations.getAnimations("torch");
-				newEntity = new Torch(px, py, true, entityAnimations);
+				newEntity = new Torch(px, py, true, this);
 				background.add(newEntity);
 				System.out.println("RANDOM A VER: " + newEntity.getCurrentAnimation().getCurrentFrame());
 			}
@@ -291,4 +290,12 @@ public class Loader {
 		return square;
 	}
 	
+	public Hashtable<String, Animation> getAnimations(String entity){
+		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
+		Hashtable<String, FrameList> entityFrameLists = totalAnimations.getFrameLists("torch");
+		for(String id : entityFrameLists.keySet()){
+			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames(),true));
+		}
+		return animations;
+	}
 }

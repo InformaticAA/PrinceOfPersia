@@ -28,15 +28,12 @@ public class Test extends State {
 	
 	private boolean reverse = false;
 	
-	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String, Integer> keys_mapped) {
-		super(gsm,keys, keys_mapped);
+	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String, Integer> keys_mapped, Loader loader) {
+		super(gsm,keys, keys_mapped, loader);
 	}
 	
 	@Override
 	public void init() {
-	
-		Loader loader = new Loader(FRAME_TIME);
-		loader.loadAllSprites();
 		Level level1 = loader.loadLevel(1);
 		currentRoom = level1.getRoom(1, 7);
 		
@@ -58,7 +55,6 @@ public class Test extends State {
 		
 		
 		currentRoom.update(elapsedTime);
-		System.out.println();
 		
 //		dastan.getCurrentAnimation().update(elapsedTime, reverse);
 //		

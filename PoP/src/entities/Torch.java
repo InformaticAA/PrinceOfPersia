@@ -1,24 +1,15 @@
 package entities;
 
-import java.util.Hashtable;
-
-import framework.Animation;
+import framework.Loader;
 
 public class Torch extends Entity {
 
 	public Torch(int x, int y, boolean back,
-			Hashtable<String,Animation> animations) {
-		super(x, y, back, animations);
+			Loader loader) {
+		super(x, y, back, loader);
 		
+		animations = loader.getAnimations("torch");
 		currentAnimation = animations.get("fire");
 		currentAnimation.setRandomCurrentFrame();
 	}
-	
-	@Override
-	public void update(long elapsedTime) {
-		currentAnimation.update(elapsedTime);
-		
-		System.out.print(currentAnimation.getCurrentFrame() + " ");
-	}
-	
 }

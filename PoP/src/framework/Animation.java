@@ -2,29 +2,34 @@ package framework;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Animation {
 
 	private String id;
 	private ArrayList<Frame> frames;
 	private int currentFrame;
+	private int initialFrame;
 	private boolean infinite;
 	private long animTime;
 	private long totalDuration;
 	
-	public Animation(String id, boolean infinite) {
+	public Animation(String id, ArrayList<Frame> frames, boolean infinite) {
 		this.id = id;
-		frames = new ArrayList<Frame>();
+		this.frames = frames;
 		currentFrame = 0;
+		initialFrame = 0;
 		this.infinite = infinite;
 		animTime = 0;
 		totalDuration = 0;
+		for (int i = 0; i < frames.size(); i++) {
+			totalDuration = totalDuration + frames.get(i).getEndtime();
+		}
 	}
 	
 	public void addFrame(Frame frame, long duration) {
 		totalDuration += duration;
 		frames.add(frame);
+		System.out.println("Frames added " + duration);
 	}
 	
 	public BufferedImage getImage() {
@@ -41,12 +46,10 @@ public class Animation {
 			
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
-				currentFrame = 0;
+				currentFrame = initialFrame;
 			}
-
-			if (currentFrame < frames.size() - 1) {
-				currentFrame++;
-			}
+			currentFrame= (currentFrame + 1) % frames.size();
+			System.out.println(currentFrame);
 		}
 	}
 	
@@ -58,11 +61,11 @@ public class Animation {
 				
 				if (animTime >= totalDuration) {
 					animTime = animTime % totalDuration;
-					currentFrame = 0;
+					currentFrame = initialFrame;
 				}
 	
 				if (currentFrame < frames.size() - 1) {
-					currentFrame++;
+					currentFrame= (currentFrame + 1) % frames.size();
 				}
 			}
 			else {
@@ -109,12 +112,7 @@ public class Animation {
 	public void setRandomCurrentFrame() {
 		int randomFrame = (int) (Math.random() * frames.size());
 		currentFrame = randomFrame;
-		
-		long newTime = 0;
-		for (int i = 0; i < frames.size(); i++) {
-			newTime += frames.get(i).getEndtime();
-		}
-		animTime = newTime;
+		initialFrame = currentFrame;
 	}
 
 }

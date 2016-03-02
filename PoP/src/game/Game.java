@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
 
+import framework.Loader;
 import input.Key;
 import input.Listener;
 import kuusisto.tinysound.TinySound;
@@ -38,14 +39,18 @@ public class Game extends JPanel implements Runnable{
 	/* Game State Manager */
 	private GameStateManager gsm;
 	
-	/* Key Queue*/
+	/* Key Queue */
 	private ConcurrentLinkedQueue<Key> keys;
 	
-	public Game(){
+	/* Game Data */
+	private Loader loader;
+	
+	public Game(Loader loader){
 		super();
 		setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		setFocusable(true);
 		requestFocus();
+		this.loader = loader;
 	}
 	
 	public void addNotify(){
@@ -67,8 +72,8 @@ public class Game extends JPanel implements Runnable{
 		
 		running = true;
 		
-		gsm = new GameStateManager(keys);
-		gsm.setState(0);
+		gsm = new GameStateManager(keys,loader);
+		gsm.setState(1);
 	}
 	
 	public void run(){

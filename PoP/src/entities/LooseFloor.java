@@ -1,14 +1,12 @@
 package entities;
 
-import java.util.Hashtable;
-
-import framework.Animation;
+import framework.Loader;
 
 public class LooseFloor extends Entity {
 
 	public LooseFloor(int x, int y, boolean back,
-			Hashtable<String, Animation> animations) {
-		super(x, y, back, animations);
+			Loader loader) {
+		super(x, y, back, loader);
 		
 	}
 	

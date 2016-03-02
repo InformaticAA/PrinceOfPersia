@@ -15,7 +15,7 @@ public class GameStarter {
 		loader.loadAllSprites();
 		
 		JFrame window = new JFrame("Prince Of Persia");
-		window.setContentPane(new Game());
+		window.setContentPane(new Game(loader));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		window.pack();

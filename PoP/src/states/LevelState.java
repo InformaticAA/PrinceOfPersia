@@ -3,6 +3,7 @@ package states;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
@@ -21,19 +22,15 @@ public class LevelState extends State{
 	/* Variables */
 	private boolean start;
 	private float remainingTime;
-	
-	private Loader loader;
-	
 	private Level currentLevel;
 	
 	private Player player;
 	
 	
-	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, boolean start, Loader loader) {
-		super(gsm, keys);
+	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader) {
+		super(gsm, keys, keys_mapped, loader);
 
 		this.start = start;
-		this.loader = loader;
 	}
 
 	@Override

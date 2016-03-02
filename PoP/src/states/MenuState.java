@@ -1,7 +1,6 @@
 package states;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Hashtable;
@@ -9,6 +8,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
+import entities.Torch;
+import framework.Loader;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
@@ -29,8 +30,10 @@ public class MenuState extends State{
 	private Sound choosing;
 	private Music menu;
 	
-	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped){
-		super(gsm, keys, keys_mapped);
+	private Torch t1,t2;
+	
+	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader){
+		super(gsm, keys, keys_mapped, loader);
 		
 		try{
 			bg = new Background("/Sprites_400/Menu/room_won.png");
@@ -44,6 +47,8 @@ public class MenuState extends State{
 			moving = TinySound.loadSound(new File("resources/Sounds/1/sword moving.wav"));
 			choosing = TinySound.loadSound(new File("resources/Sounds/1/sword vs sword.wav"));
 			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
+			t1 = new Torch(232,265,true,loader);
+			t2 = new Torch(468,265,true,loader);
 			
 		} catch(Exception e){
 			e.printStackTrace();
@@ -58,6 +63,8 @@ public class MenuState extends State{
 	@Override
 	public void update(long elapsedTime) {
 		manageKeys();
+		t1.update(elapsedTime);
+		t2.update(elapsedTime);
 		// TODO Auto-generated method stub
 		
 	}
@@ -73,6 +80,10 @@ public class MenuState extends State{
 					Game.HEIGHT/2 - 55*Game.SCALE + i*20*Game.SCALE + options[0].getHeight(),
 					null);
 		}
+		
+		
+		t1.drawSelf(g);
+		t2.drawSelf(g);
 		
 		g.drawImage(sword, 
 				Game.WIDTH/2 - options[currentChoice].getWidth()/2 - sword.getWidth() - 10*Game.SCALE,

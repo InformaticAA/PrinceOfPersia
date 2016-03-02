@@ -33,10 +33,6 @@ public class SplashScreen extends JWindow {
         setVisible(visible);
     }
 
-    public void dispose() {
-        dispose();
-    }
-
     public void paint(Graphics g) {
         g.drawImage(image, 0, 0, null);
     }

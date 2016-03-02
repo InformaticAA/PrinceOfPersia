@@ -21,5 +21,8 @@ public class GameStarter {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
+		
+		s.showSplashScreen(false);
+		
 	}
 }

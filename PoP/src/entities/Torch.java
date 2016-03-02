@@ -14,4 +14,11 @@ public class Torch extends Entity {
 		currentAnimation.setRandomCurrentFrame();
 	}
 	
+	@Override
+	public void update(long elapsedTime) {
+		currentAnimation.update(elapsedTime);
+		
+		System.out.print(currentAnimation.getCurrentFrame() + " ");
+	}
+	
 }

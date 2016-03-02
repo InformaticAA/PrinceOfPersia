@@ -107,9 +107,14 @@ public class Animation {
 	}
 	
 	public void setRandomCurrentFrame() {
-		Random gen = new Random();
-		gen.setSeed(System.currentTimeMillis());
-		currentFrame = gen.nextInt(frames.size());
+		int randomFrame = (int) (Math.random() * frames.size());
+		currentFrame = randomFrame;
+		
+		long newTime = 0;
+		for (int i = 0; i < frames.size(); i++) {
+			newTime += frames.get(i).getEndtime();
+		}
+		animTime = newTime;
 	}
 
 }

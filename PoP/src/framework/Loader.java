@@ -222,11 +222,6 @@ public class Loader {
 				
 				/* Loads each square's entities in a floor */
 				String squareContent = readFloor.next();
-				
-				if (squareContent.contains("t")) {
-					System.out.println(squareContent);
-				}
-				
 				Square square = loadEntities(x, y, squareContent);
 				room.setSquare(x, y, square);
 				
@@ -260,7 +255,9 @@ public class Loader {
 		int px = 64 + y * 64;
 		int py = 4 + x * 94;
 		
-		System.out.println("coords: (" + px + ", " + py + ")");
+		if (squareContent.contains(" t ")) {
+			System.out.println("square: (" + x + ", " + y + ")");
+		}
 		
 		while (readSquare.hasNext()) {
 			
@@ -273,6 +270,7 @@ public class Loader {
 				entityAnimations = totalAnimations.getAnimations("torch");
 				newEntity = new Torch(px, py, true, entityAnimations);
 				background.add(newEntity);
+				System.out.println("RANDOM A VER: " + newEntity.getCurrentAnimation().getCurrentFrame());
 			}
 //			else if (entity.equals("loose_floor")) {
 //				entityAnimations = animations.getAnimations("loose_floor");

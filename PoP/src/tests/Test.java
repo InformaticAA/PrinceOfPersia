@@ -1,7 +1,6 @@
 package tests;
 
 import java.awt.Graphics2D;
-import java.io.File;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -59,7 +58,8 @@ public class Test extends State {
 		
 		
 		currentRoom.update(elapsedTime);
-
+		System.out.println();
+		
 //		dastan.getCurrentAnimation().update(elapsedTime, reverse);
 //		
 //		if (dastan.getCurrentAnimation().isOver(reverse)) {

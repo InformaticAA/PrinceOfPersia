@@ -49,7 +49,6 @@ public class Animation {
 				currentFrame = initialFrame;
 			}
 			currentFrame= (currentFrame + 1) % frames.size();
-			System.out.println(currentFrame);
 		}
 	}
 	

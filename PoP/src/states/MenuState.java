@@ -92,6 +92,7 @@ public class MenuState extends State{
 	
 	public void select(){
 		if(currentChoice == 0){
+			gsm.setState(2);
 			//campaign
 		}
 		else if(currentChoice == 1){

@@ -6,16 +6,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
-
 import javax.imageio.ImageIO;
-
 import data.FrameList;
 import data.FrameLists;
 import data.Level;
 import data.Room;
 import data.Square;
-import entities.Entity;
-import entities.Torch;
+import entities.*;
 
 public class Loader {
 
@@ -170,6 +167,8 @@ public class Loader {
 				
 				if (line.contains("room")) {
 					
+					System.out.println("Leemos");
+					
 					/* Reads all room content */
 					Scanner readLine = new Scanner(line);
 					readLine.next();
@@ -269,7 +268,10 @@ public class Loader {
 			if (entity.equals("t")) {
 				newEntity = new Torch(px, py, true, this);
 				background.add(newEntity);
-				System.out.println("RANDOM A VER: " + newEntity.getCurrentAnimation().getCurrentFrame());
+			} else if (entity.equals("ls")) {
+				System.out.println("Posicion " + px + " " + py);
+				newEntity = new Wall(px,py,false,this,"left_stack_main");
+				background.add(newEntity);
 			}
 //			else if (entity.equals("loose_floor")) {
 //				entityAnimations = animations.getAnimations("loose_floor");

@@ -30,6 +30,7 @@ public class GameStateManager {
 		key_mapper.initDefaultKeys();
 		gameStates.add(new Test(this, keys, keys_mapped, loader));
 		gameStates.add(new MenuState(this,keys, keys_mapped, loader));
+		gameStates.add(new LevelState(this, keys, keys_mapped, loader, true));
 	}
 	
 	public void setState(int state){

@@ -47,8 +47,8 @@ public class MenuState extends State{
 			moving = TinySound.loadSound(new File("resources/Sounds/1/sword moving.wav"));
 			choosing = TinySound.loadSound(new File("resources/Sounds/1/sword vs sword.wav"));
 			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
-			t1 = new Torch(232,265,loader);
-			t2 = new Torch(468,265,loader);
+			t1 = new Torch(232,265,loader,true);
+			t2 = new Torch(468,265,loader,true);
 			
 		} catch(Exception e){
 			e.printStackTrace();

@@ -1,7 +1,7 @@
 3 9
 room 1 1
 b;b;b;b;b;b;b;b;b;b
-rs d2(2,0.5) d2(3,0.25) rsb;fs prt;-;bricks(3);-;pl nb-prm fl potion1 nb;fr fl nb;fr fl t nb;fr fl bricks(1) nb
+rs d2(2,0.5) d2(3,0.25) rsb;fs prt;-;bricks(3);-;pl b;prm fl potion1 b;fr fl b;fr fl t nb;fr fl bricks(1) b
 fs pl b;prm prt;-;bricks(3);-;ls(mark(3)) d2(2,0.4,mark(1)) lsb;cs d2(2,0.5) d1(3,0.1) csb;cs d1(2,0.5,mark(3)) d2(3,0.1) csb;cs d1(2,0.5) d1(3,0.1) csb;cs d2(2,0.4) d2(3,0.1) csb
 fs pl b;prm prt;-;bricks(3);-;ls d2(2,0.5,mark(2)) lsb;cs d2(2,0.5) d1(3,0.1) csb;cs d1(2,0.3) d1(3,0.2) csb;cs d1(2,0.4) d2(3,0.3) random csb;cs d2(2,0.4) d2(3 0.1) csb
 

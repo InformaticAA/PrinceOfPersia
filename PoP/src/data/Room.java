@@ -21,7 +21,7 @@ public class Room {
 	 */
 	public void update(long elapsedTime) {
 		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid.length; j++) {
+			for (int j = 0; j < grid[0].length; j++) {
 				if (grid[i][j] !=  null) {
 					grid[i][j].update(elapsedTime);
 				}
@@ -34,7 +34,7 @@ public class Room {
 	 */
 	public void draw(Graphics2D g) {
 		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid.length; j++) {
+			for (int j = 0; j < grid[0].length; j++) {
 				if (grid[i][j] !=  null) {
 					grid[i][j].draw(g);
 				}

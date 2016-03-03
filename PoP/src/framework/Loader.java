@@ -58,6 +58,9 @@ public class Loader {
 						if (entityAnimations != null) {
 							totalAnimations.addEntityFrameLists(f.getName(), entityAnimations);
 							System.out.println("ENTITY: " + f.getName());
+//							for (String key : entityAnimations.keySet()) {
+//								System.out.println(" -Key: " + key + " - Animations: " + entityAnimations.get(key).getId());
+//							}
 						}
 					}
 				}
@@ -219,7 +222,6 @@ public class Loader {
 			readFloor.useDelimiter(";");
 			
 			while (readFloor.hasNext() && y < 10) {
-				
 				/* Loads each square's entities in a floor */
 				String squareContent = readFloor.next();
 				Square square = loadEntities(x, y, squareContent);
@@ -250,27 +252,45 @@ public class Loader {
 		ArrayList<Entity> foreground = new ArrayList<Entity>();
 		Square square = new Square();
 		Scanner readSquare = new Scanner(squareContent);
-		boolean back = false;
 		
 		int px = 64 + y * 64;
-		int py = 4 + x * 94;
-		
-		if (squareContent.contains(" t ")) {
-			System.out.println("square: (" + x + ", " + y + ")");
-		}
+		int py = (int)(4 + x * 125.3);
 		
 		while (readSquare.hasNext()) {
 			
 			/* Loads each entity described in squareContent */
 			String entity = readSquare.next();
 			Entity newEntity = null;
-			
-			if (entity.equals("t")) {
-				newEntity = new Torch(px, py, true, this);
+			if (entity.equals("ls")) {
+				newEntity = new Wall(px,py,this,"left_stack_main");
+				foreground.add(newEntity);
+			} else if(entity.equals("cs")){
+				newEntity = new Wall(px,py,this,"centre_stack_main");
 				background.add(newEntity);
-			} else if (entity.equals("ls")) {
-				System.out.println("Posicion " + px + " " + py);
-				newEntity = new Wall(px,py,false,this,"left_stack_main");
+			} else if(entity.equals("rs")){
+				newEntity = new Wall(px,py,this,"right_stack_main");
+				background.add(newEntity);
+			} else if(entity.equals("fs")){
+				newEntity = new Wall(px,py,this,"face_stack_main");
+				background.add(newEntity);
+			}
+			
+			
+			
+			else if (entity.equals("t")) {
+				newEntity = new Torch(px, py, this);
+				background.add(newEntity);
+			} else if(entity.equals("lsb")) {
+				newEntity = new Base(px,py,this,"left_stack_base");
+				background.add(newEntity);
+			} else if(entity.equals("b")){
+				newEntity = new Base(px,py,this,"normal_base");
+				background.add(newEntity);
+			} else if(entity.equals("csb")){
+				newEntity = new Base(px,py,this,"centre_stack_base");
+				background.add(newEntity);
+			} else if(entity.equals("rsb")){
+				newEntity = new Base(px,py,this,"right_stack_base");
 				background.add(newEntity);
 			}
 //			else if (entity.equals("loose_floor")) {
@@ -294,7 +314,7 @@ public class Loader {
 	
 	public Hashtable<String, Animation> getAnimations(String entity){
 		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
-		Hashtable<String, FrameList> entityFrameLists = totalAnimations.getFrameLists("torch");
+		Hashtable<String, FrameList> entityFrameLists = totalAnimations.getFrameLists(entity);
 		for(String id : entityFrameLists.keySet()){
 			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames(),true));
 		}

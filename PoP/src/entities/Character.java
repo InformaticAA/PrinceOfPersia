@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.Set;
 
 import framework.Animation;
+import framework.Loader;
 
 public class Character extends Entity {
 
@@ -59,8 +60,8 @@ public class Character extends Entity {
 	private Animation currentAnimation;
 	private boolean facingRight;
 	
-	public Character(int x, int y, boolean back) {
-		super(x,y, back, null);
+	public Character(int x, int y, Loader loader) {
+		super(x,y,loader);
 	}
 	
 	/**

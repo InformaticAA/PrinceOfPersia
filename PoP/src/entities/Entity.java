@@ -10,15 +10,16 @@ import framework.Loader;
 public abstract class Entity {
 	
 	protected int x, y;
-	protected boolean back;
+	protected int x_offset, y_offset;
 	protected Hashtable<String,Animation> animations;
 	protected Animation currentAnimation;
 	protected Loader loader;
 	
-	public Entity(int x, int y, boolean back, Loader loader) {
+	public Entity(int x, int y, Loader loader) {
 		this.x = x;
 		this.y = y;
-		this.back = back;
+		this.x_offset = 0;
+		this.y_offset = 0;
 		this.loader = loader;
 		currentAnimation = null;
 	}

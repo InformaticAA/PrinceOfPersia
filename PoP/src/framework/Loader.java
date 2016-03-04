@@ -254,7 +254,7 @@ public class Loader {
 		Scanner readSquare = new Scanner(squareContent);
 		
 		int px = 64 + y * 64;
-		int py = (int)(6 + x * 124);
+		int py = (int)(6 + x * 126);
 		
 		while (readSquare.hasNext()) {
 			
@@ -262,25 +262,25 @@ public class Loader {
 			String entity = readSquare.next();
 			Entity newEntity = null;
 			if (entity.equals("ls")) {
-				newEntity = new Wall(px,py,0,-4,this,"left_stack_main");
+				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
 				foreground.add(newEntity);
 			} else if(entity.equals("cs")){
-				newEntity = new Wall(px,py,0,-4,this,"centre_stack_main");
+				newEntity = new Wall(px,py,0,-6,this,"centre_stack_main");
 				background.add(newEntity);
 			} else if(entity.equals("rs")){
-				newEntity = new Wall(px,py,0,-4,this,"right_stack_main");
+				newEntity = new Wall(px,py,0,-6,this,"right_stack_main");
 				background.add(newEntity);
 			} else if(entity.equals("fs")){
-				newEntity = new Wall(px,py,-14,0,this,"face_stack_main");
+				newEntity = new Wall(px,py,-14,-2,this,"face_stack_main");
 				background.add(newEntity);
 			} else if(entity.equals("random")){
-				newEntity = new Wall(px,py,0,-82,this,"random_block");
+				newEntity = new Wall(px,py,0,-84,this,"random_block");
 				background.add(newEntity);
 			} else if(entity.equals("fst")){
 				newEntity = new Wall(px,py,-14,0,this,"face_stack_top");
 				background.add(newEntity);
 			} else if(entity.equals("pl")){
-				newEntity = new Pillar(px,py,0,-4,this,"pillar_left");
+				newEntity = new Pillar(px,py,0,-6,this,"pillar_left");
 				foreground.add(newEntity);
 			}
 			

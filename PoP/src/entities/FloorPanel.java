@@ -8,7 +8,6 @@ public class FloorPanel extends Entity{
 		super(x + x_offset, y + y_offset, loader);
 		animations = loader.getAnimations("floor_panels");
 		currentAnimation = animations.get(floor_type);
-		
 	}
 
 }

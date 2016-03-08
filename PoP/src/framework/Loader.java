@@ -263,12 +263,66 @@ public class Loader {
 			Entity newEntity = null;
 			
 			/* Loads background elements */
-			if(entity.equals("cs")){
+			if(entity.startsWith("cs") && !entity.startsWith("csb")){
 				newEntity = new Wall(px,py,0,-6,this,"centre_stack_main");
 				background.add(newEntity);
-			} else if(entity.equals("rs")){
+				
+				/* Chooses mark if necessary */
+				if(entity.contains("mark")) {
+					int numMark = Integer.parseInt(entity.substring(8,9));
+					int voff = -104;
+					int hoff = -2;
+					if (numMark == 1) {
+						// top left mark
+						voff -= 12;
+						hoff -= 34;
+					} else if (numMark == 2) {
+						// bottom left mark
+						voff += 22;
+						hoff -= 34;
+					} else if (numMark == 3) {
+						// top right mark
+						voff -= 0;
+						hoff -= 0;
+					} else if (numMark == 4) {
+						// bottom right mark
+						voff += 20;
+						hoff -= 0;
+					}
+					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
+					background.add(newEntity);
+				}
+				
+			} else if(entity.startsWith("rs") && !entity.startsWith("rsb")){
 				newEntity = new Wall(px,py,0,-6,this,"right_stack_main");
 				background.add(newEntity);
+				
+				/* Chooses mark if necessary */
+				if(entity.contains("mark")) {
+					int numMark = Integer.parseInt(entity.substring(8,9));
+					int voff = -104;
+					int hoff = -2;
+					if (numMark == 1) {
+						// top left mark
+						voff -= 12;
+						hoff -= 34;
+					} else if (numMark == 2) {
+						// bottom left mark
+						voff += 22;
+						hoff -= 34;
+					} else if (numMark == 3) {
+						// top right mark
+						voff -= 0;
+						hoff -= 0;
+					} else if (numMark == 4) {
+						// bottom right mark
+						voff += 20;
+						hoff -= 0;
+					}
+					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
+					background.add(newEntity);
+				}
+				
 			} else if(entity.equals("fs")){
 				newEntity = new Wall(px,py,-14,-2,this,"face_stack_main");
 				background.add(newEntity);
@@ -307,14 +361,73 @@ public class Loader {
 			
 			/* Loads foreground elements */
 			if(entity.startsWith("d")){
+				
+				System.out.println(entity);
+				
+				/* Chooses divider */
 				String numDiv = entity.substring(1,2);
 				int voff = -126 + 42 * Integer.parseInt(entity.substring(3,4));
 				int hoff = -56 + (int) (56 * Double.parseDouble(entity.substring(5,8)));
+				
 				newEntity = new Wall(px,py,hoff,voff,this,"divider" + numDiv);
 				foreground.add(newEntity);
-			} else if (entity.equals("ls")) {
+				
+				/* Chooses mark if necessary */
+				if(entity.contains("mark")) {
+					int numMark = Integer.parseInt(entity.substring(14,15));
+					if (numMark == 1) {
+						// top left mark
+						voff -= 32;
+						hoff += 22;
+					} else if (numMark == 2) {
+						// bottom left mark
+						voff += 2;
+						hoff += 22;
+					} else if (numMark == 3) {
+						// top right mark
+						voff -= 20;
+						hoff -= 10;
+					} else if (numMark == 4) {
+						// bottom right mark
+						voff -= 0;
+						hoff -= 10;
+					}
+					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
+					foreground.add(newEntity);
+				}
+				
+			} else if (entity.startsWith("ls")) {
 				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
 				foreground.add(newEntity);
+				
+				System.out.println(entity);
+				
+				/* Chooses mark if necessary */
+				if(entity.contains("mark")) {
+					int numMark = Integer.parseInt(entity.substring(8,9));
+					int voff = -104;
+					int hoff = -2;
+					if (numMark == 1) {
+						// top left mark
+						voff -= 12;
+						hoff -= 34;
+					} else if (numMark == 2) {
+						// bottom left mark
+						voff += 22;
+						hoff -= 34;
+					} else if (numMark == 3) {
+						// top right mark
+						voff -= 0;
+						hoff -= 0;
+					} else if (numMark == 4) {
+						// bottom right mark
+						voff += 20;
+						hoff -= 0;
+					}
+					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
+					foreground.add(newEntity);
+				}
+				
 			} else if(entity.equals("pl")){
 				newEntity = new Pillar(px,py,0,-6,this,"pillar_left");
 				foreground.add(newEntity);

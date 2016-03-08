@@ -357,10 +357,42 @@ public class Loader {
 			} else if(entity.equals("br")){
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
-			} 
+			} else if (entity.startsWith("ls")) {
+				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
+				foreground.add(newEntity);
+				
+				System.out.println(entity);
+				
+				/* Chooses mark if necessary */
+				if(entity.contains("mark")) {
+					int numMark = Integer.parseInt(entity.substring(8,9));
+					int voff = -104;
+					int hoff = -2;
+					if (numMark == 1) {
+						// top left mark
+						voff -= 12;
+						hoff -= 34;
+					} else if (numMark == 2) {
+						// bottom left mark
+						voff += 22;
+						hoff -= 34;
+					} else if (numMark == 3) {
+						// top right mark
+						voff -= 0;
+						hoff -= 0;
+					} else if (numMark == 4) {
+						// bottom right mark
+						voff += 20;
+						hoff -= 0;
+					}
+					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
+					foreground.add(newEntity);
+				}
+				
+			}
 			
 			/* Loads foreground elements */
-			if(entity.startsWith("d")){
+			else if(entity.startsWith("d")){
 				
 				System.out.println(entity);
 				
@@ -391,38 +423,6 @@ public class Loader {
 						// bottom right mark
 						voff -= 0;
 						hoff -= 10;
-					}
-					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
-					foreground.add(newEntity);
-				}
-				
-			} else if (entity.startsWith("ls")) {
-				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
-				foreground.add(newEntity);
-				
-				System.out.println(entity);
-				
-				/* Chooses mark if necessary */
-				if(entity.contains("mark")) {
-					int numMark = Integer.parseInt(entity.substring(8,9));
-					int voff = -104;
-					int hoff = -2;
-					if (numMark == 1) {
-						// top left mark
-						voff -= 12;
-						hoff -= 34;
-					} else if (numMark == 2) {
-						// bottom left mark
-						voff += 22;
-						hoff -= 34;
-					} else if (numMark == 3) {
-						// top right mark
-						voff -= 0;
-						hoff -= 0;
-					} else if (numMark == 4) {
-						// bottom right mark
-						voff += 20;
-						hoff -= 0;
 					}
 					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
 					foreground.add(newEntity);

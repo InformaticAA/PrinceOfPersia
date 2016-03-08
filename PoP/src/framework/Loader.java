@@ -357,11 +357,15 @@ public class Loader {
 			} else if(entity.equals("br")){
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
-			} else if (entity.startsWith("ls")) {
+			} else if(entity.equals("loose")){
+				newEntity = new FloorPanel(px,py,-12,-2,this,"loose_floor_idle");
+				background.add(newEntity);
+			}
+			
+			/* Loads foreground elements */
+			else if (entity.startsWith("ls")) {
 				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
 				foreground.add(newEntity);
-				
-				System.out.println(entity);
 				
 				/* Chooses mark if necessary */
 				if(entity.contains("mark")) {
@@ -389,12 +393,7 @@ public class Loader {
 					foreground.add(newEntity);
 				}
 				
-			}
-			
-			/* Loads foreground elements */
-			else if(entity.startsWith("d")){
-				
-				System.out.println(entity);
+			} else if(entity.startsWith("d")){
 				
 				/* Chooses divider */
 				String numDiv = entity.substring(1,2);

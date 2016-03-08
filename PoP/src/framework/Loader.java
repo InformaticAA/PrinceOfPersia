@@ -57,7 +57,7 @@ public class Loader {
 						entityAnimations = loadEntityAnimations(path + f.getName());
 						if (entityAnimations != null) {
 							totalAnimations.addEntityFrameLists(f.getName(), entityAnimations);
-							System.out.println("ENTITY: " + f.getName());
+//							System.out.println("ENTITY: " + f.getName());
 //							for (String key : entityAnimations.keySet()) {
 //								System.out.println(" -Key: " + key + " - Animations: " + entityAnimations.get(key).getId());
 //							}
@@ -261,10 +261,9 @@ public class Loader {
 			/* Loads each entity described in squareContent */
 			String entity = readSquare.next();
 			Entity newEntity = null;
-			if (entity.equals("ls")) {
-				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
-				foreground.add(newEntity);
-			} else if(entity.equals("cs")){
+			
+			/* Loads background elements */
+			if(entity.equals("cs")){
 				newEntity = new Wall(px,py,0,-6,this,"centre_stack_main");
 				background.add(newEntity);
 			} else if(entity.equals("rs")){
@@ -279,37 +278,56 @@ public class Loader {
 			} else if(entity.equals("fst")){
 				newEntity = new Wall(px,py,-14,0,this,"face_stack_top");
 				background.add(newEntity);
-			} else if(entity.equals("pl")){
-				newEntity = new Pillar(px,py,0,-6,this,"pillar_left");
-				foreground.add(newEntity);
-			}
-			
-			
-			
-			else if (entity.equals("t")) {
+			} else if(entity.contains("bricks")){
+				String numBrick = entity.substring(7,8);
+				newEntity = new Wall(px,py,-8,-46,this,"brick" + numBrick);
+				background.add(newEntity);
+			} else if(entity.equals("prm")){
+				newEntity = new Pillar(px,py,-12,-2,this,"pillar_right_main");
+				background.add(newEntity);
+			} else if (entity.equals("t")) {
 				newEntity = new Torch(px, py, this,false);
 				background.add(newEntity);
 			} else if(entity.equals("lsb")) {
 				newEntity = new Base(px,py,this,"left_stack_base");
 				background.add(newEntity);
-			} else if(entity.equals("b")){
-				newEntity = new Base(px,py,this,"normal_base");
-				foreground.add(newEntity);
 			} else if(entity.equals("csb")){
 				newEntity = new Base(px,py,this,"centre_stack_base");
 				background.add(newEntity);
 			} else if(entity.equals("rsb")){
 				newEntity = new Base(px,py,this,"right_stack_base");
 				background.add(newEntity);
+			} else if(entity.equals("rf")){
+				newEntity = new FloorPanel(px,py,-12,-2,this,"normal_right");
+				background.add(newEntity);
+			} else if(entity.equals("br")){
+				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
+				background.add(newEntity);
+			} 
+			
+			/* Loads foreground elements */
+			if(entity.startsWith("d")){
+				String numDiv = entity.substring(1,2);
+				int voff = -126 + 42 * Integer.parseInt(entity.substring(3,4));
+				int hoff = -56 + (int) (56 * Double.parseDouble(entity.substring(5,8)));
+				newEntity = new Wall(px,py,hoff,voff,this,"divider" + numDiv);
+				foreground.add(newEntity);
+			} else if (entity.equals("ls")) {
+				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
+				foreground.add(newEntity);
+			} else if(entity.equals("pl")){
+				newEntity = new Pillar(px,py,0,-6,this,"pillar_left");
+				foreground.add(newEntity);
+			} else if(entity.equals("b")){
+				newEntity = new Base(px,py,this,"normal_base");
+				foreground.add(newEntity);
+			} else if(entity.equals("lf")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
+				foreground.add(newEntity);
+			} else if(entity.equals("bl")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"broken_left");
+				foreground.add(newEntity);
 			}
-//			else if (entity.equals("loose_floor")) {
-//				entityAnimations = animations.getAnimations("loose_floor");
-//				newEntity = new LooseFloor(x, y, true, entityAnimations);
-//			}
-//			else if (entity.equals("loose_floor")) {
-//				entityAnimations = animations.getAnimations("loose_floor");
-//				newEntity = new LooseFloor(x, y, true, entityAnimations);
-//			}
 			
 		}
 		square.setBackground(background);

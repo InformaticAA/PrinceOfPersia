@@ -13,4 +13,5 @@ public class Torch extends Entity {
 		currentAnimation = animations.get("fire");
 		currentAnimation.setRandomCurrentFrame();
 	}
+	
 }

@@ -64,22 +64,9 @@ public class Character extends Entity {
 		super(x,y,loader);
 	}
 	
-	/**
-	 * @return the bounding box of the character
-	 */
-	public Rectangle getRectangle() {
-		return new Rectangle(x,y,cwidth,cheight);
-	}
-	
-	/**
-	 * Checks collision with other characters
-	 * @return true if both rectangle collide,
-	 * false otherwise
-	 */
-	public boolean intersects(Character character) {
-		Rectangle r1 = this.getRectangle();
-		Rectangle r2 = character.getRectangle();
-		return r1.intersects(r2);
+	@Override
+	public void update(long elapsedTime) {
+		
 	}
 	
 	/**

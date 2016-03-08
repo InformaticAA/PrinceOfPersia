@@ -170,8 +170,6 @@ public class Loader {
 				
 				if (line.contains("room")) {
 					
-					System.out.println("Leemos");
-					
 					/* Reads all room content */
 					Scanner readLine = new Scanner(line);
 					readLine.next();
@@ -341,7 +339,7 @@ public class Loader {
 				background.add(newEntity);
 			} else if (entity.equals("t")) {
 				newEntity = new Torch(px, py, this,false);
-				background.add(newEntity);
+//				background.add(newEntity);
 			} else if(entity.equals("lsb")) {
 				newEntity = new Base(px,py,this,"left_stack_base");
 				background.add(newEntity);
@@ -358,7 +356,7 @@ public class Loader {
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
 			} else if(entity.equals("loose")){
-				newEntity = new LooseFloor(px,py,-12,0,this,"idle");
+				newEntity = new LooseFloor(px,py,-12,0,this,"shaking");
 				background.add(newEntity);
 			}
 			

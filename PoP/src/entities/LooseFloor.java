@@ -11,6 +11,7 @@ public class LooseFloor extends Entity {
 		activated = false;
 		animations = loader.getAnimations("loose_floor");
 		currentAnimation = animations.get(loose_type);
+		currentAnimation.setFrameDuration(4);
 	}
 	
 	/**
@@ -25,5 +26,6 @@ public class LooseFloor extends Entity {
 	 */
 	public void setActivated(boolean activated) {
 		this.activated = activated;
+		
 	}
 }

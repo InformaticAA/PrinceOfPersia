@@ -9,6 +9,8 @@ public class Animation {
 	private ArrayList<Frame> frames;
 	private int currentFrame;
 	private int initialFrame;
+	private int currentUpdates;
+	private int frameDuration;
 	private boolean infinite;
 	private long animTime;
 	private long totalDuration;
@@ -16,9 +18,11 @@ public class Animation {
 	public Animation(String id, ArrayList<Frame> frames, boolean infinite) {
 		this.id = id;
 		this.frames = frames;
-		currentFrame = 0;
-		initialFrame = 0;
 		this.infinite = infinite;
+		currentUpdates = 0;
+		currentFrame = 0;
+		frameDuration = 1;
+		initialFrame = 0;
 		animTime = 0;
 		totalDuration = 0;
 		for (int i = 0; i < frames.size(); i++) {
@@ -47,8 +51,19 @@ public class Animation {
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;
+				currentUpdates = 0;
 			}
-			currentFrame= (currentFrame + 1) % frames.size();
+			else {
+				
+				if (currentUpdates == frameDuration - 1) {
+					currentFrame = (currentFrame + 1) % frames.size();
+					currentUpdates = 0;
+				}
+				else {
+					currentUpdates++;
+				}
+			}
+			
 		}
 	}
 	
@@ -112,6 +127,11 @@ public class Animation {
 		int randomFrame = (int) (Math.random() * frames.size());
 		currentFrame = randomFrame;
 		initialFrame = currentFrame;
+	}
+	
+	public void setFrameDuration(int frameDuration) {
+		this.totalDuration = frameDuration * totalDuration;
+		this.frameDuration = frameDuration;
 	}
 
 }

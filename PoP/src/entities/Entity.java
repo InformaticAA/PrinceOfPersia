@@ -1,6 +1,7 @@
 package entities;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
@@ -13,6 +14,7 @@ public abstract class Entity {
 	protected int x_offset, y_offset;
 	protected Hashtable<String,Animation> animations;
 	protected Animation currentAnimation;
+	protected Rectangle boundingBox;
 	protected Loader loader;
 	
 	public Entity(int x, int y, Loader loader) {
@@ -26,6 +28,8 @@ public abstract class Entity {
 	
 	public void update(long elapsedTime) {
 		currentAnimation.update(elapsedTime);
+		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
+				currentAnimation.getImage().getHeight());
 	}
 	
 	/**
@@ -35,6 +39,24 @@ public abstract class Entity {
 	public void drawSelf(Graphics g) {
 		BufferedImage img = currentAnimation.getImage();
 		g.drawImage(img, x - img.getWidth(), y - img.getHeight(), null);
+	}
+	
+	/**
+	 * @return the bounding box of the character
+	 */
+	public Rectangle getBoundingBox() {
+		return boundingBox;
+	}
+	
+	/**
+	 * Checks collision with other characters
+	 * @return true if both rectangle collide,
+	 * false otherwise
+	 */
+	public boolean intersects(Entity entity) {
+		Rectangle r1 = boundingBox;
+		Rectangle r2 = entity.getBoundingBox();
+		return r1.intersects(r2);
 	}
 	
 	/**

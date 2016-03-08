@@ -1,64 +1,25 @@
 package entities;
 
 import java.awt.Rectangle;
-import java.util.Set;
 
-import framework.Animation;
 import framework.Loader;
 
 public class Character extends Entity {
 
 	/* Attributes */
-	private int hp;
-	private int maxHp;
-	
-//	/* TileMap */
-//	private TileMap tileMap;
-//	private int tileSize;
-//	private double xmap;
-//	private double ymap;
-	
-	/* Position */
-	private int xprev;
-	private int yprev;
-	private int x;
-	private int y;
-	
-	/* Collision box */
-	private int width;
-	private int height;
-	private int cwidth;
-	private int cheight;
-	
-	/* Collision */
-	private int currRow;
-	private int currCol;
-	private double xdest;
-	private double ydest;
-	private double xtemp;
-	private double ytemp;
-	private boolean topLeft;
-	private boolean topRight;
-	private boolean bottomLeft;
-	private boolean bottomRight;
-	
-	/* States */
-	public enum state {
-		IDLE, LEFT_RUN, RIGHT_RUN, JUMP, FALLING, FIGHT
-	};
+	protected int hp;
+	protected int maxHp;
 	
 	/* Movement */
-	private double moveSpeed;
-	private double maxSpeed;
-	private double fightSpeed;
-	private double jumpSpeed;
-	private double fallSpeed;
-	private double maxFallSpeed;
+	protected double moveSpeed;
+	protected double maxSpeed;
+	protected double fightSpeed;
+	protected double jumpSpeed;
+	protected double fallSpeed;
+	protected double maxFallSpeed;
 	
 	/* Animations */
-	private Set<Animation> animations;
-	private Animation currentAnimation;
-	private boolean facingRight;
+	protected boolean facingRight;
 	
 	public Character(int x, int y, Loader loader) {
 		super(x,y,loader);
@@ -66,7 +27,9 @@ public class Character extends Entity {
 	
 	@Override
 	public void update(long elapsedTime) {
-		
+		currentAnimation.update(elapsedTime);
+		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
+				currentAnimation.getImage().getHeight());
 	}
 	
 	/**
@@ -93,22 +56,6 @@ public class Character extends Entity {
 		this.maxHp = maxHp;
 	}
 
-	public int getXprev() {
-		return xprev;
-	}
-
-	public void setXprev(int xprev) {
-		this.xprev = xprev;
-	}
-
-	public int getYprev() {
-		return yprev;
-	}
-
-	public void setYprev(int yprev) {
-		this.yprev = yprev;
-	}
-
 	public int getX() {
 		return x;
 	}
@@ -123,118 +70,6 @@ public class Character extends Entity {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public int getCwidth() {
-		return cwidth;
-	}
-
-	public void setCwidth(int cwidth) {
-		this.cwidth = cwidth;
-	}
-
-	public int getCheight() {
-		return cheight;
-	}
-
-	public void setCheight(int cheight) {
-		this.cheight = cheight;
-	}
-
-	public int getCurrRow() {
-		return currRow;
-	}
-
-	public void setCurrRow(int currRow) {
-		this.currRow = currRow;
-	}
-
-	public int getCurrCol() {
-		return currCol;
-	}
-
-	public void setCurrCol(int currCol) {
-		this.currCol = currCol;
-	}
-
-	public double getXdest() {
-		return xdest;
-	}
-
-	public void setXdest(double xdest) {
-		this.xdest = xdest;
-	}
-
-	public double getYdest() {
-		return ydest;
-	}
-
-	public void setYdest(double ydest) {
-		this.ydest = ydest;
-	}
-
-	public double getXtemp() {
-		return xtemp;
-	}
-
-	public void setXtemp(double xtemp) {
-		this.xtemp = xtemp;
-	}
-
-	public double getYtemp() {
-		return ytemp;
-	}
-
-	public void setYtemp(double ytemp) {
-		this.ytemp = ytemp;
-	}
-
-	public boolean isTopLeft() {
-		return topLeft;
-	}
-
-	public void setTopLeft(boolean topLeft) {
-		this.topLeft = topLeft;
-	}
-
-	public boolean isTopRight() {
-		return topRight;
-	}
-
-	public void setTopRight(boolean topRight) {
-		this.topRight = topRight;
-	}
-
-	public boolean isBottomLeft() {
-		return bottomLeft;
-	}
-
-	public void setBottomLeft(boolean bottomLeft) {
-		this.bottomLeft = bottomLeft;
-	}
-
-	public boolean isBottomRight() {
-		return bottomRight;
-	}
-
-	public void setBottomRight(boolean bottomRight) {
-		this.bottomRight = bottomRight;
 	}
 
 	public double getMoveSpeed() {

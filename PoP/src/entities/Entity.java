@@ -24,12 +24,11 @@ public abstract class Entity {
 		this.y_offset = 0;
 		this.loader = loader;
 		currentAnimation = null;
+		boundingBox = null;
 	}
 	
 	public void update(long elapsedTime) {
 		currentAnimation.update(elapsedTime);
-		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
-				currentAnimation.getImage().getHeight());
 	}
 	
 	/**
@@ -41,8 +40,13 @@ public abstract class Entity {
 		g.drawImage(img, x - img.getWidth(), y - img.getHeight(), null);
 	}
 	
+	public void enableBoundingBox() {
+		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
+				currentAnimation.getImage().getHeight());
+	}
+	
 	/**
-	 * @return the bounding box of the character
+	 * @return the bounding box of the entity
 	 */
 	public Rectangle getBoundingBox() {
 		return boundingBox;
@@ -107,5 +111,5 @@ public abstract class Entity {
 	public void setCurrentAnimation(String animationName) {
 		this.currentAnimation = animations.get(animationName);
 	}
-	
+
 }

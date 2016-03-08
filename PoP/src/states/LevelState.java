@@ -47,7 +47,7 @@ public class LevelState extends State{
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 //			}
-//			player = new Player(INITIAL_HEALTH);
+			player = new Player(100,300,loader);
 		}
 		
 		else{
@@ -91,7 +91,7 @@ public class LevelState extends State{
 				remainingTime = INIT_TIME;
 				currentLevel = loader.loadLevel(INITIAL_LEVEL);
 				currentRoom = currentLevel.getRoom(1, 7);
-//				player = new Player(INITIAL_HEALTH);
+//				player = new Player(100,300,loader);
 			}
 			
 		}
@@ -102,19 +102,17 @@ public class LevelState extends State{
 	public void update(long elapsedTime) {
 		remainingTime = remainingTime - elapsedTime;
 		currentRoom.update(elapsedTime);
-		// TODO Auto-generated method stub
+		player.update(elapsedTime);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
 		currentRoom.draw(g);
-		// TODO Auto-generated method stub
-		
+		player.drawSelf(g);
 	}
 
 	@Override
 	public void manageKeys() {
-		// TODO Auto-generated method stub
 		
 	}
 	

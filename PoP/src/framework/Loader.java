@@ -28,10 +28,9 @@ public class Loader {
 	 * Loads every sprite needed in the game
 	 */
 	public void loadAllSprites() {
-//		loadAnimations("resources/Cutscenes/");
 		loadAnimations("resources/Sprites_400/Dungeon/");
 		loadAnimations("resources/Sprites_400/Objects/");
-//		loadAnimations("resources/Characters/");
+		loadAnimations("resources/Sprites_400/Characters/");
 	}
 	
 	/**
@@ -339,7 +338,7 @@ public class Loader {
 				background.add(newEntity);
 			} else if (entity.equals("t")) {
 				newEntity = new Torch(px, py, this,false);
-//				background.add(newEntity);
+				background.add(newEntity);
 			} else if(entity.equals("lsb")) {
 				newEntity = new Base(px,py,this,"left_stack_base");
 				background.add(newEntity);

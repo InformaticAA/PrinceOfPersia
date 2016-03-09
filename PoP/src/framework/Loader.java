@@ -6,22 +6,36 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
+
 import javax.imageio.ImageIO;
+
 import data.FrameList;
 import data.FrameLists;
 import data.Level;
 import data.Room;
 import data.Square;
-import entities.*;
+import entities.Base;
+import entities.Door;
+import entities.DoorFrame;
+import entities.Entity;
+import entities.FloorPanel;
+import entities.LooseFloor;
+import entities.Pillar;
+import entities.Torch;
+import entities.Wall;
+import kuusisto.tinysound.Sound;
+import kuusisto.tinysound.TinySound;
 
 public class Loader {
 
 	private long frameTime;
 	private FrameLists totalAnimations;
+	private Hashtable<String,Sound> totalSounds;
 	
 	public Loader(long frameTime) {
 		this.frameTime = frameTime;
 		this.totalAnimations = new FrameLists();
+		this.totalSounds = new Hashtable<String,Sound>();
 	}
 	
 	/**
@@ -31,6 +45,7 @@ public class Loader {
 		loadAnimations("resources/Sprites_400/Dungeon/");
 		loadAnimations("resources/Sprites_400/Objects/");
 		loadAnimations("resources/Sprites_400/Characters/");
+		loadSounds("resources/Sounds/");
 	}
 	
 	/**
@@ -65,8 +80,33 @@ public class Loader {
 				}
 			}
 		}
-		
 	}
+	
+
+	/**
+	 * Loads every sound in the folder path
+	 */
+	public void loadSounds(String path){
+		TinySound.init();
+		/* Loads the animations in each folder */
+		File dir = new File(path);
+		if (dir.isDirectory()) {
+			File[] files = dir.listFiles();
+			
+			if (files != null) {
+				for(File f : files) {
+					if (f.isFile()) {
+						totalSounds.put(getFileName(f), TinySound.loadSound(f));
+					}
+				}
+			}
+		}
+	}
+	
+	public Sound getSound(String name){
+		return totalSounds.get(name);
+	}
+	
 	
 	/**
 	 * 
@@ -357,6 +397,21 @@ public class Loader {
 			} else if(entity.equals("loose")){
 				newEntity = new LooseFloor(px,py,-12,0,this,"shaking");
 				background.add(newEntity);
+			} else if(entity.equals("doorfr")){
+				newEntity = new DoorFrame(px,py,-12,-2,this,"door_frame_right");
+				background.add(newEntity);
+			} else if(entity.startsWith("door")){
+				
+				Scanner doortype = new Scanner(entity.substring(5,entity.length()-1));
+				doortype.useDelimiter(",");
+				int id = doortype.nextInt();
+				String animation = doortype.next();
+				int frame = doortype.nextInt();
+				doortype.close();
+				newEntity = new Door(px,py,-24,-6,this,animation, id, frame);
+				
+				/* Si principe a la izquierda -> foreground, si principe a la derecha -> background */
+				background.add(newEntity);
 			}
 			
 			/* Loads foreground elements */
@@ -455,5 +510,9 @@ public class Loader {
 			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames(),true));
 		}
 		return animations;
+	}
+	
+	private String getFileName(File f){
+		return f.getName().substring(0,f.getName().length()-4);
 	}
 }

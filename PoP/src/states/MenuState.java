@@ -44,8 +44,8 @@ public class MenuState extends State{
 			options[2] = ImageIO.read(new File("resources/Sprites_400/Menu/settings.png"));
 			options[3] = ImageIO.read(new File("resources/Sprites_400/Menu/exit.png"));
 			sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
-			moving = TinySound.loadSound(new File("resources/Sounds/1/sword moving.wav"));
-			choosing = TinySound.loadSound(new File("resources/Sounds/1/sword vs sword.wav"));
+			moving = loader.getSound("sword moving");
+			choosing = loader.getSound("sword vs sword");
 			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
 			t1 = new Torch(232,265,loader,true);
 			t2 = new Torch(468,265,loader,true);

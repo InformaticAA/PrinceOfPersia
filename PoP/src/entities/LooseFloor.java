@@ -26,6 +26,14 @@ public class LooseFloor extends Entity {
 	 */
 	public void setActivated(boolean activated) {
 		this.activated = activated;
-		
+	}
+	
+	@Override
+	public void update(long elapsedTime){
+		super.update(elapsedTime);
+		if(currentAnimation.getId().equals("shaking")){
+			int sound = (int)(Math.random()*3 + 1);
+			loader.getSound("tile moving " + sound).play();
+		}
 	}
 }

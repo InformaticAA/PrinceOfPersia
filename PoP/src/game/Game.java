@@ -66,7 +66,6 @@ public class Game extends JPanel implements Runnable{
 	
 	private void init(){
 		
-		TinySound.init();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) image.getGraphics();
 		

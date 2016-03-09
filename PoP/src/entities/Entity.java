@@ -11,7 +11,8 @@ import framework.Loader;
 public abstract class Entity {
 	
 	protected int x, y;
-	protected int x_offset, y_offset;
+	protected int x_draw, y_draw;
+	
 	protected Hashtable<String,Animation> animations;
 	protected Animation currentAnimation;
 	protected Rectangle boundingBox;
@@ -20,15 +21,19 @@ public abstract class Entity {
 	public Entity(int x, int y, Loader loader) {
 		this.x = x;
 		this.y = y;
-		this.x_offset = 0;
-		this.y_offset = 0;
 		this.loader = loader;
 		currentAnimation = null;
 		boundingBox = null;
 	}
 	
 	public void update(long elapsedTime) {
+		
+		/* Updates animation */
 		currentAnimation.update(elapsedTime);
+		
+		/* Updates draw position */
+		x_draw = x - currentAnimation.getImage().getWidth();
+		y_draw = y - currentAnimation.getImage().getHeight();
 	}
 	
 	/**
@@ -37,12 +42,22 @@ public abstract class Entity {
 	 */
 	public void drawSelf(Graphics g) {
 		BufferedImage img = currentAnimation.getImage();
-		g.drawImage(img, x - img.getWidth(), y - img.getHeight(), null);
+		g.drawImage(img, x_draw, y_draw, null);
 	}
 	
+	/**
+	 * Creates a bounding box that covers the entity
+	 */
 	public void enableBoundingBox() {
-		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
+		boundingBox = new Rectangle(x_draw,y_draw,currentAnimation.getImage().getWidth(),
 				currentAnimation.getImage().getHeight());
+	}
+	
+	/**
+	 * Creates a bounding box with given measures
+	 */
+	public void enableBoundingBox(int x, int y, int width, int height) {
+		boundingBox = new Rectangle(x,y,width,height);
 	}
 	
 	/**

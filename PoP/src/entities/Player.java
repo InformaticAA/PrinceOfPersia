@@ -19,6 +19,7 @@ public class Player extends Character {
 		
 		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
 				currentAnimation.getImage().getHeight());
+		
 	}
 	
 	@Override
@@ -46,7 +47,7 @@ public class Player extends Character {
 		g.setColor(Color.RED);
 		int width = currentAnimation.getImage().getWidth();
 		int height = currentAnimation.getImage().getHeight();
-		g.drawRect(x - width, y - height, boundingBox.width, boundingBox.height);
+		g.drawRect(x_draw, y_draw, boundingBox.width, boundingBox.height);
 		g.setColor(Color.BLACK);
 	}
 }

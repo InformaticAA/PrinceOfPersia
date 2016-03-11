@@ -10,6 +10,7 @@ import framework.Loader;
 
 public abstract class Entity {
 	
+	protected String typeOfEntity;
 	protected int x, y;
 	protected int x_draw, y_draw;
 	
@@ -18,7 +19,8 @@ public abstract class Entity {
 	protected Rectangle boundingBox;
 	protected Loader loader;
 	
-	public Entity(int x, int y, Loader loader) {
+	public Entity(String typeOfEntity, int x, int y, Loader loader) {
+		this.typeOfEntity = typeOfEntity;
 		this.x = x;
 		this.y = y;
 		this.loader = loader;
@@ -125,6 +127,10 @@ public abstract class Entity {
 	 */
 	public void setCurrentAnimation(String animationName) {
 		this.currentAnimation = animations.get(animationName);
+	}
+	
+	public String getTypeOfEntity() {
+		return typeOfEntity;
 	}
 
 }

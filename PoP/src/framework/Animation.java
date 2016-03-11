@@ -102,10 +102,10 @@ public class Animation {
 		boolean over = false;
 		
 		if (!reverse) {
-			over = (currentFrame == frames.size() - 1) && !infinite;
+			over = (currentFrame == frames.size() - 1);
 		}
 		else {
-			over = (currentFrame == 0) && !infinite;
+			over = (currentFrame == 0);
 		}
 		
 		return over;

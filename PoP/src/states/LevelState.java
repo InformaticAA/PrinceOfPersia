@@ -4,11 +4,14 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import data.Level;
 import data.Room;
+import entities.Entity;
 import entities.Player;
 import framework.Loader;
 import input.Key;
@@ -100,6 +103,7 @@ public class LevelState extends State{
 
 	@Override
 	public void update(long elapsedTime) {
+		manageKeys();
 		remainingTime = remainingTime - elapsedTime;
 		currentRoom.update(elapsedTime);
 		player.update(elapsedTime);
@@ -113,7 +117,31 @@ public class LevelState extends State{
 
 	@Override
 	public void manageKeys() {
-		
+		Object[] keys_used = keys.toArray();
+		keys.clear();
+		Key e;
+		if(keys_used.length!=0){
+			for (int i = 0; i < keys_used.length; i++) {
+				e = (Key)keys_used[i];
+				if(e.isPressed()){
+					
+					/* key pressed */
+					int key_pressed = e.getKeycode();
+					
+					if(key_pressed == keys_mapped.get(Key.UP)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.DOWN)){
+					} else if(key_pressed == keys_mapped.get(Key.LEFT)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.ENTER)){
+					}
+				} else{
+					
+				}
+			}
+		}
 	}
 	
 	public void initPlayer(){

@@ -22,7 +22,7 @@ public class Character extends Entity {
 	protected boolean facingRight;
 	
 	public Character(int x, int y, Loader loader) {
-		super(x,y,loader);
+		super("Character", x,y,loader);
 	}
 	
 	@Override

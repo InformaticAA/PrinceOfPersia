@@ -395,7 +395,7 @@ public class Loader {
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
 			} else if(entity.equals("loose")){
-				newEntity = new LooseFloor(px,py,-12,0,this,"shaking");
+				newEntity = new LooseFloor(px,py,-12,0,this,"idle");
 				background.add(newEntity);
 			} else if(entity.equals("doorfr")){
 				newEntity = new DoorFrame(px,py,-12,-2,this,"door_frame_right");

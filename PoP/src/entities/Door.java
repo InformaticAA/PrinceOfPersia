@@ -10,7 +10,7 @@ public class Door extends Entity{
 	private Sound closing;
 	
 	public Door(int x, int y, int x_offset, int y_offset, Loader loader, String door_state, int id, int frame) {
-		super(x + x_offset, y + y_offset, loader);
+		super("Door", x + x_offset, y + y_offset, loader);
 		this.id = id;
 		animations = loader.getAnimations("door");
 		currentAnimation = animations.get(door_state);

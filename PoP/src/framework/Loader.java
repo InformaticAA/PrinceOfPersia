@@ -491,6 +491,9 @@ public class Loader {
 			} else if(entity.equals("pl")){
 				newEntity = new Pillar(px,py,0,-6,this,"pillar_left");
 				foreground.add(newEntity);
+			} else if(entity.equals("pshadow")){
+				newEntity = new Pillar(px,py,0,-6,this,"pillar_shadow");
+				background.add(newEntity);
 			} else if(entity.equals("b")){
 				newEntity = new Base(px,py,this,"normal_base");
 				foreground.add(newEntity);

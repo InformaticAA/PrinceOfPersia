@@ -34,8 +34,9 @@ public abstract class Entity {
 		currentAnimation.update(elapsedTime);
 		
 		/* Updates draw position */
-		x_draw = x - currentAnimation.getImage().getWidth();
-		y_draw = y - currentAnimation.getImage().getHeight();
+//		x_draw = x - currentAnimation.getImage().getWidth();
+//		y_draw = y - currentAnimation.getImage().getHeight();
+		enableBoundingBox();
 	}
 	
 	/**
@@ -44,14 +45,15 @@ public abstract class Entity {
 	 */
 	public void drawSelf(Graphics g) {
 		BufferedImage img = currentAnimation.getImage();
-		g.drawImage(img, x_draw, y_draw, null);
+		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
+				y - currentAnimation.getImage().getHeight(), null);
 	}
 	
 	/**
 	 * Creates a bounding box that covers the entity
 	 */
 	public void enableBoundingBox() {
-		boundingBox = new Rectangle(x_draw,y_draw,currentAnimation.getImage().getWidth(),
+		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
 				currentAnimation.getImage().getHeight());
 	}
 	

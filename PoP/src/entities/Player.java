@@ -14,7 +14,10 @@ public class Player extends Character {
 	public Player(int x, int y, Loader loader) {
 		super(x, y, loader);
 		animations = loader.getAnimations("Dastan");
-		currentAnimation = animations.get("idle");
+		
+		currentAnimation = animations.get("running");
+		currentAnimation.setFrameDuration(3);
+		
 		currentState = PlayerState.IDLE;
 		
 		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
@@ -31,7 +34,10 @@ public class Player extends Character {
 		switch (currentState) {
 		case IDLE:
 			
-			currentAnimation = animations.get("idle");
+//			x = x - 8;
+//			currentAnimation = animations.get("running");
+//			System.out.println("x: " + x + ", y: " + y);
+//			System.out.println("x_draw: " + x_draw + ", y_draw: " + y_draw);
 			
 			break;
 		default:
@@ -47,7 +53,9 @@ public class Player extends Character {
 		g.setColor(Color.RED);
 		int width = currentAnimation.getImage().getWidth();
 		int height = currentAnimation.getImage().getHeight();
-		g.drawRect(x_draw, y_draw, boundingBox.width, boundingBox.height);
+		g.drawRect(x - currentAnimation.getImage().getWidth(),
+				y - currentAnimation.getImage().getHeight(),
+				width, height);
 		g.setColor(Color.BLACK);
 	}
 }

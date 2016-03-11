@@ -391,8 +391,14 @@ public class Loader {
 			} else if(entity.equals("rsb")){
 				newEntity = new Base(px,py,this,"right_stack_base");
 				background.add(newEntity);
+			} else if(entity.equals("lf")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
+				background.add(newEntity);
 			} else if(entity.equals("rf")){
 				newEntity = new FloorPanel(px,py,-12,-2,this,"normal_right");
+				background.add(newEntity);
+			} else if(entity.equals("bl")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"broken_left");
 				background.add(newEntity);
 			} else if(entity.equals("br")){
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
@@ -487,12 +493,6 @@ public class Loader {
 				foreground.add(newEntity);
 			} else if(entity.equals("b")){
 				newEntity = new Base(px,py,this,"normal_base");
-				foreground.add(newEntity);
-			} else if(entity.equals("lf")){
-				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
-				foreground.add(newEntity);
-			} else if(entity.equals("bl")){
-				newEntity = new FloorPanel(px,py,0,-6,this,"broken_left");
 				foreground.add(newEntity);
 			}
 			

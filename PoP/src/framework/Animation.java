@@ -51,6 +51,7 @@ public class Animation {
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;
+				animTime = 0;
 				currentUpdates = 0;
 			}
 			else {
@@ -130,7 +131,7 @@ public class Animation {
 	}
 	
 	public void setFrameDuration(int frameDuration) {
-		this.totalDuration = frameDuration * totalDuration;
+		this.totalDuration = (long) (frameDuration * totalDuration);
 		this.frameDuration = frameDuration;
 	}
 

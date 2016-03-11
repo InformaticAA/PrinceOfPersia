@@ -25,13 +25,6 @@ public class Character extends Entity {
 		super("Character", x,y,loader);
 	}
 	
-	@Override
-	public void update(long elapsedTime) {
-		currentAnimation.update(elapsedTime);
-		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
-				currentAnimation.getImage().getHeight());
-	}
-	
 	/**
 	 * TODO: checks collision with map objects
 	 * @return

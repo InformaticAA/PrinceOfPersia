@@ -121,7 +121,6 @@ public class MenuState extends State{
 					int key_pressed = e.getKeycode();
 					
 					if(key_pressed == keys_mapped.get(Key.UP)){
-						System.out.println("hola");
 						moving.play();
 						currentChoice = (currentChoice + 3)%4;
 					} else if(key_pressed == keys_mapped.get(Key.DOWN)){

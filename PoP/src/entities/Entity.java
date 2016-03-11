@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -36,7 +37,7 @@ public abstract class Entity {
 		/* Updates draw position */
 //		x_draw = x - currentAnimation.getImage().getWidth();
 //		y_draw = y - currentAnimation.getImage().getHeight();
-		enableBoundingBox();
+//		enableBoundingBox();
 	}
 	
 	/**
@@ -44,17 +45,35 @@ public abstract class Entity {
 	 * @param g
 	 */
 	public void drawSelf(Graphics g) {
+		
+		/* Draws the entity */
 		BufferedImage img = currentAnimation.getImage();
 		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
 				y - currentAnimation.getImage().getHeight(), null);
+		
+		/* Draws the entity's bounding box */
+		if (boundingBox != null) {
+			int width = currentAnimation.getImage().getWidth();
+			int height = currentAnimation.getImage().getHeight();
+
+			g.setColor(Color.RED);
+			g.drawRect((int) boundingBox.getX() - width,
+					(int) boundingBox.getY() - height,
+					(int) boundingBox.getWidth(),
+					(int) boundingBox.getHeight());
+			g.setColor(Color.BLACK);
+		}
 	}
 	
 	/**
 	 * Creates a bounding box that covers the entity
 	 */
 	public void enableBoundingBox() {
-		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
-				currentAnimation.getImage().getHeight());
+		
+		if (boundingBox != null) {
+			boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
+					currentAnimation.getImage().getHeight());
+		}
 	}
 	
 	/**

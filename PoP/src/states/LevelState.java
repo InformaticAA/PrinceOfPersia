@@ -51,6 +51,7 @@ public class LevelState extends State{
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 //			}
 			player = new Player(100,300,loader);
+			currentRoom.addEntity(player);
 		}
 		
 		else{
@@ -106,13 +107,11 @@ public class LevelState extends State{
 		manageKeys();
 		remainingTime = remainingTime - elapsedTime;
 		currentRoom.update(elapsedTime);
-		player.update(elapsedTime);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
 		currentRoom.draw(g);
-		player.drawSelf(g);
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package data;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+import entities.Entity;
 
 public class Room {
 
@@ -9,23 +12,34 @@ public class Room {
 	private int row;
 	private int col;
 	private Square[][] grid;
+	private ArrayList<Entity> background;
+	private ArrayList<Entity> foreground;
+	private ArrayList<Entity> entities;
 	
 	public Room(int row, int col) {
 		this.row = row;
 		this.col = col;
 		this.grid = new Square[rows][cols];
+		this.background = new ArrayList<Entity>();
+		this.foreground = new ArrayList<Entity>();
+		this.entities = new ArrayList<Entity>();
 	}
 	
 	/**
 	 * Updates all squares in the room
 	 */
 	public void update(long elapsedTime) {
-		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid[0].length; j++) {
-				if (grid[i][j] !=  null) {
-					grid[i][j].update(elapsedTime);
-				}
-			}
+		
+		for (Entity entity : background) {
+			entity.update(elapsedTime);
+		}
+		
+		for (Entity entity : entities) {
+			entity.update(elapsedTime);
+		}
+		
+		for (Entity entity : foreground) {
+			entity.update(elapsedTime);
 		}
 	}
 	
@@ -33,12 +47,16 @@ public class Room {
 	 * Draws room's content
 	 */
 	public void draw(Graphics2D g) {
-		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid[0].length; j++) {
-				if (grid[i][j] !=  null) {
-					grid[i][j].draw(g);
-				}
-			}
+		for (Entity entity : background) {
+			entity.drawSelf(g);
+		}
+		
+		for (Entity entity : entities){
+			entity.drawSelf(g);
+		}
+
+		for (Entity entity : foreground) {
+			entity.drawSelf(g);
 		}
 	}
 	
@@ -103,6 +121,22 @@ public class Room {
 	 */
 	public void setEntities(Square[][] grid) {
 		this.grid = grid;
+	}
+	
+	public void addBackground(ArrayList<Entity> newEntities){
+		this.background.addAll(newEntities);
+	}
+	
+	public void addForeground(ArrayList<Entity> newEntities){
+		this.foreground.addAll(newEntities);
+	}
+	
+	public void addEntities(ArrayList<Entity> newEntities){
+		this.entities.addAll(newEntities);
+	}
+	
+	public void addEntity(Entity entity){
+		this.entities.add(entity);
 	}
 	
 }

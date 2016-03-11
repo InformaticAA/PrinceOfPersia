@@ -262,6 +262,9 @@ public class Loader {
 				/* Loads each square's entities in a floor */
 				String squareContent = readFloor.next();
 				Square square = loadEntities(x, y, squareContent);
+				room.addBackground(square.getBackground());
+				room.addForeground(square.getForeground());
+				room.addEntities(square.getEntities());
 				room.setSquare(x, y, square);
 				
 				y++;

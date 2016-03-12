@@ -23,5 +23,8 @@ public class KeyMapper {
 		key_map.put(Key.LEFT, KeyEvent.VK_LEFT);
 		key_map.put(Key.RIGHT, KeyEvent.VK_RIGHT);
 		key_map.put(Key.ENTER, KeyEvent.VK_ENTER);
+		key_map.put(Key.SHIFT, KeyEvent.VK_SHIFT);
+		key_map.put(Key.ESCAPE, KeyEvent.VK_ESCAPE);
+		key_map.put(Key.CONTROL, KeyEvent.VK_CONTROL);
 	}
 }

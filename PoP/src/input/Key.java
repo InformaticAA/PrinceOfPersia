@@ -7,6 +7,9 @@ public class Key {
 	public static final String LEFT = "LEFT";
 	public static final String RIGHT = "RIGHT";
 	public static final String ENTER = "ENTER";
+	public static final String SHIFT = "SHIFT";
+	public static final String ESCAPE = "ESCAPE";
+	public static final String CONTROL = "CONTROL";
 	
 	private boolean pressed;
 	private int keycode;

@@ -127,14 +127,27 @@ public class LevelState extends State{
 					/* key pressed */
 					int key_pressed = e.getKeycode();
 					
+					if(key_pressed == keys_mapped.get(Key.ESCAPE)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.CONTROL)){
+						
+					} else{
+						
+					}
+					
+					/* this has to be sent to the player */
 					if(key_pressed == keys_mapped.get(Key.UP)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.DOWN)){
+						
 					} else if(key_pressed == keys_mapped.get(Key.LEFT)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.ENTER)){
+						
+					} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
+						
 					}
 				} else{
 					

@@ -13,7 +13,7 @@ public class Player extends Character {
 		super(x, y, loader);
 		animations = loader.getAnimations("Dastan");
 		
-		currentAnimation = animations.get("running");
+		currentAnimation = animations.get("idle");
 		currentAnimation.setFrameDuration(3);
 		
 		currentState = PlayerState.IDLE;

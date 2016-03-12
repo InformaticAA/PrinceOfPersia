@@ -8,5 +8,9 @@ public class Base extends Entity{
 		super("Base", x, y, loader);
 		animations = loader.getAnimations("bases");
 		currentAnimation = animations.get(base_type);
+		
+		/* Sets the bounding box */
+		enableBoundingBox(this.x,this.y,currentAnimation.getImage().getWidth(),
+				currentAnimation.getImage().getHeight());
 	}
 }

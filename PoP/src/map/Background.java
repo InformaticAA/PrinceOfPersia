@@ -2,6 +2,7 @@ package map;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.imageio.ImageIO;
 
@@ -13,9 +14,7 @@ public class Background {
 	public Background(String s){
 		
 		try{
-			image = ImageIO.read(
-					getClass().getResourceAsStream(s)
-			);
+			image = ImageIO.read(new File("resources/Sprites_400/Menu/room_won.png"));
 		}
 		catch(Exception e){
 			e.printStackTrace();

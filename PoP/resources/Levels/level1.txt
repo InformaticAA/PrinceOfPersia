@@ -2,14 +2,14 @@
 room 1 1
 b;b;b;b;b;b;b;b;b;b
 rs d2(2,0.5) d2(3,0.25) rsb;fs prt;-;bricks(3);-;pl b;prm fl potion1 b;fr fl b;fr fl t nb;fr fl bricks(1) b
-fs pl b;prm prt;-;bricks(3);-;ls(mark(3)) d2(2,0.4,mark(1)) lsb;cs d2(2,0.5) d1(3,0.1) csb;cs d1(2,0.5,mark(3)) d2(3,0.1) csb;cs d1(2,0.5) d1(3,0.1) csb;cs d2(2,0.4) d2(3,0.1) csb
-fs pl b;prm prt;-;bricks(3);-;ls d2(2,0.5,mark(2)) lsb;cs d2(2,0.5) d1(3,0.1) csb;cs d1(2,0.3) d1(3,0.2) csb;cs d1(2,0.4) d2(3,0.3) random csb;cs d2(2,0.4) d2(3,0.1) csb
+fs pl b;prm prt;-;bricks(3);-;rf ls(mark(3)) d2(2,0.4,mark(1)) lsb;cs d2(2,0.5) d1(3,0.1) csb;cs d1(2,0.5,mark(3)) d2(3,0.1) csb;cs d1(2,0.5) d1(3,0.1) csb;cs d2(2,0.4) d2(3,0.1) csb
+fs pl b;prm prt;-;bricks(3);-;rf ls d2(2,0.5,mark(2)) lsb;cs d2(2,0.5) d1(3,0.1) csb;cs d1(2,0.3) d1(3,0.2) csb;cs d1(2,0.4) d2(3,0.3) random csb;cs d2(2,0.4) d2(3,0.1) csb
 
 room 1 7
 b;b;b;b;b;b;b;b;b;b
-doorfr door(5,door_closed,0) fst;-;-;lf b;rf lf b;rf lf bricks(1) b;rf lf b; rf lf bricks(1) b;ls d1(2,0.3,mark(1)) lsb;cs(mark(3)) d1(2,0.3) d2(3,0.2) csb;
-fs lf b;rf lf t b;rf lf t b;rf pl pshadow bricks(1) b; prm fst;ls d2(2,0.5,mark(2)) lsb;cs random d2(2,0.5) d1(3,0.1) csb;cs d2(2,0.5,mark(1)) d2(3,0.1) csb;cs d1(2,0.5) d2(3,0.1) csb;cs random d1(2,0.5) d1(3,0.1) csb
-cs d2(2,0.5) d2(3,0.2) csb;cs d2(2,0.5) d2(3,0.4) csb;cs d2(2,0.4,mark(3)) d1(3,0.3) csb;rs d1(2,0.5) d2(3,0.3) rsb;fs bl b;pl pshadow br b;prm;loose lf b;rf lf bricks(1) b;ls d1(2,0.5) lsb;
+doorfr door(5,door_closed,0) fst;-;-;lf b;rf lf b;rf lf bricks(1) b;rf lf b; rf lf bricks(1) b;rf ls d1(2,0.3,mark(1)) lsb;cs(mark(3)) d1(2,0.3) d2(3,0.2) csb;
+fs lf b;rf lf t b;rf lf t b;rf pl pshadow bricks(1) b; prm fst;fs ls d2(2,0.5,mark(2)) lsb;cs random d2(2,0.5) d1(3,0.1) csb;cs d2(2,0.5,mark(1)) d2(3,0.1) csb;cs d1(2,0.5) d2(3,0.1) csb;cs random d1(2,0.5) d1(3,0.1) csb
+cs d2(2,0.5) d2(3,0.2) csb;cs d2(2,0.5) d2(3,0.4) csb;cs d2(2,0.4,mark(3)) d1(3,0.3) csb;rs d1(2,0.5) d2(3,0.3) rsb;fs bl b;pl pshadow br b;prm;loose lf b;rf lf bricks(1) b;rf ls d1(2,0.5) lsb;
 
 
 

@@ -20,10 +20,11 @@ public class Character extends Entity {
 	protected double maxFallSpeed;
 	
 	/* Animations */
-	protected boolean facingRight;
+	protected String orientation;
 	
-	public Character(int x, int y, Loader loader) {
+	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);
+		this.orientation = orientation;
 	}
 	
 	/**
@@ -114,12 +115,12 @@ public class Character extends Entity {
 		this.maxFallSpeed = maxFallSpeed;
 	}
 
-	public boolean isFacingRight() {
-		return facingRight;
+	public String getFacingRight() {
+		return orientation;
 	}
 
-	public void setFacingRight(boolean facingRight) {
-		this.facingRight = facingRight;
+	public void setFacingRight(String facingRight) {
+		this.orientation = facingRight;
 	}
 	
 	public void moveCharacter(){

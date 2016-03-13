@@ -19,11 +19,11 @@ public class Player extends Character {
 	private PlayerState currentState;
 	private boolean shift_pressed;
 	
-	public Player(int x, int y, Loader loader) {
-		super(x, y, loader);
+	public Player(int x, int y, Loader loader, String orientation) {
+		super(x, y, loader, orientation);
 		animations = loader.getAnimations("Dastan");
 		
-		currentAnimation = animations.get("idle");
+		currentAnimation = animations.get("idle_" + this.orientation);
 		currentState = PlayerState.IDLE;
 		
 		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
@@ -39,29 +39,31 @@ public class Player extends Character {
 		case IDLE:
 			
 			switch(currentAnimation.getId()){
-			case "running start":
+			case "running start_left":
+			case "running start_right":
 				if(currentAnimation.isOver(false)){
 					currentAnimation.reset();
 					System.out.println();
 					System.out.printf("stops running: ");
-					currentAnimation = animations.get("running stop");
+					currentAnimation = animations.get("running stop_" + orientation);
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;
-			case "running":
-				
+			case "running_left":
+			case "running_right":	
 				currentAnimation.reset();
 				System.out.printf("stops running: ");
-				currentAnimation = animations.get("running stop");
+				currentAnimation = animations.get("running stop_"+orientation);
 				currentAnimation.setFrameDuration(FRAME_DURATION);
 				break;
-			case "running stop":
+			case "running stop_left":
+			case "running_stop_right":
 				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
 					System.out.println();
 					currentAnimation.reset();
 					this.setMoveSpeed(0);
-					currentAnimation = animations.get("idle");
+					currentAnimation = animations.get("idle_"+orientation);
 				}
 				break;
 			}
@@ -78,27 +80,31 @@ public class Player extends Character {
 		case MOVE:
 			
 			switch (currentAnimation.getId()){
-			case "idle":
+			case "idle_left":
+			case "idle_right":
 				System.out.printf("starts running: ");
-				currentAnimation = animations.get("running start");
+				currentAnimation = animations.get("running start_" + orientation);
 				currentAnimation.setFrameDuration(FRAME_DURATION);
 				break;
-			case "running start":
+			case "running start_left":
+			case "running start_right":
 				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
 					System.out.println();
 					currentAnimation.reset();
-					currentAnimation = animations.get("running");
+					currentAnimation = animations.get("running_" + orientation);
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				} 
 				break;
-			case "running":
+			case "running_left":
+			case "running_right":
 //				System.out.println("running");
 				break;
-			case "running stop":
+			case "running stop_left":
+			case "running stop_right":
 				if(currentAnimation.isOver(false)){
 					currentAnimation.reset();
-					currentAnimation = animations.get("running start");
+					currentAnimation = animations.get("running start_" + orientation);
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 //			default:

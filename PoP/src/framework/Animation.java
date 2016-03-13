@@ -133,5 +133,10 @@ public class Animation {
 		this.totalDuration = (long) (frameDuration * totalDuration);
 		this.frameDuration = frameDuration;
 	}
+	
+	public void reset() {
+		currentFrame = 0;
+		animTime = 0;
+	}
 
 }

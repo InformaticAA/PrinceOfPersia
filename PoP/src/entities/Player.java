@@ -33,7 +33,7 @@ public class Player extends Character {
 	
 	@Override
 	public void update(long elapsedTime) {
-		super.update(elapsedTime);
+//		super.update(elapsedTime);
 
 		switch (currentState) {
 		case IDLE:
@@ -41,18 +41,21 @@ public class Player extends Character {
 			switch(currentAnimation.getId()){
 			case "running start":
 				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
 					currentAnimation = animations.get("running stop");
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;
 			case "running":
 				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
 					currentAnimation = animations.get("running stop");
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;
 			case "running stop":
 				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
 					this.setMoveSpeed(0);
 					currentAnimation = animations.get("idle");
 				}
@@ -79,6 +82,7 @@ public class Player extends Character {
 			case "running start":
 				System.out.println(currentAnimation.getCurrentFrame());
 				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
 					currentAnimation = animations.get("running");
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				} 
@@ -93,6 +97,7 @@ public class Player extends Character {
 		default:
 			break;
 		}
+		currentAnimation.update(elapsedTime);
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){

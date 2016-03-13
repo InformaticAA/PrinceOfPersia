@@ -234,6 +234,7 @@ public class Player extends Character {
 			
 		} else if(key_released == keys_mapped.get(Key.RIGHT)){
 			if(currentState != PlayerState.IDLE && this.getOrientation().equals("right")){
+				System.out.println("Seteamos el idle de la derecha");
 				this.currentState = PlayerState.IDLE;
 			}
 			
@@ -245,6 +246,7 @@ public class Player extends Character {
 			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
 			if(currentState != PlayerState.IDLE && this.getOrientation().equals("left")){
+				System.out.println("Seteamos el idle de la izquierda");
 				this.currentState = PlayerState.IDLE;
 			}
 //			if(this.currentState == PlayerState.MOVE){

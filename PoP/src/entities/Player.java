@@ -174,7 +174,7 @@ public class Player extends Character {
 			case "turn running_right":
 				if(currentAnimation.isOver(false)){
 					currentAnimation.reset();
-					currentAnimation = animations.get("running start_" + orientation);
+					currentAnimation = animations.get("running_" + orientation);
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;

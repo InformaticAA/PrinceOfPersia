@@ -18,6 +18,8 @@ public class Player extends Character {
 	
 	private PlayerState currentState;
 	private boolean shift_pressed;
+	private boolean changed_position;
+	private String newOrientation;
 	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
@@ -29,6 +31,8 @@ public class Player extends Character {
 		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
 				currentAnimation.getImage().getHeight());
 		
+		this.changed_position = false;
+		this.newOrientation = orientation;
 	}
 	
 	@Override
@@ -39,31 +43,52 @@ public class Player extends Character {
 		case IDLE:
 			
 			switch(currentAnimation.getId()){
+			
+			case "turning_left":
+			case "turning_right":
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					currentAnimation.reset();
+					currentAnimation = animations.get("idle_" + orientation);
+				}
+				break;
+				
 			case "running start_left":
 			case "running start_right":
 				if(currentAnimation.isOver(false)){
-					currentAnimation.reset();
 					System.out.println();
 					System.out.printf("stops running: ");
+					currentAnimation.reset();
 					currentAnimation = animations.get("running stop_" + orientation);
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;
+				
 			case "running_left":
 			case "running_right":	
-				currentAnimation.reset();
 				System.out.printf("stops running: ");
-				currentAnimation = animations.get("running stop_"+orientation);
+				currentAnimation.reset();
+				currentAnimation = animations.get("running stop_" + orientation);
 				currentAnimation.setFrameDuration(FRAME_DURATION);
 				break;
+				
+			case "turn running_left":
+			case "turn running_right":
+				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
+					currentAnimation = animations.get("running stop_" + orientation);
+					currentAnimation.setFrameDuration(FRAME_DURATION);
+				}
+				break;
+				
 			case "running stop_left":
-			case "running_stop_right":
+			case "running stop_right":
 				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
 					System.out.println();
 					currentAnimation.reset();
 					this.setMoveSpeed(0);
-					currentAnimation = animations.get("idle_"+orientation);
+					currentAnimation = animations.get("idle_" + orientation);
 				}
 				break;
 			}
@@ -82,22 +107,58 @@ public class Player extends Character {
 			switch (currentAnimation.getId()){
 			case "idle_left":
 			case "idle_right":
-				System.out.printf("starts running: ");
-				currentAnimation = animations.get("running start_" + orientation);
-				currentAnimation.setFrameDuration(FRAME_DURATION);
+				if(changed_position){
+					changed_position = false;
+					this.setOrientation(newOrientation);
+					currentAnimation.reset();
+					currentAnimation = animations.get("turning_" + orientation);
+					currentAnimation.setFrameDuration(FRAME_DURATION);
+				}
+				else{
+					System.out.printf("starts running: ");
+					currentAnimation.reset();
+					currentAnimation = animations.get("running start_" + orientation);
+					currentAnimation.setFrameDuration(FRAME_DURATION);
+				}
 				break;
+				
+			case "turning_left":
+			case "turning_right":
+				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
+					currentAnimation = animations.get("running start_" + orientation);
+				}
+				break;
+				
 			case "running start_left":
 			case "running start_right":
 				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
-					System.out.println();
-					currentAnimation.reset();
-					currentAnimation = animations.get("running_" + orientation);
-					currentAnimation.setFrameDuration(FRAME_DURATION);
+					if(changed_position){
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						currentAnimation.reset();
+						currentAnimation = animations.get("turn running_" + orientation);
+						currentAnimation.setFrameDuration(FRAME_DURATION);
+					} else{
+						System.out.println();
+						currentAnimation.reset();
+						currentAnimation = animations.get("running_" + orientation);
+						currentAnimation.setFrameDuration(FRAME_DURATION);
+					}
 				} 
 				break;
+				
 			case "running_left":
 			case "running_right":
+				
+				if(changed_position){
+					changed_position = false;
+					this.setOrientation(newOrientation);
+					currentAnimation.reset();
+					currentAnimation = animations.get("turn running_" + orientation);
+					currentAnimation.setFrameDuration(FRAME_DURATION);
+				}
 //				System.out.println("running");
 				break;
 			case "running stop_left":
@@ -107,6 +168,16 @@ public class Player extends Character {
 					currentAnimation = animations.get("running start_" + orientation);
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
+				break;
+				
+			case "turn running_left":
+			case "turn running_right":
+				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
+					currentAnimation = animations.get("running start_" + orientation);
+					currentAnimation.setFrameDuration(FRAME_DURATION);
+				}
+				break;
 //			default:
 //				System.out.println(currentAnimation.getId());
 			}
@@ -121,8 +192,11 @@ public class Player extends Character {
 		if(key_pressed == keys_mapped.get(Key.UP)){
 			
 		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
-			if(currentState != PlayerState.MOVE){
-				currentState = PlayerState.MOVE;
+
+			currentState = PlayerState.MOVE;
+			if(this.getOrientation().equals("left")){
+				this.changed_position = true;
+				this.newOrientation = "right";
 			}
 //			if(currentState != PlayerState.MOVE){
 //				this.currentAnimation = animations.get("running");
@@ -131,9 +205,13 @@ public class Player extends Character {
 //				this.setMoveSpeed(15);
 //			}
 		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
-			if(currentState != PlayerState.MOVE){
-				currentState = PlayerState.MOVE;
+			
+			currentState = PlayerState.MOVE;
+			if(this.getOrientation().equals("right")){
+				this.changed_position = true;
+				this.newOrientation = "left";
 			}
+			
 //			if(currentState != PlayerState.MOVE){
 //				this.currentAnimation = animations.get("running");
 //				this.currentAnimation.setFrameDuration(4);
@@ -144,6 +222,10 @@ public class Player extends Character {
 			
 		} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
 			shift_pressed = true;
+		} else if(key_pressed == keys_mapped.get(Key.D)){
+			System.out.println("State: " + this.currentState + "\n" + 
+					"Animation: " + this.getCurrentAnimation().getId() + "\n" + 
+					"Orientation: " + this.getOrientation());
 		}
 	}
 	
@@ -151,7 +233,7 @@ public class Player extends Character {
 		if(key_released == keys_mapped.get(Key.UP)){
 			
 		} else if(key_released == keys_mapped.get(Key.RIGHT)){
-			if(currentState != PlayerState.IDLE){
+			if(currentState != PlayerState.IDLE && this.getOrientation().equals("right")){
 				this.currentState = PlayerState.IDLE;
 			}
 			
@@ -162,7 +244,7 @@ public class Player extends Character {
 //			}
 			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
-			if(currentState != PlayerState.IDLE){
+			if(currentState != PlayerState.IDLE && this.getOrientation().equals("left")){
 				this.currentState = PlayerState.IDLE;
 			}
 //			if(this.currentState == PlayerState.MOVE){

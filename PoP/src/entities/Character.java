@@ -115,11 +115,11 @@ public class Character extends Entity {
 		this.maxFallSpeed = maxFallSpeed;
 	}
 
-	public String getFacingRight() {
+	public String getOrientation() {
 		return orientation;
 	}
 
-	public void setFacingRight(String facingRight) {
+	public void setOrientation(String facingRight) {
 		this.orientation = facingRight;
 	}
 	

@@ -49,12 +49,11 @@ public class Player extends Character {
 				}
 				break;
 			case "running":
-				if(currentAnimation.isOver(false)){
-					currentAnimation.reset();
-					System.out.printf("stops running: ");
-					currentAnimation = animations.get("running stop");
-					currentAnimation.setFrameDuration(FRAME_DURATION);
-				}
+				
+				currentAnimation.reset();
+				System.out.printf("stops running: ");
+				currentAnimation = animations.get("running stop");
+				currentAnimation.setFrameDuration(FRAME_DURATION);
 				break;
 			case "running stop":
 				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
@@ -116,8 +115,9 @@ public class Player extends Character {
 		if(key_pressed == keys_mapped.get(Key.UP)){
 			
 		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
-			currentState = PlayerState.MOVE;
-			this.setMoveSpeed(0);
+			if(currentState != PlayerState.MOVE){
+				currentState = PlayerState.MOVE;
+			}
 //			if(currentState != PlayerState.MOVE){
 //				this.currentAnimation = animations.get("running");
 //				this.currentAnimation.setFrameDuration(4);
@@ -125,8 +125,9 @@ public class Player extends Character {
 //				this.setMoveSpeed(15);
 //			}
 		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
-			currentState = PlayerState.MOVE;
-			this.setMoveSpeed(0);
+			if(currentState != PlayerState.MOVE){
+				currentState = PlayerState.MOVE;
+			}
 //			if(currentState != PlayerState.MOVE){
 //				this.currentAnimation = animations.get("running");
 //				this.currentAnimation.setFrameDuration(4);
@@ -144,7 +145,10 @@ public class Player extends Character {
 		if(key_released == keys_mapped.get(Key.UP)){
 			
 		} else if(key_released == keys_mapped.get(Key.RIGHT)){
-			this.currentState = PlayerState.IDLE;
+			if(currentState != PlayerState.IDLE){
+				this.currentState = PlayerState.IDLE;
+			}
+			
 //			if(this.currentState == PlayerState.MOVE){
 //				this.currentAnimation = animations.get("idle");
 //				this.setMoveSpeed(0);
@@ -152,7 +156,9 @@ public class Player extends Character {
 //			}
 			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
-			this.currentState = PlayerState.IDLE;
+			if(currentState != PlayerState.IDLE){
+				this.currentState = PlayerState.IDLE;
+			}
 //			if(this.currentState == PlayerState.MOVE){
 //				this.currentAnimation = animations.get("idle");
 //				this.setMoveSpeed(0);

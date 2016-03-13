@@ -96,6 +96,12 @@ public class Player extends Character {
 			case "running":
 //				System.out.println("running");
 				break;
+			case "running stop":
+				if(currentAnimation.isOver(false)){
+					currentAnimation.reset();
+					currentAnimation = animations.get("running start");
+					currentAnimation.setFrameDuration(FRAME_DURATION);
+				}
 //			default:
 //				System.out.println(currentAnimation.getId());
 			}

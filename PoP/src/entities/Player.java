@@ -34,8 +34,6 @@ public class Player extends Character {
 	@Override
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
-		
-		currentAnimation.update(elapsedTime);
 
 		switch (currentState) {
 		case IDLE:
@@ -47,9 +45,9 @@ public class Player extends Character {
 				}
 				break;
 			case "running":
-				if(currentAnimation.isOver(false)){
+//				if(currentAnimation.isOver(false)){
 					currentAnimation = animations.get("running stop");
-				}
+//				}
 				break;
 			case "running stop":
 				if(currentAnimation.isOver(false)){
@@ -78,11 +76,8 @@ public class Player extends Character {
 			case "running start":
 				System.out.println("running start");
 				if(currentAnimation.isOver(false)){
-					System.out.println("True");
 					currentAnimation = animations.get("running");
-				} else{
-					System.out.println("False");
-				}
+				} 
 				break;
 			case "running":
 				System.out.println("running");

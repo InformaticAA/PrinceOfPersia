@@ -13,6 +13,8 @@ public class Player extends Character {
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
+	private final int FRAME_DURATION = 6;
+	private final int MOVE_SPEED = 2;
 	
 	private PlayerState currentState;
 	private boolean shift_pressed;
@@ -22,8 +24,6 @@ public class Player extends Character {
 		animations = loader.getAnimations("Dastan");
 		
 		currentAnimation = animations.get("idle");
-		currentAnimation.setFrameDuration(3);
-		
 		currentState = PlayerState.IDLE;
 		
 		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
@@ -35,8 +35,6 @@ public class Player extends Character {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		currentAnimation.update(elapsedTime);
-
 		switch (currentState) {
 		case IDLE:
 			
@@ -47,8 +45,11 @@ public class Player extends Character {
 				}
 				break;
 			case "running":
+				System.out.println(currentAnimation.getCurrentFrame());
 				if(currentAnimation.isOver(false)){
+					System.out.println("stops running");
 					currentAnimation = animations.get("running stop");
+					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;
 			case "running stop":
@@ -72,20 +73,23 @@ public class Player extends Character {
 			
 			switch (currentAnimation.getId()){
 			case "idle":
-				System.out.println("idle");
+				System.out.println("starts running");
 				currentAnimation = animations.get("running start");
+				currentAnimation.setFrameDuration(FRAME_DURATION);
 				break;
 			case "running start":
-				System.out.println("running start");
+				System.out.println(currentAnimation.getCurrentFrame());
 				if(currentAnimation.isOver(false)){
-					System.out.println("True");
+					System.out.println("running all the way");
 					currentAnimation = animations.get("running");
+					currentAnimation.setFrameDuration(FRAME_DURATION);
 				} else{
 					System.out.println("False");
 				}
 				break;
 			case "running":
-				System.out.println("running");
+				System.out.println(currentAnimation.getCurrentFrame());
+//				System.out.println("running");
 				break;
 //			default:
 //				System.out.println(currentAnimation.getId());
@@ -101,7 +105,7 @@ public class Player extends Character {
 			
 		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
 			currentState = PlayerState.MOVE;
-			this.setMoveSpeed(15);
+			this.setMoveSpeed(0);
 //			if(currentState != PlayerState.MOVE){
 //				this.currentAnimation = animations.get("running");
 //				this.currentAnimation.setFrameDuration(4);
@@ -110,7 +114,7 @@ public class Player extends Character {
 //			}
 		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
 			currentState = PlayerState.MOVE;
-			this.setMoveSpeed(-15);
+			this.setMoveSpeed(0);
 //			if(currentState != PlayerState.MOVE){
 //				this.currentAnimation = animations.get("running");
 //				this.currentAnimation.setFrameDuration(4);

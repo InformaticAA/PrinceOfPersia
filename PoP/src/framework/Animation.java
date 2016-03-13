@@ -47,7 +47,6 @@ public class Animation {
 	public void update(long elapsedTime) {
 		if (frames.size() > 1) {
 			animTime += elapsedTime;
-			
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;

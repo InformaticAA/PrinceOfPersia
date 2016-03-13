@@ -132,7 +132,7 @@ public class LevelState extends State{
 					} else if(key_pressed == keys_mapped.get(Key.CONTROL)){
 						
 					} else{
-						
+						player.manageKeyPressed(key_pressed, keys_mapped);
 					}
 					
 					/* this has to be sent to the player */
@@ -151,6 +151,16 @@ public class LevelState extends State{
 					}
 				} else{
 					
+					/* Key released */
+					int key_released = e.getKeycode();
+					
+					if(key_released == keys_mapped.get(Key.ESCAPE)){
+						
+					} else if(key_released == keys_mapped.get(Key.CONTROL)){
+						
+					} else{
+						player.manageKeyReleased(key_released, keys_mapped);
+					}
 				}
 			}
 		}

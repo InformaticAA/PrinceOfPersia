@@ -11,7 +11,8 @@ public class Character extends Entity {
 	protected int maxHp;
 	
 	/* Movement */
-	protected double moveSpeed;
+	protected int xSpeed;
+	protected int ySpeed;
 	protected double maxSpeed;
 	protected double fightSpeed;
 	protected double jumpSpeed;
@@ -65,12 +66,12 @@ public class Character extends Entity {
 		this.y = y;
 	}
 
-	public double getMoveSpeed() {
-		return moveSpeed;
+	public int getMoveSpeed() {
+		return xSpeed;
 	}
 
-	public void setMoveSpeed(double moveSpeed) {
-		this.moveSpeed = moveSpeed;
+	public void setMoveSpeed(int moveSpeed) {
+		this.xSpeed = moveSpeed;
 	}
 
 	public double getMaxSpeed() {
@@ -90,11 +91,11 @@ public class Character extends Entity {
 	}
 
 	public double getJumpSpeed() {
-		return jumpSpeed;
+		return ySpeed;
 	}
 
-	public void setJumpSpeed(double jumpSpeed) {
-		this.jumpSpeed = jumpSpeed;
+	public void setJumpSpeed(int ySpeed) {
+		this.ySpeed = ySpeed;
 	}
 
 	public double getFallSpeed() {
@@ -119,5 +120,11 @@ public class Character extends Entity {
 
 	public void setFacingRight(boolean facingRight) {
 		this.facingRight = facingRight;
+	}
+	
+	public void moveCharacter(){
+		setX(x + xSpeed);
+		setY(y + ySpeed);
+		this.boundingBox.translate(xSpeed, ySpeed);
 	}
 }

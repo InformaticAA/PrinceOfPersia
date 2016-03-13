@@ -1,13 +1,16 @@
 package entities;
 
 import java.awt.Rectangle;
+import java.util.Hashtable;
 
 import framework.Loader;
+import input.Key;
 
 public class Player extends Character {
 
-	private enum PlayerState {IDLE, MOVE, JUMP, COMBAT};
+	private enum PlayerState {IDLE, STARTING_TO_MOVE, MOVE, JUMP, COMBAT};
 	private PlayerState currentState;
+	private boolean shift_pressed;
 	
 	public Player(int x, int y, Loader loader) {
 		super(x, y, loader);
@@ -37,8 +40,59 @@ public class Player extends Character {
 //			System.out.println("x_draw: " + x_draw + ", y_draw: " + y_draw);
 			
 			break;
+		case MOVE:
+			this.moveCharacter();
+			break;
 		default:
 			break;
+		}
+	}
+	
+	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
+		if(key_pressed == keys_mapped.get(Key.UP)){
+			
+		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
+			if(currentState != PlayerState.MOVE){
+				this.currentAnimation = animations.get("running");
+				this.currentAnimation.setFrameDuration(4);
+				this.currentState = PlayerState.MOVE;
+				this.setMoveSpeed(15);
+			}
+		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
+			if(currentState != PlayerState.MOVE){
+				this.currentAnimation = animations.get("running");
+				this.currentAnimation.setFrameDuration(4);
+				this.currentState = PlayerState.MOVE;
+				this.setMoveSpeed(-15);
+			}
+		} else if(key_pressed == keys_mapped.get(Key.DOWN)){
+			
+		} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
+			shift_pressed = true;
+		}
+	}
+	
+	public void manageKeyReleased(int key_released, Hashtable<String,Integer> keys_mapped){
+		if(key_released == keys_mapped.get(Key.UP)){
+			
+		} else if(key_released == keys_mapped.get(Key.RIGHT)){
+			if(this.currentState == PlayerState.MOVE){
+				this.currentAnimation = animations.get("idle");
+				this.setMoveSpeed(0);
+				this.currentState = PlayerState.IDLE;
+			}
+			
+		} else if(key_released == keys_mapped.get(Key.LEFT)){
+			if(this.currentState == PlayerState.MOVE){
+				this.currentAnimation = animations.get("idle");
+				this.setMoveSpeed(0);
+				this.currentState = PlayerState.IDLE;
+			}
+			
+		} else if(key_released == keys_mapped.get(Key.DOWN)){
+			
+		} else if(key_released == keys_mapped.get(Key.SHIFT)){
+			shift_pressed = false;
 		}
 	}
 

@@ -13,7 +13,7 @@ public class Player extends Character {
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
-	private final int FRAME_DURATION = 2;
+	private final int FRAME_DURATION = 1;
 	private final int MOVE_SPEED = 2;
 	
 	private PlayerState currentState;
@@ -42,6 +42,8 @@ public class Player extends Character {
 			case "running start":
 				if(currentAnimation.isOver(false)){
 					currentAnimation.reset();
+					System.out.println();
+					System.out.printf("stops running: ");
 					currentAnimation = animations.get("running stop");
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
@@ -49,12 +51,15 @@ public class Player extends Character {
 			case "running":
 				if(currentAnimation.isOver(false)){
 					currentAnimation.reset();
+					System.out.printf("stops running: ");
 					currentAnimation = animations.get("running stop");
 					currentAnimation.setFrameDuration(FRAME_DURATION);
 				}
 				break;
 			case "running stop":
+				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
+					System.out.println();
 					currentAnimation.reset();
 					this.setMoveSpeed(0);
 					currentAnimation = animations.get("idle");
@@ -75,13 +80,14 @@ public class Player extends Character {
 			
 			switch (currentAnimation.getId()){
 			case "idle":
-				System.out.println("starts running");
+				System.out.printf("starts running: ");
 				currentAnimation = animations.get("running start");
 				currentAnimation.setFrameDuration(FRAME_DURATION);
 				break;
 			case "running start":
-				System.out.println(currentAnimation.getCurrentFrame());
+				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
+					System.out.println();
 					currentAnimation.reset();
 					currentAnimation = animations.get("running");
 					currentAnimation.setFrameDuration(FRAME_DURATION);

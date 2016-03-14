@@ -14,16 +14,18 @@ public class Player extends Character {
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
 	private final int FRAME_DURATION = 6;
-	private final int MOVE_SPEED = 1;
+	private final int MOVE_SPEED = 2;
 	
 	private boolean right_pressed;
 	private boolean left_pressed;
+	private boolean shift_pressed;
 	
 	private PlayerState currentState;
-	private boolean shift_pressed;
 	
 	private boolean changed_position;
 	private String newOrientation;
+	
+	private boolean canMakeStep;
 	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
@@ -37,14 +39,18 @@ public class Player extends Character {
 		
 		this.changed_position = false;
 		this.newOrientation = orientation;
+		
 		this.right_pressed = false;
 		this.left_pressed = false;
+		this.shift_pressed = false;
+		
+		this.canMakeStep = true;
 	}
 	
 	@Override
 	public void update(long elapsedTime) {
-//		super.update(elapsedTime);
-
+		super.update(elapsedTime);
+		
 		if(!right_pressed && !left_pressed){
 			currentState = PlayerState.IDLE;
 		}
@@ -70,9 +76,6 @@ public class Player extends Character {
 					} else{
 						this.setMoveSpeed(MOVE_SPEED);
 					}
-					
-//					System.out.println();
-//					System.out.printf("stops running: ");
 					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -84,7 +87,6 @@ public class Player extends Character {
 				} else{
 					this.setMoveSpeed(MOVE_SPEED);
 				}
-//				System.out.printf("stops running: ");
 				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -104,9 +106,7 @@ public class Player extends Character {
 				
 			case "running stop start_left":
 			case "running stop start_right":
-//				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
-//					System.out.println();
 					if(this.getOrientation().equals("left")){
 						this.setMoveSpeed(-MOVE_SPEED);
 					} else{
@@ -119,9 +119,7 @@ public class Player extends Character {
 				
 			case "running stop_left":
 			case "running stop_right":
-//				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
-//					System.out.println();
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
@@ -131,13 +129,18 @@ public class Player extends Character {
 			case "idle_right":
 				if(changed_position){
 					changed_position = false;
-//					this.setOrientation(newOrientation);
-//					this.setCurrentAnimation("turning_"+ orientation);
 				}
 				this.setMoveSpeed(0);
 				
 				break;
-				
+			
+			case "walking a step_right":
+			case "walking a step_left":
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
 			default:
 				System.out.println("Unexpected animation");
 				break;
@@ -155,6 +158,16 @@ public class Player extends Character {
 					changed_position = false;
 					this.setOrientation(newOrientation);
 					this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
+				} else if(shift_pressed){
+					if(canMakeStep){
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED/2);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED/2);
+						}
+						this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
+						canMakeStep = false;
+					}
 				}
 				else{
 					if(this.getOrientation().equals("left")){
@@ -175,6 +188,16 @@ public class Player extends Character {
 						changed_position = false;
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
+					} else if(shift_pressed){
+						if(canMakeStep){
+							if(this.getOrientation().equals("left")){
+								this.setMoveSpeed(-MOVE_SPEED/2);
+							} else{
+								this.setMoveSpeed(MOVE_SPEED/2);
+							}
+							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
+							canMakeStep = false;
+						}
 					} else{
 						if(this.getOrientation().equals("left")){
 							this.setMoveSpeed(-MOVE_SPEED);
@@ -274,6 +297,14 @@ public class Player extends Character {
 					
 				}
 				break;
+				
+			case "walking a step_right":
+			case "walking a step_left":
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
 			default:
 				System.out.println("Unexpected animation");
 			}
@@ -282,14 +313,15 @@ public class Player extends Character {
 			
 			break;
 		}
-		currentAnimation.update(elapsedTime);
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
 		if(key_pressed == keys_mapped.get(Key.UP)){
 			
 		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
-
+			if(!right_pressed){
+				canMakeStep = true;
+			}
 			currentState = PlayerState.MOVE;
 			if(this.getOrientation().equals("left")){
 				this.changed_position = true;
@@ -303,7 +335,9 @@ public class Player extends Character {
 //				this.setMoveSpeed(15);
 //			}
 		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
-			
+			if(!left_pressed){
+				canMakeStep = true;
+			}
 			currentState = PlayerState.MOVE;
 			if(this.getOrientation().equals("right")){
 				this.changed_position = true;

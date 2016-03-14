@@ -11,6 +11,8 @@ import framework.Loader;
 
 public abstract class Entity {
 	
+	public static final int FRAME_DURATION = 5;
+	
 	protected String typeOfEntity;
 	protected int x, y;
 	protected int x_draw, y_draw;
@@ -146,9 +148,10 @@ public abstract class Entity {
 	/**
 	 * @param currentAnimation the currentAnimation to set
 	 */
-	public void setCurrentAnimation(String animationName) {
-		currentAnimation.reset();
+	public void setCurrentAnimation(String animationName, int frameDuration) {
 		this.currentAnimation = animations.get(animationName);
+		currentAnimation.reset();
+		currentAnimation.setFrameDuration(frameDuration);
 	}
 	
 	public String getTypeOfEntity() {

@@ -6,7 +6,7 @@ import framework.Loader;
 
 public class GameStarter {
 	
-	public static final int FPS = 12;
+	public static final int FPS = 60;
 	
 	public static void main(String[] args){
 		SplashScreen s = new SplashScreen("resources/Sprites_400/Splash/splash.png");

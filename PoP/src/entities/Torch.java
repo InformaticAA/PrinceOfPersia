@@ -10,7 +10,7 @@ public class Torch extends Entity {
 			this.y = y-53;
 		}
 		animations = loader.getAnimations("torch");
-		currentAnimation = animations.get("fire");
+		this.setCurrentAnimation("fire", FRAME_DURATION);
 		currentAnimation.setRandomCurrentFrame();
 	}
 	

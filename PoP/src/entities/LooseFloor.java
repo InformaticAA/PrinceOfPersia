@@ -55,8 +55,8 @@ public class LooseFloor extends Entity {
 	}
 	
 	@Override
-	public void setCurrentAnimation(String newAnimation){
-		super.setCurrentAnimation(newAnimation);
+	public void setCurrentAnimation(String newAnimation, int frameDuration){
+		super.setCurrentAnimation(newAnimation, frameDuration);
 		System.out.println("hola");
 		if(currentAnimation.getId().equals("shaking")){
 			int sound = (int)(Math.random()*3 + 1);

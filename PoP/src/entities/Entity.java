@@ -96,6 +96,7 @@ public abstract class Entity {
 	 */
 	public boolean intersects(Entity entity) {
 		boolean intersection = false;
+		
 		Rectangle r1 = boundingBox;
 		Rectangle r2 = entity.getBoundingBox();
 		

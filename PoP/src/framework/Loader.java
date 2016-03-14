@@ -23,6 +23,7 @@ import entities.LooseFloor;
 import entities.Pillar;
 import entities.Torch;
 import entities.Wall;
+import entities.Character;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 
@@ -270,7 +271,7 @@ public class Loader {
 				Square square = loadEntities(x, y, squareContent);
 				room.addBackground(square.getBackground());
 				room.addForeground(square.getForeground());
-				room.addEntities(square.getEntities());
+				room.addCharacters(square.getCharacters());
 				room.setSquare(x, y, square);
 				
 				y++;
@@ -294,7 +295,7 @@ public class Loader {
 	 */
 	public Square loadEntities(int x, int y, String squareContent) {
 		ArrayList<Entity> background = new ArrayList<Entity>();
-		ArrayList<Entity> entities = new ArrayList<Entity>();
+		ArrayList<Character> characters = new ArrayList<Character>();
 		ArrayList<Entity> foreground = new ArrayList<Entity>();
 		Square square = new Square();
 		Scanner readSquare = new Scanner(squareContent);
@@ -507,7 +508,7 @@ public class Loader {
 			
 		}
 		square.setBackground(background);
-		square.setEntities(entities);
+		square.setCharacters(characters);
 		square.setForeground(foreground);
 		
 		readSquare.close();

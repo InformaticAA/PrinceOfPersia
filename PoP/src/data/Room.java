@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import entities.Entity;
+import entities.Character;
 
 public class Room {
 
@@ -14,7 +15,7 @@ public class Room {
 	private Square[][] grid;
 	private ArrayList<Entity> background;
 	private ArrayList<Entity> foreground;
-	private ArrayList<Entity> entities;
+	private ArrayList<Character> characters;
 	
 	public Room(int row, int col) {
 		this.row = row;
@@ -22,7 +23,7 @@ public class Room {
 		this.grid = new Square[rows][cols];
 		this.background = new ArrayList<Entity>();
 		this.foreground = new ArrayList<Entity>();
-		this.entities = new ArrayList<Entity>();
+		this.characters = new ArrayList<Character>();
 	}
 	
 	/**
@@ -34,8 +35,8 @@ public class Room {
 			entity.update(elapsedTime);
 		}
 		
-		for (Entity entity : entities) {
-			entity.update(elapsedTime);
+		for (Character character : characters) {
+			character.update(elapsedTime);
 		}
 		
 		for (Entity entity : foreground) {
@@ -51,8 +52,8 @@ public class Room {
 			entity.drawSelf(g);
 		}
 		
-		for (Entity entity : entities){
-			entity.drawSelf(g);
+		for (Character character : characters) {
+			character.drawSelf(g);
 		}
 
 		for (Entity entity : foreground) {
@@ -131,12 +132,12 @@ public class Room {
 		this.foreground.addAll(newEntities);
 	}
 	
-	public void addEntities(ArrayList<Entity> newEntities){
-		this.entities.addAll(newEntities);
+	public void addCharacters(ArrayList<Character> newCharacters){
+		this.characters.addAll(newCharacters);
 	}
 	
-	public void addEntity(Entity entity){
-		this.entities.add(entity);
+	public void addCharacter(Character character){
+		this.characters.add(character);
 	}
 
 	/**
@@ -168,17 +169,17 @@ public class Room {
 	}
 
 	/**
-	 * @return the entities
+	 * @return the characters
 	 */
-	public ArrayList<Entity> getEntities() {
-		return entities;
+	public ArrayList<Character> getCharacters() {
+		return characters;
 	}
 
 	/**
-	 * @param entities the entities to set
+	 * @param characters
 	 */
-	public void setEntities(ArrayList<Entity> entities) {
-		this.entities = entities;
+	public void setCharacters(ArrayList<Character> characters) {
+		this.characters = characters;
 	}
 	
 }

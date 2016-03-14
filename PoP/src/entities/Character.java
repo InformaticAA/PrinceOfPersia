@@ -1,5 +1,7 @@
 package entities;
 
+import java.awt.Rectangle;
+
 import framework.Loader;
 
 public class Character extends Entity {
@@ -33,14 +35,41 @@ public class Character extends Entity {
 		enableBoundingBox();
 	}
 	
-	/**
-	 * TODO: checks collision with map objects
-	 * @return
-	 */
-	public boolean checkTileMapCollision() {
-		return false;
+	public void moveCharacter(){
+		setX(x + xSpeed);
+		setY(y + ySpeed);
+		this.boundingBox.translate(xSpeed, ySpeed);
 	}
-
+	
+	/**
+	 * Checks collision with other characters
+	 * @return true if both rectangle collide,
+	 * false otherwise
+	 */
+	@Override
+	public boolean intersects(Entity entity) {
+		boolean intersection = false;
+		
+		/* Creates the bounding box for the next step */
+		Rectangle nextStep = new Rectangle((int) boundingBox.getX(),
+					(int) boundingBox.getY(),
+					(int) boundingBox.getWidth(),
+					(int) boundingBox.getHeight());
+	
+		nextStep.translate(xSpeed, ySpeed);
+		
+		Rectangle r2 = entity.getBoundingBox();
+		
+		/* Checks if collision will take place in the next step */
+		if (nextStep != null && r2 != null) {
+			intersection = nextStep.intersects(r2);
+		}
+		else {
+			intersection = false;
+		}
+		return intersection;
+	}
+	
 	public int getHp() {
 		return hp;
 	}
@@ -129,9 +158,39 @@ public class Character extends Entity {
 		this.orientation = facingRight;
 	}
 	
-	public void moveCharacter(){
-		setX(x + xSpeed);
-		setY(y + ySpeed);
-		this.boundingBox.translate(xSpeed, ySpeed);
+	/**
+	 * @return the xSpeed
+	 */
+	public int getxSpeed() {
+		return xSpeed;
 	}
+
+	/**
+	 * @param xSpeed the xSpeed to set
+	 */
+	public void setxSpeed(int xSpeed) {
+		this.xSpeed = xSpeed;
+	}
+
+	/**
+	 * @return the ySpeed
+	 */
+	public int getySpeed() {
+		return ySpeed;
+	}
+
+	/**
+	 * @param ySpeed the ySpeed to set
+	 */
+	public void setySpeed(int ySpeed) {
+		this.ySpeed = ySpeed;
+	}
+
+	/**
+	 * @param jumpSpeed the jumpSpeed to set
+	 */
+	public void setJumpSpeed(double jumpSpeed) {
+		this.jumpSpeed = jumpSpeed;
+	}
+	
 }

@@ -14,6 +14,20 @@ public class Level {
 		this.rooms = new Room[rows][cols];
 	}
 	
+	/**
+	 * Updates every room in the level
+	 */
+	public void update(long elapsedTime) {
+		
+		for (int i = 0; i < rooms.length; i++) {
+			for (int j = 0; j < rooms[0].length; j++) {
+				if (rooms[i][j] != null) {
+					rooms[i][j].update(elapsedTime);
+				}
+			}
+		}
+	}
+	
 	public void addRoom(Room room) {
 		rooms[room.getRow()][room.getCol()] = room;
 	}

@@ -138,5 +138,47 @@ public class Room {
 	public void addEntity(Entity entity){
 		this.entities.add(entity);
 	}
+
+	/**
+	 * @return the background
+	 */
+	public ArrayList<Entity> getBackground() {
+		return background;
+	}
+
+	/**
+	 * @param background the background to set
+	 */
+	public void setBackground(ArrayList<Entity> background) {
+		this.background = background;
+	}
+
+	/**
+	 * @return the foreground
+	 */
+	public ArrayList<Entity> getForeground() {
+		return foreground;
+	}
+
+	/**
+	 * @param foreground the foreground to set
+	 */
+	public void setForeground(ArrayList<Entity> foreground) {
+		this.foreground = foreground;
+	}
+
+	/**
+	 * @return the entities
+	 */
+	public ArrayList<Entity> getEntities() {
+		return entities;
+	}
+
+	/**
+	 * @param entities the entities to set
+	 */
+	public void setEntities(ArrayList<Entity> entities) {
+		this.entities = entities;
+	}
 	
 }

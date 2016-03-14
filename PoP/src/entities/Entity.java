@@ -20,6 +20,7 @@ public abstract class Entity {
 	protected Hashtable<String,Animation> animations;
 	protected Animation currentAnimation;
 	protected Rectangle boundingBox;
+	protected Color boundingBoxColor;
 	protected Loader loader;
 	
 	public Entity(String typeOfEntity, int x, int y, Loader loader) {
@@ -29,6 +30,7 @@ public abstract class Entity {
 		this.loader = loader;
 		currentAnimation = null;
 		boundingBox = null;
+		boundingBoxColor = Color.RED;
 	}
 	
 	public void update(long elapsedTime) {
@@ -36,10 +38,8 @@ public abstract class Entity {
 		/* Updates animation */
 		currentAnimation.update(elapsedTime);
 		
-		/* Updates draw position */
-//		x_draw = x - currentAnimation.getImage().getWidth();
-//		y_draw = y - currentAnimation.getImage().getHeight();
-//		enableBoundingBox();
+		/* Updates the position of the bounding box */
+		enableBoundingBox();
 	}
 	
 	/**
@@ -55,12 +55,9 @@ public abstract class Entity {
 		
 		/* Draws the entity's bounding box */
 		if (boundingBox != null) {
-			int width = currentAnimation.getImage().getWidth();
-			int height = currentAnimation.getImage().getHeight();
-
-			g.setColor(Color.RED);
-			g.drawRect((int) boundingBox.getX() - width,
-					(int) boundingBox.getY() - height,
+			g.setColor(boundingBoxColor);
+			g.drawRect((int) boundingBox.getX(),
+					(int) boundingBox.getY(),
 					(int) boundingBox.getWidth(),
 					(int) boundingBox.getHeight());
 			g.setColor(Color.BLACK);
@@ -73,7 +70,9 @@ public abstract class Entity {
 	public void enableBoundingBox() {
 		
 		if (boundingBox != null) {
-			boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
+			boundingBox = new Rectangle(x - currentAnimation.getImage().getWidth(),
+					y - currentAnimation.getImage().getHeight(),
+					currentAnimation.getImage().getWidth(),
 					currentAnimation.getImage().getHeight());
 		}
 	}
@@ -82,7 +81,8 @@ public abstract class Entity {
 	 * Creates a bounding box with given measures
 	 */
 	public void enableBoundingBox(int x, int y, int width, int height) {
-		boundingBox = new Rectangle(x,y,width,height);
+		boundingBox = new Rectangle(x - currentAnimation.getImage().getWidth(),
+				y - currentAnimation.getImage().getHeight(), width, height);
 	}
 	
 	/**
@@ -98,9 +98,17 @@ public abstract class Entity {
 	 * false otherwise
 	 */
 	public boolean intersects(Entity entity) {
+		boolean intersection = false;
 		Rectangle r1 = boundingBox;
 		Rectangle r2 = entity.getBoundingBox();
-		return r1.intersects(r2);
+		
+		if (r1 != null && r2 != null) {
+			intersection = r1.intersects(r2);
+		}
+		else {
+			intersection = false;
+		}
+		return intersection;
 	}
 	
 	/**
@@ -156,6 +164,20 @@ public abstract class Entity {
 	
 	public String getTypeOfEntity() {
 		return typeOfEntity;
+	}
+
+	/**
+	 * @return the boundingBoxColor
+	 */
+	public Color getBoundingBoxColor() {
+		return boundingBoxColor;
+	}
+
+	/**
+	 * @param boundingBoxColor the boundingBoxColor to set
+	 */
+	public void setBoundingBoxColor(Color boundingBoxColor) {
+		this.boundingBoxColor = boundingBoxColor;
 	}
 
 }

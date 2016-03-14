@@ -1,5 +1,6 @@
 package states;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +51,7 @@ public class LevelState extends State{
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 //			}
-			player = new Player(450,365,loader, "left");
+			player = new Player(450,325,loader, "left");
 			currentRoom.addEntity(player);
 		}
 		
@@ -106,6 +107,39 @@ public class LevelState extends State{
 	public void update(long elapsedTime) {
 		manageKeys();
 		remainingTime = remainingTime - elapsedTime;
+		
+		/* Checks for collisions in the currentRoom */
+		ArrayList<Entity> bgEntities = currentRoom.getBackground();
+		ArrayList<Entity> characters = currentRoom.getEntities();
+		ArrayList<Entity> fgEntities = currentRoom.getForeground();
+		
+		for (Entity e : characters) {
+			
+			/* Collisions with background */
+			for (Entity bgE : bgEntities) {
+				if (bgE.intersects(e)) {
+					bgE.setBoundingBoxColor(Color.YELLOW);
+					e.setBoundingBoxColor(Color.YELLOW);
+				}
+				else {
+					bgE.setBoundingBoxColor(Color.RED);
+					e.setBoundingBoxColor(Color.RED);
+				}
+			}
+			
+			/* Collisions with foreground */
+			for (Entity fgE : fgEntities) {
+				if (fgE.intersects(e)) {
+					fgE.setBoundingBoxColor(Color.YELLOW);
+					e.setBoundingBoxColor(Color.YELLOW);
+				}
+				else {
+					fgE.setBoundingBoxColor(Color.RED);
+					e.setBoundingBoxColor(Color.RED);
+				}
+			}
+		}
+		
 		currentRoom.update(elapsedTime);
 	}
 

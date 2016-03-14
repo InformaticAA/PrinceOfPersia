@@ -198,10 +198,10 @@ public class LevelState extends State{
 						/* Collision with wall in the character's left side */
 						
 						
-					} else if (c.getBoundingBox().getMaxX() > bgE.getBoundingBox().getMinX()) {
+					} else if (c.getBoundingBox().getMaxX() < bgE.getBoundingBox().getMinX()) {
 						
 						/* Collision with wall in the character's right side */
-						
+						c.setySpeed(0);
 					}
 					
 					/* y axis */
@@ -213,11 +213,8 @@ public class LevelState extends State{
 					} else if (c.getBoundingBox().getMaxY() < bgE.getBoundingBox().getMinY()) {
 						
 						/* Collision with wall in the character's down side */
-						
+						c.setySpeed(0);
 					}
-					
-					/* Character stops falling */
-					c.setySpeed(0);
 					
 					bgE.setBoundingBoxColor(Color.YELLOW);
 					c.setBoundingBoxColor(Color.YELLOW);
@@ -239,7 +236,7 @@ public class LevelState extends State{
 						/* Collision with wall in the character's left side */
 						
 						
-					} else if (c.getBoundingBox().getMaxX() > fgE.getBoundingBox().getMinX()) {
+					} else if (c.getBoundingBox().getMaxX() < fgE.getBoundingBox().getMinX()) {
 						
 						/* Collision with wall in the character's right side */
 						

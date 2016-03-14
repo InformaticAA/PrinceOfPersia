@@ -234,7 +234,9 @@ public class Player extends Character {
 						changed_position = false;
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turn running started_" + orientation, FRAME_DURATION);
-						
+					} else{
+						this.currentState = PlayerState.IDLE;
+						this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
 					}
 				}
 				break;

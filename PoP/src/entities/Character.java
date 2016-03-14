@@ -1,6 +1,9 @@
 package entities;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
 import framework.Loader;
 
@@ -25,6 +28,31 @@ public class Character extends Entity {
 	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);
 		this.orientation = orientation;
+	}
+	
+	/**
+	 * Draws the entity's actual frame of current animation
+	 * @param g
+	 */
+	@Override
+	public void drawSelf(Graphics g) {
+		
+		/* Draws the entity */
+		BufferedImage img = currentAnimation.getImage();
+		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
+				y - currentAnimation.getImage().getHeight(), null);
+		
+		/* Draws the entity's bounding box */
+		if (boundingBox != null) {
+			int width = currentAnimation.getImage().getWidth();
+			int height = currentAnimation.getImage().getHeight();
+
+			g.setColor(Color.RED);
+			g.drawRect((int) boundingBox.getX() - width,
+					(int) boundingBox.getY() - height,
+					width, height);
+			g.setColor(Color.BLACK);
+		}
 	}
 	
 	/**

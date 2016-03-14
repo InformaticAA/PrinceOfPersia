@@ -4,11 +4,12 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import entities.Entity;
+import entities.Character;
 
 public class Square {
 
 	private ArrayList<Entity> background;
-	private ArrayList<Entity> entities;
+	private ArrayList<Character> characters;
 	private ArrayList<Entity> foreground;
 	
 	public Square() {
@@ -25,8 +26,8 @@ public class Square {
 			e.update(elapsedTime);
 		}
 		
-		for (Entity e : entities) {
-			e.update(elapsedTime);
+		for (Character c : characters) {
+			c.update(elapsedTime);
 		}
 		
 		for (Entity e : foreground) {
@@ -44,8 +45,8 @@ public class Square {
 			e.drawSelf(g);
 		}
 		
-		for (Entity e : entities) {
-			e.drawSelf(g);
+		for (Character c : characters) {
+			c.drawSelf(g);
 		}
 		
 		for (Entity e : foreground) {
@@ -55,17 +56,17 @@ public class Square {
 	}
 	
 	/**
-	 * @return the entities
+	 * @return the characters
 	 */
-	public ArrayList<Entity> getEntities() {
-		return entities;
+	public ArrayList<Character> getCharacters() {
+		return characters;
 	}
 
 	/**
-	 * @param entities the entities to set
+	 * @param characters the characters to set
 	 */
-	public void setEntities(ArrayList<Entity> entities) {
-		this.entities = entities;
+	public void setCharacters(ArrayList<Character> characters) {
+		this.characters = characters;
 	}
 
 	/**

@@ -2,6 +2,7 @@ package states;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import data.Level;
 import data.Room;
+import entities.Character;
 import entities.Entity;
 import entities.Player;
 import framework.Loader;
@@ -51,8 +53,10 @@ public class LevelState extends State{
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 //			}
-			player = new Player(450,365,loader, "left");
-			currentRoom.addEntity(player);
+			player = new Player(100,130,loader, "left");
+			player.setySpeed(4);
+			
+			currentRoom.addCharacter(player);
 		}
 		
 		else{
@@ -105,42 +109,11 @@ public class LevelState extends State{
 
 	@Override
 	public void update(long elapsedTime) {
-		manageKeys();
 		remainingTime = remainingTime - elapsedTime;
-		
-		/* Checks for collisions in the currentRoom */
-		ArrayList<Entity> bgEntities = currentRoom.getBackground();
-		ArrayList<Entity> characters = currentRoom.getEntities();
-		ArrayList<Entity> fgEntities = currentRoom.getForeground();
-		
-		for (Entity e : characters) {
-			
-			/* Collisions with background */
-			for (Entity bgE : bgEntities) {
-				if (bgE.intersects(e)) {
-					bgE.setBoundingBoxColor(Color.YELLOW);
-					e.setBoundingBoxColor(Color.YELLOW);
-				}
-				else {
-					bgE.setBoundingBoxColor(Color.RED);
-					e.setBoundingBoxColor(Color.RED);
-				}
-			}
-			
-			/* Collisions with foreground */
-			for (Entity fgE : fgEntities) {
-				if (fgE.intersects(e)) {
-					fgE.setBoundingBoxColor(Color.YELLOW);
-					e.setBoundingBoxColor(Color.YELLOW);
-				}
-				else {
-					fgE.setBoundingBoxColor(Color.RED);
-					e.setBoundingBoxColor(Color.RED);
-				}
-			}
-		}
-		
-		currentRoom.update(elapsedTime);
+
+		manageKeys();
+		checkCollisions();
+		currentLevel.update(elapsedTime);
 	}
 
 	@Override
@@ -200,8 +173,101 @@ public class LevelState extends State{
 		}
 	}
 	
+	
 	public void initPlayer(){
 		
 	}
 
+	private void checkCollisions() {
+		
+		/* Checks for collisions in the currentRoom */
+		ArrayList<Entity> bgEntities = currentRoom.getBackground();
+		ArrayList<Character> characters = currentRoom.getCharacters();
+		ArrayList<Entity> fgEntities = currentRoom.getForeground();
+		
+		for (Character c : characters) {
+			
+			/* Collisions with background */
+			for (Entity bgE : bgEntities) {
+				
+				if (c.intersects(bgE)) {
+					
+					/* x axis */
+					if (c.getBoundingBox().getMinX() > bgE.getBoundingBox().getMaxX()) {
+						
+						/* Collision with wall in the character's left side */
+						
+						
+					} else if (c.getBoundingBox().getMaxX() > bgE.getBoundingBox().getMinX()) {
+						
+						/* Collision with wall in the character's right side */
+						
+					}
+					
+					/* y axis */
+					if (c.getBoundingBox().getMinY() > bgE.getBoundingBox().getMaxY()) {
+						
+						/* Collision with wall in the character's up side */
+						
+						
+					} else if (c.getBoundingBox().getMaxY() < bgE.getBoundingBox().getMinY()) {
+						
+						/* Collision with wall in the character's down side */
+						
+					}
+					
+					/* Character stops falling */
+					c.setySpeed(0);
+					
+					bgE.setBoundingBoxColor(Color.YELLOW);
+					c.setBoundingBoxColor(Color.YELLOW);
+				}
+				else {
+					bgE.setBoundingBoxColor(Color.RED);
+					c.setBoundingBoxColor(Color.RED);
+				}
+			}
+			
+			/* Collisions with foreground */
+			for (Entity fgE : fgEntities) {
+				if (fgE.intersects(c)) {
+					
+					
+					/* x axis */
+					if (c.getBoundingBox().getMinX() > fgE.getBoundingBox().getMaxX()) {
+						
+						/* Collision with wall in the character's left side */
+						
+						
+					} else if (c.getBoundingBox().getMaxX() > fgE.getBoundingBox().getMinX()) {
+						
+						/* Collision with wall in the character's right side */
+						
+					}
+					
+					/* y axis */
+					if (c.getBoundingBox().getMinY() > fgE.getBoundingBox().getMaxY()) {
+						
+						/* Collision with wall in the character's up side */
+						
+						
+					} else if (c.getBoundingBox().getMaxY() < fgE.getBoundingBox().getMinY()) {
+						
+						/* Collision with wall in the character's down side */
+						
+					}
+					
+					/* Character stops falling */
+					c.setySpeed(0);
+					
+					fgE.setBoundingBoxColor(Color.YELLOW);
+					c.setBoundingBoxColor(Color.YELLOW);
+				}
+				else {
+					fgE.setBoundingBoxColor(Color.RED);
+					c.setBoundingBoxColor(Color.RED);
+				}
+			}
+		}
+	}
 }

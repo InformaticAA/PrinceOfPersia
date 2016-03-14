@@ -25,6 +25,14 @@ public class Character extends Entity {
 		this.orientation = orientation;
 	}
 	
+	@Override
+	public void update(long elapsedTime) {
+		super.update(elapsedTime);
+		
+		/* Updates the position of the bounding box */
+		enableBoundingBox();
+	}
+	
 	/**
 	 * TODO: checks collision with map objects
 	 * @return

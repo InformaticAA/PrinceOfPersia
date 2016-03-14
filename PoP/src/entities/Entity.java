@@ -37,9 +37,6 @@ public abstract class Entity {
 		
 		/* Updates animation */
 		currentAnimation.update(elapsedTime);
-		
-		/* Updates the position of the bounding box */
-		enableBoundingBox();
 	}
 	
 	/**

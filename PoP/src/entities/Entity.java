@@ -61,8 +61,7 @@ public abstract class Entity {
 			g.setColor(Color.RED);
 			g.drawRect((int) boundingBox.getX() - width,
 					(int) boundingBox.getY() - height,
-					(int) boundingBox.getWidth(),
-					(int) boundingBox.getHeight());
+					width, height);
 			g.setColor(Color.BLACK);
 		}
 	}

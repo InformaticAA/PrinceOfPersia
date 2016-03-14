@@ -45,7 +45,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 8);
+			currentRoom = currentLevel.getRoom(1, 7);
 			
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );

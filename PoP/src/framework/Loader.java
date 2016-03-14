@@ -29,13 +29,19 @@ import kuusisto.tinysound.TinySound;
 public class Loader {
 
 	private long frameTime;
+	private int fps;
 	private FrameLists totalAnimations;
 	private Hashtable<String,Sound> totalSounds;
 	
-	public Loader(long frameTime) {
-		this.frameTime = frameTime;
+	public Loader(int fps) {
+		this.fps = fps;
+		this.frameTime = 1000/fps;
 		this.totalAnimations = new FrameLists();
 		this.totalSounds = new Hashtable<String,Sound>();
+	}
+	
+	public int getFPS(){
+		return this.fps;
 	}
 	
 	/**

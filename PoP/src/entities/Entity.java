@@ -147,6 +147,7 @@ public abstract class Entity {
 	 * @param currentAnimation the currentAnimation to set
 	 */
 	public void setCurrentAnimation(String animationName) {
+		currentAnimation.reset();
 		this.currentAnimation = animations.get(animationName);
 	}
 	

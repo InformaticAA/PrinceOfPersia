@@ -29,8 +29,8 @@ public class Game extends JPanel implements Runnable{
 	/* Game Thread */
 	private Thread gameLoop;
 	private boolean running;
-	private int FPS = 14;
-	private long targetTime = 1000/FPS;
+	private int FPS;
+	private long targetTime;
 	
 	/* Image */
 	private BufferedImage image;
@@ -47,6 +47,8 @@ public class Game extends JPanel implements Runnable{
 	
 	public Game(Loader loader){
 		super();
+		this.FPS = loader.getFPS();
+		this.targetTime = 1000/this.FPS;
 		setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		setFocusable(true);
 		requestFocus();

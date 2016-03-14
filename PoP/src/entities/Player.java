@@ -16,6 +16,8 @@ public class Player extends Character {
 	private final int FRAME_DURATION = 6;
 	private final int MOVE_SPEED = 2;
 	
+	private boolean up_pressed;
+	private boolean down_pressed;
 	private boolean right_pressed;
 	private boolean left_pressed;
 	private boolean shift_pressed;
@@ -26,6 +28,7 @@ public class Player extends Character {
 	private String newOrientation;
 	
 	private boolean canMakeStep;
+	private boolean canWalkCrouched;
 	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
@@ -43,8 +46,11 @@ public class Player extends Character {
 		this.right_pressed = false;
 		this.left_pressed = false;
 		this.shift_pressed = false;
+		this.up_pressed = false;
+		this.down_pressed = false;
 		
 		this.canMakeStep = true;
+		this.canWalkCrouched = true;
 	}
 	
 	@Override
@@ -129,6 +135,8 @@ public class Player extends Character {
 			case "idle_right":
 				if(changed_position){
 					changed_position = false;
+				} else if(down_pressed){
+					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 				}
 				this.setMoveSpeed(0);
 				
@@ -141,6 +149,45 @@ public class Player extends Character {
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
+				
+			case "crouching down_left":
+			case "crouching down_right":
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case "crouching idle_left":
+			case "crouching idle_right":
+				if(!down_pressed){
+					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+				} 
+				this.setMoveSpeed(0);
+				break;
+				
+			case "crouching up_left":
+			case "crouching up_right":
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					canWalkCrouched = true;
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case "crouching walk_left":
+			case "crouching walk_right":
+				if(currentAnimation.isOver(false)){
+					if(!down_pressed){
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+					} else{
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
 			default:
 				System.out.println("Unexpected animation");
 				break;
@@ -168,6 +215,13 @@ public class Player extends Character {
 						this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
 						canMakeStep = false;
 					}
+				} else if(down_pressed){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 				}
 				else{
 					if(this.getOrientation().equals("left")){
@@ -240,6 +294,8 @@ public class Player extends Character {
 					changed_position = false;
 					this.setOrientation(newOrientation);
 					this.setCurrentAnimation("turn running_" + orientation, FRAME_DURATION);
+				} else if(down_pressed){
+					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 				}
 				
 				System.out.println("running");
@@ -305,6 +361,66 @@ public class Player extends Character {
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
+				
+			case "crouching down_left":
+			case "crouching down_right":
+				if(currentAnimation.isOver(false)){
+					if(changed_position){
+						changed_position = false;
+						this.currentState = PlayerState.IDLE;
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
+					if(canWalkCrouched){
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED/2);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED/2);
+						}
+						canWalkCrouched = false;
+						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
+					} else{
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			case "crouching walk_left":
+			case "crouching walk_right":
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case "crouching idle_left":
+			case "crouching idle_right":
+				if(canWalkCrouched){
+					canWalkCrouched = false;
+					if(changed_position){
+						changed_position = false;
+					} else{
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED);
+						}
+						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
+					}
+				}
+				if(!down_pressed){
+					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case "crouching up_left":
+			case "crouching up_right":
+				if(currentAnimation.isOver(false)){
+					canWalkCrouched = true;
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
 			default:
 				System.out.println("Unexpected animation");
 			}
@@ -321,6 +437,7 @@ public class Player extends Character {
 		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
 			if(!right_pressed){
 				canMakeStep = true;
+				canWalkCrouched = true;
 			}
 			currentState = PlayerState.MOVE;
 			if(this.getOrientation().equals("left")){
@@ -328,15 +445,11 @@ public class Player extends Character {
 				this.newOrientation = "right";
 			}
 			right_pressed = true;
-//			if(currentState != PlayerState.MOVE){
-//				this.currentAnimation = animations.get("running");
-//				this.currentAnimation.setFrameDuration(4);
-//				this.currentState = PlayerState.MOVE;
-//				this.setMoveSpeed(15);
-//			}
+			
 		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
 			if(!left_pressed){
 				canMakeStep = true;
+				canWalkCrouched = true;
 			}
 			currentState = PlayerState.MOVE;
 			if(this.getOrientation().equals("right")){
@@ -345,13 +458,8 @@ public class Player extends Character {
 			}
 			left_pressed = true;
 			
-//			if(currentState != PlayerState.MOVE){
-//				this.currentAnimation = animations.get("running");
-//				this.currentAnimation.setFrameDuration(4);
-//				this.currentState = PlayerState.MOVE;
-//				this.setMoveSpeed(-15);
-//			}
 		} else if(key_pressed == keys_mapped.get(Key.DOWN)){
+			down_pressed = true;
 			
 		} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
 			shift_pressed = true;
@@ -371,24 +479,14 @@ public class Player extends Character {
 			}
 			right_pressed = false;
 			
-//			if(this.currentState == PlayerState.MOVE){
-//				this.currentAnimation = animations.get("idle");
-//				this.setMoveSpeed(0);
-//				this.currentState = PlayerState.IDLE;
-//			}
-			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
 			if(/*currentState != PlayerState.IDLE && */this.getOrientation().equals("left")){
 				this.currentState = PlayerState.IDLE;
 			}
 			left_pressed = false;
-//			if(this.currentState == PlayerState.MOVE){
-//				this.currentAnimation = animations.get("idle");
-//				this.setMoveSpeed(0);
-//				this.currentState = PlayerState.IDLE;
-//			}
 			
 		} else if(key_released == keys_mapped.get(Key.DOWN)){
+			down_pressed = false;
 			
 		} else if(key_released == keys_mapped.get(Key.SHIFT)){
 			shift_pressed = false;

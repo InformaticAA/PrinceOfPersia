@@ -68,14 +68,19 @@ public class Player extends Character {
 			
 			case "turning_left":
 			case "turning_right":
+				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case "running start_left":
 			case "running start_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
 						this.setMoveSpeed(-MOVE_SPEED);
@@ -100,6 +105,11 @@ public class Player extends Character {
 			case "turn running_right":
 			case "turn running started_left":
 			case "turn running started_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(-MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
 						this.setMoveSpeed(-MOVE_SPEED);
@@ -112,12 +122,12 @@ public class Player extends Character {
 				
 			case "running stop start_left":
 			case "running stop start_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED);
-					}
 					this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
 					this.setMoveSpeed(0);
 				}
@@ -125,6 +135,11 @@ public class Player extends Character {
 				
 			case "running stop_left":
 			case "running stop_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
@@ -144,6 +159,11 @@ public class Player extends Character {
 			
 			case "walking a step_right":
 			case "walking a step_left":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
 				if(currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
@@ -152,8 +172,8 @@ public class Player extends Character {
 				
 			case "crouching down_left":
 			case "crouching down_right":
+				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -177,6 +197,11 @@ public class Player extends Character {
 				
 			case "crouching walk_left":
 			case "crouching walk_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
 					if(!down_pressed){
 						this.setMoveSpeed(0);
@@ -214,6 +239,8 @@ public class Player extends Character {
 						}
 						this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
 						canMakeStep = false;
+					} else{
+						this.setMoveSpeed(0);
 					}
 				} else if(down_pressed){
 					if(this.getOrientation().equals("left")){
@@ -251,6 +278,8 @@ public class Player extends Character {
 							}
 							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
 							canMakeStep = false;
+						} else{
+							this.setMoveSpeed(0);
 						}
 					} else{
 						if(this.getOrientation().equals("left")){
@@ -324,6 +353,7 @@ public class Player extends Character {
 			case "running stop_right":
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
+						this.setMoveSpeed(0);
 						changed_position = false;
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
@@ -343,6 +373,11 @@ public class Player extends Character {
 			case "turn running_right":
 			case "turn running started_left":
 			case "turn running started_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(-MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
 						this.setMoveSpeed(-MOVE_SPEED);
@@ -356,6 +391,11 @@ public class Player extends Character {
 				
 			case "walking a step_right":
 			case "walking a step_left":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
 				if(currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
@@ -364,10 +404,16 @@ public class Player extends Character {
 				
 			case "crouching down_left":
 			case "crouching down_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
 						changed_position = false;
 						this.currentState = PlayerState.IDLE;
+						this.setMoveSpeed(0);
 						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 					}
 					if(canWalkCrouched){
@@ -387,6 +433,11 @@ public class Player extends Character {
 				
 			case "crouching walk_left":
 			case "crouching walk_right":
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
 				if(currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
@@ -395,6 +446,7 @@ public class Player extends Character {
 				
 			case "crouching idle_left":
 			case "crouching idle_right":
+				this.setMoveSpeed(0);
 				if(canWalkCrouched){
 					canWalkCrouched = false;
 					if(changed_position){
@@ -415,6 +467,7 @@ public class Player extends Character {
 				
 			case "crouching up_left":
 			case "crouching up_right":
+				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					canWalkCrouched = true;
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);

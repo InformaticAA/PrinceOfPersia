@@ -81,29 +81,30 @@ public class Player extends Character {
 			this.currentState = PlayerState.JUMP;
 		}
 		
+		manageAnimations();
+		this.moveCharacter();
 		
-		
-		switch (currentState) {
-		
-		case IDLE:
-			
-			manageIdleState();
-			break;
-			
-		case MOVE:
-			
-			manageMoveState();
-			break;
-			
-		case JUMP:
-			
-			manageJumpState();
-			break;
-			
-		default:
-			
-			break;
-		}
+//		switch (currentState) {
+//		
+//		case IDLE:
+//			
+//			manageIdleState();
+//			break;
+//			
+//		case MOVE:
+//			
+//			manageMoveState();
+//			break;
+//			
+//		case JUMP:
+//			
+//			manageJumpState();
+//			break;
+//			
+//		default:
+//			
+//			break;
+//		}
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
@@ -180,271 +181,395 @@ public class Player extends Character {
 		}
 	}
 	
-	public void manageIdleState(){
+	private void manageAnimations(){
 		
 		switch(currentAnimation.getId()){
 		
-		case "turning_left":
-		case "turning_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
+		case "clipping_left":
+		case "clipping_right":
 			
-		case "running start_left":
-		case "running start_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running_left":
-		case "running_right":	
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-			break;
-			
-		case "turn running_left":
-		case "turn running_right":
-		case "turn running started_left":
-		case "turn running started_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(-MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running stop start_left":
-		case "running stop start_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
-				this.setMoveSpeed(0);
-			}
-			break;
-			
-		case "running stop_left":
-		case "running stop_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "idle_left":
-		case "idle_right":
-			if(changed_position){
-				changed_position = false;
-			} else if(down_pressed){
-				this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-			}
-			this.setMoveSpeed(0);
-			
-			break;
-		
-		case "walking a step_right":
-		case "walking a step_left":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED/2);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED/2);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
 			
 		case "crouching down_left":
 		case "crouching down_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+			
+			switch(currentState){
+			case IDLE:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(changed_position){
+						changed_position = false;
+						this.currentState = PlayerState.IDLE;
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
+					if(canWalkCrouched){
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED/2);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED/2);
+						}
+						canWalkCrouched = false;
+						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
+					} else{
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
 			
 		case "crouching idle_left":
 		case "crouching idle_right":
-			if(!down_pressed){
+
+			switch(currentState){
+			case IDLE:
+				if(!down_pressed){
+					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+				} 
+				this.setMoveSpeed(0);
+				break;
+				
+			case JUMP:
 				this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
-			} 
-			this.setMoveSpeed(0);
+				this.setMoveSpeed(0);
+				break;
+				
+			case MOVE:
+				this.setMoveSpeed(0);
+				if(canWalkCrouched){
+					canWalkCrouched = false;
+					if(changed_position){
+						changed_position = false;
+					} else{
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED);
+						}
+						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
+					}
+				}
+				if(!down_pressed){
+					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
 			break;
 			
 		case "crouching up_left":
 		case "crouching up_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				canWalkCrouched = true;
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+
+			switch(currentState){
+			case IDLE:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					canWalkCrouched = true;
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					canWalkCrouched = true;
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					canWalkCrouched = true;
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
 			
 		case "crouching walk_left":
 		case "crouching walk_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(!down_pressed){
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(!down_pressed){
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+					} else{
+						this.setMoveSpeed(0);
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
 				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				if(currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 				}
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
 			
-		case "scaling up start_left":
-		case "scaling up start_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
+		case "dieing_left":
+		case "dieing_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
-			
-		case "scaling up_left":
-		case "scaling up_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
-			}
-			break;
-		
-		case "scaling down_left":
-		case "scaling down_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-//				if(right_pressed && this.getOrientation().equals("right")){
-//					this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-//				} else if(left_pressed && this.getOrientation().equals("left")){
-//					this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-//				} else{
-//					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
-//				}
-			}
-			break;
-		
-		case "simple jump_left":
-		case "simple jump_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running jump_left":
-		case "running jump_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			if(this.currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		default:
-			System.out.println("Unexpected animation");
-			break;
-		}
-		this.moveCharacter();
-	}
 	
-	public void manageMoveState(){
-		
-		switch (currentAnimation.getId()){
+		case "drinking_left":
+		case "drinking_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "falling_left":
+		case "falling_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "got sword_left":
+		case "got sword_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "hanging backwards_left":
+		case "hanging backwards_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "hanging forward_left":
+		case "hanging forward_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "hanging idle_left":
+		case "hanging idle_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
 		case "idle_left":
 		case "idle_right":
-			if(changed_position){
+
+			switch(currentState){
+			case IDLE:
+				if(changed_position){
+					changed_position = false;
+				} else if(down_pressed){
+					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+				}
 				this.setMoveSpeed(0);
-				changed_position = false;
-				this.setOrientation(newOrientation);
-				this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
-			} else if(shift_pressed){
-				if(canMakeStep){
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED/2);
+				
+				break;
+				
+			case JUMP:
+				this.setMoveSpeed(0);
+				if(right_pressed || left_pressed){
+					if(right_pressed && this.currentAnimation.equals("right")){
+						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+					} else if(left_pressed && this.currentAnimation.equals("left")){
+						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
 					} else{
-						this.setMoveSpeed(MOVE_SPEED/2);
+						this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
 					}
-					this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
-					canMakeStep = false;
 				} else{
-					this.setMoveSpeed(0);
+					this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
 				}
-			} else if(down_pressed){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-				this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-			}
-			else{
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-//				System.out.printf("starts running: ");
-				this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "turning_left":
-		case "turning_right":
-			if(currentAnimation.isOver(false)){
+				break;
+				
+			case MOVE:
 				if(changed_position){
 					this.setMoveSpeed(0);
 					changed_position = false;
@@ -462,504 +587,736 @@ public class Player extends Character {
 					} else{
 						this.setMoveSpeed(0);
 					}
-				} else{
+				} else if(down_pressed){
 					if(this.getOrientation().equals("left")){
 						this.setMoveSpeed(-MOVE_SPEED);
 					} else{
 						this.setMoveSpeed(MOVE_SPEED);
 					}
+					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+				}
+				else{
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+//					System.out.printf("starts running: ");
 					this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "putting down sword_left":
+		case "putting down sword_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+		
+		case "running jump_left":
+		case "running jump_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				if(this.currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				if(this.currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				if(this.currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
 			
 		case "running start_left":
 		case "running start_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-//			System.out.printf(currentAnimation.getCurrentFrame() + ", ");
-			if(currentAnimation.isOver(false)){
-				if(changed_position){
-					changed_position = false;
-					this.setOrientation(newOrientation);
-					this.setCurrentAnimation("turn running_" + orientation, FRAME_DURATION);
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
 				} else{
-//					System.out.println();
-					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+					this.setMoveSpeed(MOVE_SPEED);
 				}
-			} 
+				if(currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						if(left_pressed){
+							this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(0);
+							this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
+						}
+					} else{
+						if(right_pressed){
+							this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+							this.setMoveSpeed(MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(0);
+							this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+						}
+					}
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+//				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
+				if(currentAnimation.isOver(false)){
+					if(changed_position){
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						this.setCurrentAnimation("turn running_" + orientation, FRAME_DURATION);
+					} else{
+//						System.out.println();
+						this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+					}
+				} 
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "running stop start_left":
+		case "running stop start_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
+					this.setMoveSpeed(0);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
+					this.setMoveSpeed(0);
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(changed_position){
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						this.setCurrentAnimation("turn running started_" + orientation, FRAME_DURATION);
+					} else{
+						this.currentState = PlayerState.IDLE;
+						this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "running stop_left":
+		case "running stop_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(currentAnimation.isOver(false)){
+					if(changed_position){
+						this.setMoveSpeed(0);
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
+						
+					} else{
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED);
+						}
+						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
 			break;
 			
 		case "running_left":
 		case "running_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(changed_position){
-				changed_position = false;
-				this.setOrientation(newOrientation);
-				this.setCurrentAnimation("turn running_" + orientation, FRAME_DURATION);
-			} else if(down_pressed){
-				this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running stop start_left":
-		case "running stop start_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(changed_position){
-					changed_position = false;
-					this.setOrientation(newOrientation);
-					this.setCurrentAnimation("turn running started_" + orientation, FRAME_DURATION);
-				} else{
-					this.currentState = PlayerState.IDLE;
-					this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
-				}
-			}
-			break;
-			
-		case "running stop_left":
-		case "running stop_right":
-			if(currentAnimation.isOver(false)){
-				if(changed_position){
-					this.setMoveSpeed(0);
-					changed_position = false;
-					this.setOrientation(newOrientation);
-					this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
-					
-				} else{
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED);
-					}
-					this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
-				}
-			}
-			break;
-			
-		case "turn running_left":
-		case "turn running_right":
-		case "turn running started_left":
-		case "turn running started_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(-MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-				this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
-				
-			}
-			break;
-			
-		case "walking a step_right":
-		case "walking a step_left":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED/2);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED/2);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "crouching down_left":
-		case "crouching down_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(changed_position){
-					changed_position = false;
-					this.currentState = PlayerState.IDLE;
-					this.setMoveSpeed(0);
-					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
-				}
-				if(canWalkCrouched){
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED/2);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED/2);
-					}
-					canWalkCrouched = false;
-					this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
-				} else{
-					this.setMoveSpeed(0);
-					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
-				}
-			}
-			break;
-			
-		case "crouching walk_left":
-		case "crouching walk_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED/2);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED/2);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "crouching idle_left":
-		case "crouching idle_right":
-			this.setMoveSpeed(0);
-			if(canWalkCrouched){
-				canWalkCrouched = false;
-				if(changed_position){
-					changed_position = false;
-				} else{
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED);
-					}
-					this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
-				}
-			}
-			if(!down_pressed){
-				this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "crouching up_left":
-		case "crouching up_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				canWalkCrouched = true;
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "scaling up start_left":
-		case "scaling up start_right":
-			if(right_pressed || left_pressed){
-				this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-			} else{
-				if(this.currentAnimation.isOver(false)){
-					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
-				}
-			}
-			break;
-			
-		case "scaling up_left":
-		case "scaling up_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
-			}
-			break;
-		
-		case "scaling down_left":
-		case "scaling down_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-//				if(right_pressed && this.getOrientation().equals("right")){
-//					this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-//				} else if(left_pressed && this.getOrientation().equals("left")){
-//					this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-//				} else{
-//					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
-//				}
-			}
-			break;
-		
-		case "simple jump_left":
-		case "simple jump_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running jump_left":
-		case "running jump_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			if(this.currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-				this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		default:
-			System.out.println("Unexpected animation");
-		}
-		this.moveCharacter();
-	}
-	
-	public void manageJumpState(){
-		switch(currentAnimation.getId()){
-		
-		case "turning_left":
-		case "turning_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running start_left":
-		case "running start_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					if(left_pressed){
-						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-						this.setMoveSpeed(-MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(0);
-						this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
-					}
-				} else{
-					if(right_pressed){
-						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-						this.setMoveSpeed(MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(0);
-						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-					}
-				}
-			}
-			break;
-			
-		case "running_left":
-		case "running_right":	
-			if(this.getOrientation().equals("left")){
-				if(left_pressed){
-					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-				} else{
-					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-				}
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				if(right_pressed){
-					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-				} else{
-					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-				}
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			break;
-			
-		case "turn running_left":
-		case "turn running_right":
-		case "turn running started_left":
-		case "turn running started_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(-MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				if(this.getOrientation().equals("left")){
-					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-					this.setMoveSpeed(MOVE_SPEED);
-				}
-			}
-			break;
-			
-		case "running stop start_left":
-		case "running stop start_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
-				this.setMoveSpeed(0);
-			}
-			break;
-			
-		case "running stop_left":
-		case "running stop_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "idle_left":
-		case "idle_right":
-			this.setMoveSpeed(0);
-			if(right_pressed || left_pressed){
-				this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-			} else{
-				System.out.println("scaling up start_" + orientation);
-				this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
-			}
-			
-			break;
-		
-		case "walking a step_right":
-		case "walking a step_left":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED/2);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED/2);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "crouching down_left":
-		case "crouching down_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "crouching idle_left":
-		case "crouching idle_right":
-			this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
-			this.setMoveSpeed(0);
-			break;
-			
-		case "crouching up_left":
-		case "crouching up_right":
-			this.setMoveSpeed(0);
-			if(currentAnimation.isOver(false)){
-				canWalkCrouched = true;
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "crouching walk_left":
-		case "crouching walk_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			if(currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "scaling up start_left":
-		case "scaling up start_right":
-			if(right_pressed || left_pressed){
-				this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-			} else{
-				if(this.currentAnimation.isOver(false)){
-					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
-				}
-			}
-			break;
-			
-		case "scaling up_left":
-		case "scaling up_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
-			}
-			break;
-		
-		case "scaling down_left":
-		case "scaling down_right":
-			if(this.currentAnimation.isOver(false)){
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-//				if(right_pressed && this.getOrientation().equals("right")){
-//					this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-//				} else if(left_pressed && this.getOrientation().equals("left")){
-//					this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-//				} else{
-//					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
-//				}
-			}
-			break;
-		
-		case "simple jump_left":
-		case "simple jump_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			if(this.currentAnimation.isOver(false)){
-				this.setMoveSpeed(0);
-				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
-			}
-			break;
-			
-		case "running jump_left":
-		case "running jump_right":
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(-MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(MOVE_SPEED);
-			}
-			
-			if(this.currentAnimation.isOver(false)){
+
+			switch(currentState){
+			case IDLE:
 				if(this.getOrientation().equals("left")){
 					this.setMoveSpeed(-MOVE_SPEED);
 				} else{
 					this.setMoveSpeed(MOVE_SPEED);
 				}
 				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					if(left_pressed){
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					} else{
+						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+					}
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					if(right_pressed){
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					} else{
+						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+					}
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				if(changed_position){
+					changed_position = false;
+					this.setOrientation(newOrientation);
+					this.setCurrentAnimation("turn running_" + orientation, FRAME_DURATION);
+				} else if(down_pressed){
+					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
 			}
 			break;
 			
+		case "scaling down_left":
+		case "scaling down_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "scaling fall_left":
+		case "scaling fall_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "scaling up start_left":
+		case "scaling up start_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(right_pressed || left_pressed){
+					if(right_pressed && orientation.equals("right")){
+						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+					} else if(left_pressed && orientation.equals("left")){
+						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+					} else{
+						if(this.currentAnimation.isOver(false)){
+							this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
+						}
+					}
+				} else{
+					if(this.currentAnimation.isOver(false)){
+						this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			case MOVE:
+				if(right_pressed || left_pressed){
+					if(right_pressed && orientation.equals("right")){
+						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+					} else if(left_pressed && orientation.equals("left")){
+						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+					} else{
+						if(this.currentAnimation.isOver(false)){
+							this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
+						}
+					}
+				} else{
+					if(this.currentAnimation.isOver(false)){
+						this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "scaling up_left":
+		case "scaling up_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "simple jump_left":
+		case "simple jump_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED);
+				}
+				
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "sword attacking_left":
+		case "sword attacking_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "taking sword out_left":
+		case "taking sword out_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "turn running_left":
+		case "turn running_right":
+		case "turn running started_left":
+		case "turn running started_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(-MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(-MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(MOVE_SPEED);
+				} else{
+					this.setMoveSpeed(-MOVE_SPEED);
+				}
+				if(currentAnimation.isOver(false)){
+					if(this.getOrientation().equals("left")){
+						this.setMoveSpeed(-MOVE_SPEED);
+					} else{
+						this.setMoveSpeed(MOVE_SPEED);
+					}
+					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+					
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "turning_left":
+		case "turning_right":
+
+			switch(currentState){
+			case IDLE:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(currentAnimation.isOver(false)){
+					if(changed_position){
+						this.setMoveSpeed(0);
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
+					} else if(shift_pressed){
+						if(canMakeStep){
+							if(this.getOrientation().equals("left")){
+								this.setMoveSpeed(-MOVE_SPEED/2);
+							} else{
+								this.setMoveSpeed(MOVE_SPEED/2);
+							}
+							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
+							canMakeStep = false;
+						} else{
+							this.setMoveSpeed(0);
+						}
+					} else{
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED);
+						}
+						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "walking a step_left":
+		case "walking a step_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				if(currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+		
 		default:
-			System.out.println("Unexpected animation");
+			System.out.println("ANIMATION NOT RECOGNIZED");
 			break;
 		}
-		this.moveCharacter();
-		
 	}
-
 }

@@ -192,31 +192,41 @@ public class LevelState extends State{
 				
 				if (c.intersects(bgE)) {
 					
+//					double minY = bgE.getBoundingBox().getMinY();
+//					double maxY = bgE.getBoundingBox().getMaxY();
+//					double playerMinY = c.getBoundingBox().getMinY();
+//					double playerMaxY = c.getBoundingBox().getMaxY();
+//					
+//					System.out.println("minY: " + minY + " - maxY: " + maxY);
+//					System.out.println("playerMinY: " + playerMinY + " - playerMaxY: " + playerMaxY);
+					
 					/* x axis */
-					if (c.getBoundingBox().getMinX() > bgE.getBoundingBox().getMaxX()) {
+					if (c.getBoundingBox().getMinX() >= bgE.getBoundingBox().getMaxX()) {
 						
 						/* Collision with wall in the character's left side */
+						System.out.println("Face stack collision detected (background)");
+						c.setMoveSpeed(0, "left");
 						
-						
-					} else if (c.getBoundingBox().getMaxX() < bgE.getBoundingBox().getMinX()) {
+					} else if (c.getBoundingBox().getMaxX() <= bgE.getBoundingBox().getMinX()) {
 						
 						/* Collision with wall in the character's right side */
+						System.out.println("Left stack collision detected (background)");
+						c.setMoveSpeed(0, "right");
 						
 					}
 					
 					/* y axis */
-					if (c.getBoundingBox().getMinY() > bgE.getBoundingBox().getMaxY()) {
+					if (c.getBoundingBox().getMinY() >= bgE.getBoundingBox().getMaxY()) {
 						
 						/* Collision with wall in the character's up side */
 						
 						
-					} else if (c.getBoundingBox().getMaxY() < bgE.getBoundingBox().getMinY()) {
+					} else if (c.getBoundingBox().getMaxY() <= bgE.getBoundingBox().getMinY()) {
 						
 						/* Collision with wall in the character's down side */
-						
+						System.out.println("Floor collision detected (background)");
+						c.setySpeed(0);
 					}
-					
-					c.setySpeed(0);
 					
 					bgE.setBoundingBoxColor(Color.YELLOW);
 					c.setBoundingBoxColor(Color.YELLOW);
@@ -231,32 +241,33 @@ public class LevelState extends State{
 			for (Entity fgE : fgEntities) {
 				if (fgE.intersects(c)) {
 					
-					
 					/* x axis */
-					if (c.getBoundingBox().getMinX() > fgE.getBoundingBox().getMaxX()) {
+					if (c.getBoundingBox().getMinX() >= fgE.getBoundingBox().getMaxX()) {
 						
 						/* Collision with wall in the character's left side */
+						System.out.println("Face stack collision detected (foreground)");
+						c.setMoveSpeed(0, "left");
 						
 						
-					} else if (c.getBoundingBox().getMaxX() < fgE.getBoundingBox().getMinX()) {
+					} else if (c.getBoundingBox().getMaxX() <= fgE.getBoundingBox().getMinX()) {
 						
 						/* Collision with wall in the character's right side */
-						
+						System.out.println("Left stack collision detected (foreground)");
+						c.setMoveSpeed(0, "right");
 					}
 					
 					/* y axis */
-					if (c.getBoundingBox().getMinY() > fgE.getBoundingBox().getMaxY()) {
+					if (c.getBoundingBox().getMinY() >= fgE.getBoundingBox().getMaxY()) {
 						
 						/* Collision with wall in the character's up side */
 						
 						
-					} else if (c.getBoundingBox().getMaxY() < fgE.getBoundingBox().getMinY()) {
+					} else if (c.getBoundingBox().getMaxY() <= fgE.getBoundingBox().getMinY()) {
 						
 						/* Collision with wall in the character's down side */
-						
+//						System.out.println("Floor collision detected (foreground)");
+						c.setySpeed(0);
 					}
-					
-					c.setySpeed(0);
 					
 					fgE.setBoundingBoxColor(Color.YELLOW);
 					c.setBoundingBoxColor(Color.YELLOW);

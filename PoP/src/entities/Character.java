@@ -18,6 +18,8 @@ public class Character extends Entity {
 	protected double jumpSpeed;
 	protected double fallSpeed;
 	protected double maxFallSpeed;
+	protected boolean leftBlocked;
+	protected boolean rightBlocked;
 	
 	/* Animations */
 	protected String orientation;
@@ -36,6 +38,12 @@ public class Character extends Entity {
 	}
 	
 	public void moveCharacter(){
+		
+		/* If character is blocked sideways, he cant move horizontally */
+		if (leftBlocked || rightBlocked) {
+			xSpeed = 0;
+		}
+		
 		setX(x + xSpeed);
 		setY(y + ySpeed);
 		this.boundingBox.translate(xSpeed, ySpeed);
@@ -107,6 +115,33 @@ public class Character extends Entity {
 	}
 
 	public void setMoveSpeed(int moveSpeed) {
+		
+		/* Unlocks player's movement in one direction */
+		if (moveSpeed > 0 && leftBlocked) {
+			leftBlocked = false;
+		} else if (moveSpeed < 0 && rightBlocked) {
+			rightBlocked = false;
+		}
+		
+		/* Sets player's horizontal speed */
+		this.xSpeed = moveSpeed;
+	}
+	
+	public void setMoveSpeed(int moveSpeed, String blockedSide) {
+		
+		/* Unlocks player's movement in one direction */
+//		if (moveSpeed > 0 && leftBlocked) {
+//			leftBlocked = false;
+//		} else if (moveSpeed < 0 && rightBlocked) {
+//			rightBlocked = false;
+//		}
+		
+		/* Sets player's horizontal speed */
+		this.xSpeed = moveSpeed;
+
+		/* Blocks player's movement in one direction */
+		this.leftBlocked = blockedSide.equals("left");
+		this.rightBlocked = blockedSide.equals("right");
 		this.xSpeed = moveSpeed;
 	}
 
@@ -168,8 +203,21 @@ public class Character extends Entity {
 	/**
 	 * @param xSpeed the xSpeed to set
 	 */
-	public void setxSpeed(int xSpeed) {
+	public void setxSpeed(int xSpeed, String blockedSide) {
+		
+		/* Unlocks player's movement in one direction */
+		if (xSpeed > 0 && leftBlocked) {
+			leftBlocked = false;
+		} else if (xSpeed < 0 && rightBlocked) {
+			rightBlocked = false;
+		}
+		
+		/* Sets player's horizontal speed */
 		this.xSpeed = xSpeed;
+
+		/* Blocks player's movement in one direction */
+		this.leftBlocked = blockedSide.equals("left");
+		this.rightBlocked = blockedSide.equals("right");
 	}
 
 	/**

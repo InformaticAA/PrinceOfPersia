@@ -83,28 +83,6 @@ public class Player extends Character {
 		
 		manageAnimations();
 		this.moveCharacter();
-		
-//		switch (currentState) {
-//		
-//		case IDLE:
-//			
-//			manageIdleState();
-//			break;
-//			
-//		case MOVE:
-//			
-//			manageMoveState();
-//			break;
-//			
-//		case JUMP:
-//			
-//			manageJumpState();
-//			break;
-//			
-//		default:
-//			
-//			break;
-//		}
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){

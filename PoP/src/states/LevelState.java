@@ -112,8 +112,8 @@ public class LevelState extends State{
 		remainingTime = remainingTime - elapsedTime;
 
 		manageKeys();
-		checkCollisions(elapsedTime);
 		currentLevel.update(elapsedTime);
+		checkCollisions(elapsedTime);
 	}
 
 	@Override
@@ -199,11 +199,19 @@ public class LevelState extends State{
 						System.out.println("Face stack collision detected (background)");
 						c.setMoveSpeed(0, "left");
 						
+						/* Sets new animation for player */
+						c.setCurrentAnimation("running collided_left", 4);
+						c.enableBoundingBox();
+						
 					} else if (c.getBoundingBox().getMaxX() <= bgE.getBoundingBox().getMinX()) {
 						
 						/* Collision with wall in the character's right side */
 						System.out.println("Left stack collision detected (background)");
 						c.setMoveSpeed(0, "right");
+						
+						/* Sets new animation for player */
+						c.setCurrentAnimation("running collided_left", 4);
+						c.enableBoundingBox();
 						
 					}
 					

@@ -98,11 +98,11 @@ public abstract class Entity {
 		boolean intersection = false;
 		
 		/* Creates a copy of the actual entity */
-		Entity newEntity = entity.copy();
-		newEntity.update(elapsedTime);
-		Rectangle r1 = newEntity.getBoundingBox();
+//		Entity newEntity = entity.copy();
+//		newEntity.update(elapsedTime);
+//		Rectangle r1 = newEntity.getBoundingBox();
 
-//		Rectangle r1 = boundingBox;
+		Rectangle r1 = boundingBox;
 		Rectangle r2 = entity.getBoundingBox();
 		
 		if (r1 != null && r2 != null) {

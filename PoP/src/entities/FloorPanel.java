@@ -30,4 +30,9 @@ public class FloorPanel extends Entity{
 		}
 	}
 
+	@Override
+	public Entity copy() {
+		return null;
+	}
+
 }

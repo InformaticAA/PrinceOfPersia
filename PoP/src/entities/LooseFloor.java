@@ -76,4 +76,9 @@ public class LooseFloor extends Entity {
 		g.setColor(Color.BLACK);
 		
 	}
+
+	@Override
+	public Entity copy() {
+		return null;
+	}
 }

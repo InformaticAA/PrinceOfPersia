@@ -13,4 +13,9 @@ public class Base extends Entity{
 		enableBoundingBox(this.x,this.y,currentAnimation.getImage().getWidth(),
 				currentAnimation.getImage().getHeight());
 	}
+
+	@Override
+	public Entity copy() {
+		return null;
+	}
 }

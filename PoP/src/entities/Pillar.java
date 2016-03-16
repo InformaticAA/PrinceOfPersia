@@ -21,4 +21,9 @@ public class Pillar extends Entity{
 		}
 	}
 
+	@Override
+	public Entity copy() {
+		return null;
+	}
+
 }

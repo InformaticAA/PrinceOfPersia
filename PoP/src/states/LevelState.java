@@ -112,7 +112,7 @@ public class LevelState extends State{
 		remainingTime = remainingTime - elapsedTime;
 
 		manageKeys();
-		checkCollisions();
+		checkCollisions(elapsedTime);
 		currentLevel.update(elapsedTime);
 	}
 
@@ -178,7 +178,7 @@ public class LevelState extends State{
 		
 	}
 
-	private void checkCollisions() {
+	private void checkCollisions(long elapsedTime) {
 		
 		/* Checks for collisions in the currentRoom */
 		ArrayList<Entity> bgEntities = currentRoom.getBackground();
@@ -190,15 +190,7 @@ public class LevelState extends State{
 			/* Collisions with background */
 			for (Entity bgE : bgEntities) {
 				
-				if (c.intersects(bgE)) {
-					
-//					double minY = bgE.getBoundingBox().getMinY();
-//					double maxY = bgE.getBoundingBox().getMaxY();
-//					double playerMinY = c.getBoundingBox().getMinY();
-//					double playerMaxY = c.getBoundingBox().getMaxY();
-//					
-//					System.out.println("minY: " + minY + " - maxY: " + maxY);
-//					System.out.println("playerMinY: " + playerMinY + " - playerMaxY: " + playerMaxY);
+				if (c.intersects(bgE, elapsedTime)) {
 					
 					/* x axis */
 					if (c.getBoundingBox().getMinX() >= bgE.getBoundingBox().getMaxX()) {
@@ -226,6 +218,10 @@ public class LevelState extends State{
 						/* Collision with wall in the character's down side */
 						System.out.println("Floor collision detected (background)");
 						c.setySpeed(0);
+					} else {
+						
+						/* Player is not colliding with anything, thus he must fall */
+						c.setySpeed(c.getGravity());
 					}
 					
 					bgE.setBoundingBoxColor(Color.YELLOW);
@@ -239,7 +235,7 @@ public class LevelState extends State{
 			
 			/* Collisions with foreground */
 			for (Entity fgE : fgEntities) {
-				if (fgE.intersects(c)) {
+				if (c.intersects(fgE, elapsedTime)) {
 					
 					/* x axis */
 					if (c.getBoundingBox().getMinX() >= fgE.getBoundingBox().getMaxX()) {

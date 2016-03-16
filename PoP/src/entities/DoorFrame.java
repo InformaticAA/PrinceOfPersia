@@ -9,4 +9,9 @@ public class DoorFrame extends Entity{
 		animations = loader.getAnimations("door_frame");
 		currentAnimation = animations.get(frame_type);
 	}
+
+	@Override
+	public Entity copy() {
+		return null;
+	}
 }

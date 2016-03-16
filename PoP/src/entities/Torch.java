@@ -13,5 +13,10 @@ public class Torch extends Entity {
 		this.setCurrentAnimation("fire", FRAME_DURATION);
 		currentAnimation.setRandomCurrentFrame();
 	}
+
+	@Override
+	public Entity copy() {
+		return null;
+	}
 	
 }

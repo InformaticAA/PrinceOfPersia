@@ -1,7 +1,9 @@
 package entities;
 
 import java.awt.Rectangle;
+import java.util.Hashtable;
 
+import framework.Animation;
 import framework.Loader;
 
 public class Character extends Entity {
@@ -10,14 +12,17 @@ public class Character extends Entity {
 	protected int hp;
 	protected int maxHp;
 	
-	/* Movement */
+	/* Movement constants */
+	protected final int gravity = 2;
+	protected final int maxxSpeed = 10;
+	protected final int maxySpeed = 7;
+	protected final int maxfightSpeed = 3;
+	protected final int jumpSpeed = 5;
+	protected final int fallSpeed = 3;
+
+	/* Movement variables */
 	protected int xSpeed;
 	protected int ySpeed;
-	protected double maxSpeed;
-	protected double fightSpeed;
-	protected double jumpSpeed;
-	protected double fallSpeed;
-	protected double maxFallSpeed;
 	protected boolean leftBlocked;
 	protected boolean rightBlocked;
 	
@@ -55,7 +60,7 @@ public class Character extends Entity {
 	 * false otherwise
 	 */
 	@Override
-	public boolean intersects(Entity entity) {
+	public boolean intersects(Entity entity, long elapsedTime) {
 		boolean intersection = false;
 		
 		/* Creates the bounding box for the next step */
@@ -78,42 +83,6 @@ public class Character extends Entity {
 		return intersection;
 	}
 	
-	public int getHp() {
-		return hp;
-	}
-
-	public void setHp(int hp) {
-		this.hp = hp;
-	}
-
-	public int getMaxHp() {
-		return maxHp;
-	}
-
-	public void setMaxHp(int maxHp) {
-		this.maxHp = maxHp;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getMoveSpeed() {
-		return xSpeed;
-	}
-
 	public void setMoveSpeed(int moveSpeed) {
 		
 		/* Unlocks player's movement in one direction */
@@ -129,13 +98,6 @@ public class Character extends Entity {
 	
 	public void setMoveSpeed(int moveSpeed, String blockedSide) {
 		
-		/* Unlocks player's movement in one direction */
-//		if (moveSpeed > 0 && leftBlocked) {
-//			leftBlocked = false;
-//		} else if (moveSpeed < 0 && rightBlocked) {
-//			rightBlocked = false;
-//		}
-		
 		/* Sets player's horizontal speed */
 		this.xSpeed = moveSpeed;
 
@@ -145,54 +107,34 @@ public class Character extends Entity {
 		this.xSpeed = moveSpeed;
 	}
 
-	public double getMaxSpeed() {
-		return maxSpeed;
+	/**
+	 * @return the hp
+	 */
+	public int getHp() {
+		return hp;
 	}
 
-	public void setMaxSpeed(double maxSpeed) {
-		this.maxSpeed = maxSpeed;
+	/**
+	 * @param hp the hp to set
+	 */
+	public void setHp(int hp) {
+		this.hp = hp;
 	}
 
-	public double getFightSpeed() {
-		return fightSpeed;
+	/**
+	 * @return the maxHp
+	 */
+	public int getMaxHp() {
+		return maxHp;
 	}
 
-	public void setFightSpeed(double fightSpeed) {
-		this.fightSpeed = fightSpeed;
+	/**
+	 * @param maxHp the maxHp to set
+	 */
+	public void setMaxHp(int maxHp) {
+		this.maxHp = maxHp;
 	}
 
-	public double getJumpSpeed() {
-		return ySpeed;
-	}
-
-	public void setJumpSpeed(int ySpeed) {
-		this.ySpeed = ySpeed;
-	}
-
-	public double getFallSpeed() {
-		return fallSpeed;
-	}
-
-	public void setFallSpeed(double fallSpeed) {
-		this.fallSpeed = fallSpeed;
-	}
-
-	public double getMaxFallSpeed() {
-		return maxFallSpeed;
-	}
-
-	public void setMaxFallSpeed(double maxFallSpeed) {
-		this.maxFallSpeed = maxFallSpeed;
-	}
-
-	public String getOrientation() {
-		return orientation;
-	}
-
-	public void setOrientation(String facingRight) {
-		this.orientation = facingRight;
-	}
-	
 	/**
 	 * @return the xSpeed
 	 */
@@ -203,21 +145,8 @@ public class Character extends Entity {
 	/**
 	 * @param xSpeed the xSpeed to set
 	 */
-	public void setxSpeed(int xSpeed, String blockedSide) {
-		
-		/* Unlocks player's movement in one direction */
-		if (xSpeed > 0 && leftBlocked) {
-			leftBlocked = false;
-		} else if (xSpeed < 0 && rightBlocked) {
-			rightBlocked = false;
-		}
-		
-		/* Sets player's horizontal speed */
+	public void setxSpeed(int xSpeed) {
 		this.xSpeed = xSpeed;
-
-		/* Blocks player's movement in one direction */
-		this.leftBlocked = blockedSide.equals("left");
-		this.rightBlocked = blockedSide.equals("right");
 	}
 
 	/**
@@ -235,10 +164,97 @@ public class Character extends Entity {
 	}
 
 	/**
-	 * @param jumpSpeed the jumpSpeed to set
+	 * @return the leftBlocked
 	 */
-	public void setJumpSpeed(double jumpSpeed) {
-		this.jumpSpeed = jumpSpeed;
+	public boolean isLeftBlocked() {
+		return leftBlocked;
 	}
-	
+
+	/**
+	 * @param leftBlocked the leftBlocked to set
+	 */
+	public void setLeftBlocked(boolean leftBlocked) {
+		this.leftBlocked = leftBlocked;
+	}
+
+	/**
+	 * @return the rightBlocked
+	 */
+	public boolean isRightBlocked() {
+		return rightBlocked;
+	}
+
+	/**
+	 * @param rightBlocked the rightBlocked to set
+	 */
+	public void setRightBlocked(boolean rightBlocked) {
+		this.rightBlocked = rightBlocked;
+	}
+
+	/**
+	 * @return the orientation
+	 */
+	public String getOrientation() {
+		return orientation;
+	}
+
+	/**
+	 * @param orientation the orientation to set
+	 */
+	public void setOrientation(String orientation) {
+		this.orientation = orientation;
+	}
+
+	/**
+	 * @return the gravity
+	 */
+	public int getGravity() {
+		return gravity;
+	}
+
+	/**
+	 * @return the maxxSpeed
+	 */
+	public int getMaxxSpeed() {
+		return maxxSpeed;
+	}
+
+	/**
+	 * @return the maxySpeed
+	 */
+	public int getMaxySpeed() {
+		return maxySpeed;
+	}
+
+	/**
+	 * @return the maxfightSpeed
+	 */
+	public int getMaxfightSpeed() {
+		return maxfightSpeed;
+	}
+
+	/**
+	 * @return the jumpSpeed
+	 */
+	public int getJumpSpeed() {
+		return jumpSpeed;
+	}
+
+	/**
+	 * @return the fallSpeed
+	 */
+	public int getFallSpeed() {
+		return fallSpeed;
+	}
+
+	@Override
+	public Entity copy() {
+		Character newCharacter = new Character(x, y, loader, orientation);
+		
+		Hashtable<String, Animation> newAnimations = this.getAnimations();
+		
+		
+		return newCharacter;
+	}
+
 }

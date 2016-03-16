@@ -38,4 +38,9 @@ public class Door extends Entity{
 		
 	}
 
+	@Override
+	public Entity copy() {
+		return null;
+	}
+
 }

@@ -94,10 +94,15 @@ public abstract class Entity {
 	 * @return true if both rectangle collide,
 	 * false otherwise
 	 */
-	public boolean intersects(Entity entity) {
+	public boolean intersects(Entity entity, long elapsedTime) {
 		boolean intersection = false;
 		
-		Rectangle r1 = boundingBox;
+		/* Creates a copy of the actual entity */
+		Entity newEntity = entity.copy();
+		newEntity.update(elapsedTime);
+		Rectangle r1 = newEntity.getBoundingBox();
+
+//		Rectangle r1 = boundingBox;
 		Rectangle r2 = entity.getBoundingBox();
 		
 		if (r1 != null && r2 != null) {
@@ -177,5 +182,7 @@ public abstract class Entity {
 	public void setBoundingBoxColor(Color boundingBoxColor) {
 		this.boundingBoxColor = boundingBoxColor;
 	}
-
+	
+	public abstract Entity copy();
+	
 }

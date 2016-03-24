@@ -8,7 +8,7 @@ import input.Key;
 
 public class Player extends Character {
 
-	private enum PlayerState {IDLE, MOVE, JUMP, COMBAT};
+	private enum PlayerState {IDLE, MOVE, JUMP, COMBAT, COLLIDED, DIED};
 	
 	/* Constants */
 	private final String RUNNING_START = "running start";
@@ -57,32 +57,40 @@ public class Player extends Character {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if(!right_pressed && !left_pressed && !up_pressed){
+		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED){
 			currentState = PlayerState.IDLE;
 		} 
 
-		if(right_pressed || left_pressed){
-			if(right_pressed && !left_pressed){
-				if(this.getOrientation().equals("left") && !changed_position){
-					this.currentState = PlayerState.IDLE;
-				} else{
-					this.currentState = PlayerState.MOVE;
-				}
-			} else if(!right_pressed && left_pressed && !changed_position){
-				if(this.getOrientation().equals("right")){
-					this.currentState = PlayerState.IDLE;
-				} else{
-					this.currentState = PlayerState.MOVE;
-				}
-			} 
+		if(this.currentState != PlayerState.COLLIDED){
+			if(right_pressed || left_pressed){
+				if(right_pressed && !left_pressed){
+					if(this.getOrientation().equals("left") && !changed_position){
+						this.currentState = PlayerState.IDLE;
+					} else{
+						this.currentState = PlayerState.MOVE;
+					}
+				} else if(!right_pressed && left_pressed && !changed_position){
+					if(this.getOrientation().equals("right")){
+						this.currentState = PlayerState.IDLE;
+					} else{
+						this.currentState = PlayerState.MOVE;
+					}
+				} 
+			}
 		}
 		
-		if(up_pressed){
+		if(up_pressed && currentState != PlayerState.COLLIDED){
 			this.currentState = PlayerState.JUMP;
 		}
 		
 		manageAnimations();
 		this.moveCharacter();
+	}
+	
+	public void setCollided(){
+		if(this.currentState != PlayerState.COMBAT){
+			this.currentState = PlayerState.COLLIDED;
+		}
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
@@ -179,6 +187,10 @@ public class Player extends Character {
 				
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLLIDED EN POS TO RARA");
+				break;
+				
 			default:
 				
 				break;
@@ -231,6 +243,15 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -273,6 +294,10 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLLIDED EN POS TO RARA");
+				break;
+				
 			default:
 				
 				break;
@@ -305,6 +330,15 @@ public class Player extends Character {
 					canWalkCrouched = true;
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
+				break;
+				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:
@@ -358,6 +392,15 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -378,6 +421,10 @@ public class Player extends Character {
 				
 			case MOVE:
 				
+				break;
+				
+			case COLLIDED:
+				System.out.println("COLLIDED EN ANIMATION TO RARA");
 				break;
 				
 			default:
@@ -402,6 +449,10 @@ public class Player extends Character {
 				
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLLIDED EN ANIMATION TO RARA");
+				break;
+				
 			default:
 				
 				break;
@@ -421,6 +472,10 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
 				
 				break;
 				
@@ -446,6 +501,10 @@ public class Player extends Character {
 				
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLLIDED EN POS TO RARA");
+				break;
+				
 			default:
 				
 				break;
@@ -465,6 +524,10 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
 				
 				break;
 				
@@ -490,6 +553,10 @@ public class Player extends Character {
 				
 				break;
 				
+			case COLLIDED:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -509,6 +576,10 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
 				
 				break;
 				
@@ -584,6 +655,10 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+
+				break;
+				
 			default:
 				
 				break;
@@ -604,6 +679,88 @@ public class Player extends Character {
 				
 			case MOVE:
 				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "running collided_left":
+		case "running collided_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case COLLIDED:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.currentState = PlayerState.IDLE;
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "running jump collided_left":
+		case "running jump collided_right":
+
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case COLLIDED:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.currentState = PlayerState.IDLE;
+				}
 				break;
 				
 			default:
@@ -665,6 +822,11 @@ public class Player extends Character {
 					}
 					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
 				}
+				break;
+				
+			case COLLIDED:
+				this.setMoveSpeed(0);
+				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:
@@ -739,6 +901,15 @@ public class Player extends Character {
 				} 
 				break;
 				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -789,6 +960,15 @@ public class Player extends Character {
 						this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
 					}
 				}
+				break;
+				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:
@@ -844,6 +1024,15 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -897,6 +1086,15 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -930,6 +1128,10 @@ public class Player extends Character {
 			default:
 				
 				break;
+				
+			case COLLIDED:
+				System.out.println("COLISIONO EN POS TO RARA");
+				break;
 			}
 			break;
 			
@@ -946,6 +1148,10 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
 				
 				break;
 				
@@ -1002,6 +1208,10 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLISIONO EN POS TO RARA");
+				break;
+				
 			default:
 				
 				break;
@@ -1029,6 +1239,10 @@ public class Player extends Character {
 				if(this.currentAnimation.isOver(false)){
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
+				break;
+				
+			case COLLIDED:
+				System.out.println("COLISIONO EN UNA ANIMACION TO RARA");
 				break;
 				
 			default:
@@ -1080,6 +1294,11 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				this.setMoveSpeed(0);
+				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -1102,6 +1321,10 @@ public class Player extends Character {
 				
 				break;
 				
+			case COLLIDED:
+
+				break;
+				
 			default:
 				
 				break;
@@ -1121,6 +1344,10 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
 				
 				break;
 				
@@ -1186,6 +1413,15 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
 			default:
 				
 				break;
@@ -1240,6 +1476,10 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLISIONO EN UNA POS TO RARA");
+				break;
+				
 			default:
 				
 				break;
@@ -1284,6 +1524,15 @@ public class Player extends Character {
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
+				break;
+				
+			case COLLIDED:
+				if(this.getOrientation().equals("left")){
+					this.setMoveSpeed(-MOVE_SPEED/2);
+				} else{
+					this.setMoveSpeed(MOVE_SPEED/2);
+				}
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:

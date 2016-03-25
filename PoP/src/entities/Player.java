@@ -30,6 +30,8 @@ public class Player extends Character {
 	private boolean canMakeStep;
 	private boolean canWalkCrouched;
 	
+	private boolean enemySaw;
+	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
 		animations = loader.getAnimations("Dastan");
@@ -51,17 +53,19 @@ public class Player extends Character {
 		
 		this.canMakeStep = true;
 		this.canWalkCrouched = true;
+		
+		this.enemySaw = false;
 	}
 	
 	@Override
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED){
+		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
 			currentState = PlayerState.IDLE;
 		} 
 
-		if(this.currentState != PlayerState.COLLIDED){
+		if(this.currentState != PlayerState.COLLIDED && this.currentState != PlayerState.COMBAT){
 			if(right_pressed || left_pressed){
 				if(right_pressed && !left_pressed){
 					if(this.getOrientation().equals("left") && !changed_position){
@@ -79,7 +83,7 @@ public class Player extends Character {
 			}
 		}
 		
-		if(up_pressed && currentState != PlayerState.COLLIDED){
+		if(up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
 			this.currentState = PlayerState.JUMP;
 		}
 		
@@ -91,6 +95,10 @@ public class Player extends Character {
 		if(this.currentState != PlayerState.COMBAT){
 			this.currentState = PlayerState.COLLIDED;
 		}
+	} 
+	
+	public void isEnemySaw(boolean isSaw){
+		this.enemySaw = isSaw;
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
@@ -191,6 +199,10 @@ public class Player extends Character {
 				System.out.println("COLLIDED EN POS TO RARA");
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -252,6 +264,10 @@ public class Player extends Character {
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -298,6 +314,10 @@ public class Player extends Character {
 				System.out.println("COLLIDED EN POS TO RARA");
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -339,6 +359,10 @@ public class Player extends Character {
 					this.setMoveSpeed(MOVE_SPEED/2);
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			case COMBAT:
+				
 				break;
 				
 			default:
@@ -401,6 +425,10 @@ public class Player extends Character {
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -426,6 +454,11 @@ public class Player extends Character {
 			case COLLIDED:
 				System.out.println("COLLIDED EN ANIMATION TO RARA");
 				break;
+				
+				
+			case COMBAT:
+				break;
+				
 				
 			default:
 				
@@ -479,6 +512,11 @@ public class Player extends Character {
 				
 				break;
 				
+			case COMBAT:
+
+				break;
+				
+				
 			default:
 				
 				break;
@@ -503,6 +541,10 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				System.out.println("COLLIDED EN POS TO RARA");
+				break;
+				
+			case COMBAT:
+
 				break;
 				
 			default:
@@ -531,6 +573,10 @@ public class Player extends Character {
 				
 				break;
 				
+			case COMBAT:
+
+				break;
+				
 			default:
 				
 				break;
@@ -556,6 +602,11 @@ public class Player extends Character {
 			case COLLIDED:
 				
 				break;
+				
+			case COMBAT:
+
+				break;
+				
 				
 			default:
 				
@@ -583,6 +634,11 @@ public class Player extends Character {
 				
 				break;
 				
+			case COMBAT:
+
+				break;
+				
+				
 			default:
 				
 				break;
@@ -594,69 +650,86 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(changed_position){
-					changed_position = false;
-				} else if(down_pressed){
-					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-				}
 				this.setMoveSpeed(0);
-				
+				if(!enemySaw){
+					if(changed_position){
+						changed_position = false;
+					} else if(down_pressed){
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+					}
+				} else{
+					this.currentState = PlayerState.COMBAT;
+				}
 				break;
 				
 			case JUMP:
 				this.setMoveSpeed(0);
-				if(right_pressed || left_pressed){
-					if(right_pressed && this.currentAnimation.equals("right")){
-						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-					} else if(left_pressed && this.currentAnimation.equals("left")){
-						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+				if(!enemySaw){
+					if(right_pressed || left_pressed){
+						if(right_pressed && this.currentAnimation.equals("right")){
+							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+						} else if(left_pressed && this.currentAnimation.equals("left")){
+							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+						} else{
+							this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+						}
 					} else{
 						this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
 					}
 				} else{
-					this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+					this.currentState = PlayerState.COMBAT;
 				}
 				break;
 				
 			case MOVE:
-				if(changed_position){
-					this.setMoveSpeed(0);
-					changed_position = false;
-					this.setOrientation(newOrientation);
-					this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
-				} else if(shift_pressed){
-					if(canMakeStep){
-						if(this.getOrientation().equals("left")){
-							this.setMoveSpeed(-MOVE_SPEED/2);
-						} else{
-							this.setMoveSpeed(MOVE_SPEED/2);
-						}
-						this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
-						canMakeStep = false;
-					} else{
+				this.setMoveSpeed(0);
+				if(!enemySaw){
+					if(changed_position){
 						this.setMoveSpeed(0);
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
+					} else if(shift_pressed){
+						if(canMakeStep){
+							if(this.getOrientation().equals("left")){
+								this.setMoveSpeed(-MOVE_SPEED/2);
+							} else{
+								this.setMoveSpeed(MOVE_SPEED/2);
+							}
+							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
+							canMakeStep = false;
+						} else{
+							this.setMoveSpeed(0);
+						}
+					} else if(down_pressed){
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED);
+						}
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 					}
-				} else if(down_pressed){
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+					else{
+						if(this.getOrientation().equals("left")){
+							this.setMoveSpeed(-MOVE_SPEED);
+						} else{
+							this.setMoveSpeed(MOVE_SPEED);
+						}
+	//					System.out.printf("starts running: ");
+						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 					}
-					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-				}
-				else{
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED);
-					}
-//					System.out.printf("starts running: ");
-					this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
+				} else{
+					this.currentState = PlayerState.COMBAT;
 				}
 				break;
 				
 			case COLLIDED:
 
+				break;
+				
+			case COMBAT:
+				this.setMoveSpeed(0);
+				this.setCurrentAnimation("taking sword out_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:
@@ -683,6 +756,14 @@ public class Player extends Character {
 				
 			case COLLIDED:
 
+				break;
+				
+			case COMBAT:
+				this.setMoveSpeed(0);
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.currentState = PlayerState.IDLE;
+				}
 				break;
 				
 			default:
@@ -724,6 +805,10 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -762,6 +847,11 @@ public class Player extends Character {
 					this.currentState = PlayerState.IDLE;
 				}
 				break;
+				
+			case COMBAT:
+			
+				break;
+				
 				
 			default:
 				
@@ -827,6 +917,10 @@ public class Player extends Character {
 			case COLLIDED:
 				this.setMoveSpeed(0);
 				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			case COMBAT:
+				
 				break;
 				
 			default:
@@ -910,6 +1004,10 @@ public class Player extends Character {
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -971,6 +1069,10 @@ public class Player extends Character {
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -1025,12 +1127,11 @@ public class Player extends Character {
 				break;
 				
 			case COLLIDED:
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
-				}
-				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				
+				break;
+				
+			case COMBAT:
+				
 				break;
 				
 			default:
@@ -1095,6 +1196,10 @@ public class Player extends Character {
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -1125,13 +1230,20 @@ public class Player extends Character {
 				}
 				break;
 				
+			case COLLIDED:
+				System.out.println("COLISIONO EN POS TO RARA");
+				break;
+				
+			case COMBAT:
+				
+				break;
+				
+				
 			default:
 				
 				break;
 				
-			case COLLIDED:
-				System.out.println("COLISIONO EN POS TO RARA");
-				break;
+			
 			}
 			break;
 			
@@ -1152,6 +1264,10 @@ public class Player extends Character {
 				break;
 				
 			case COLLIDED:
+				
+				break;
+				
+			case COMBAT:
 				
 				break;
 				
@@ -1212,6 +1328,11 @@ public class Player extends Character {
 				System.out.println("COLISIONO EN POS TO RARA");
 				break;
 				
+			case COMBAT:
+				
+				break;
+					
+				
 			default:
 				
 				break;
@@ -1243,6 +1364,10 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				System.out.println("COLISIONO EN UNA ANIMACION TO RARA");
+				break;
+				
+			case COMBAT:
+				
 				break;
 				
 			default:
@@ -1325,6 +1450,40 @@ public class Player extends Character {
 
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "sword idle_left":
+		case "sword idle_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -1349,6 +1508,13 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				
+				break;
+				
+			case COMBAT:
+				this.setMoveSpeed(0);
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+				}
 				break;
 				
 			default:
@@ -1422,6 +1588,10 @@ public class Player extends Character {
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
+			case COMBAT:
+				
+				break;
+				
 			default:
 				
 				break;
@@ -1480,6 +1650,11 @@ public class Player extends Character {
 				System.out.println("COLISIONO EN UNA POS TO RARA");
 				break;
 				
+			case COMBAT:
+				
+				break;
+					
+				
 			default:
 				
 				break;
@@ -1533,6 +1708,10 @@ public class Player extends Character {
 					this.setMoveSpeed(MOVE_SPEED/2);
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			case COMBAT:
+				
 				break;
 				
 			default:

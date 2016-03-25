@@ -48,7 +48,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(1, 9);
 			
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
@@ -57,6 +57,7 @@ public class LevelState extends State{
 			player.setySpeed(4);
 			
 			currentRoom.addCharacter(player);
+			player.isEnemySaw(true);
 		}
 		
 		else{

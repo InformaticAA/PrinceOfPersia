@@ -17,6 +17,12 @@ room 1 8
 ;;;;;;;;;
 ;;;;;;;;;
 
+room 1 9
+;;;;;;;;;
+;;;;;;;;;
+rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b
+;;;;;;;;;
+
 
 
 - = nothing

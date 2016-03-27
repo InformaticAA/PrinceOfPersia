@@ -175,7 +175,15 @@ public class Player extends Character {
 			down_pressed = true;
 			
 		} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
-			shift_pressed = true;
+			if(this.currentState != PlayerState.COMBAT){
+				shift_pressed = true;
+			} else{
+				if(!this.combatAttack){
+					this.combatCanAttack = true;
+					this.combatAttack = true;
+				}
+			}
+			
 		} else if(key_pressed == keys_mapped.get(Key.D)){
 			System.out.println("State: " + this.currentState + "\n" + 
 					"Animation: " + this.getCurrentAnimation().getId() + "\n" + 
@@ -214,6 +222,7 @@ public class Player extends Character {
 			
 		} else if(key_released == keys_mapped.get(Key.SHIFT)){
 			shift_pressed = false;
+			combatAttack = false;
 		}
 	}
 	
@@ -1472,6 +1481,105 @@ public class Player extends Character {
 			}
 			break;
 			
+		case "sword attack start_left":
+		case "sword attack start_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("sword attack end_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "sword attack end_left":
+		case "sword attack end_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "sword attack up start_left":
+		case "sword attack up start_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("sword attack end_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
 		case "sword attacking_left":
 		case "sword attacking_right":
 
@@ -1525,7 +1633,12 @@ public class Player extends Character {
 			case COMBAT:
 				if(this.currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
-					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					if(this.combatCanAttack && this.combatAttack){
+						this.combatCanAttack = false;
+						this.setCurrentAnimation("sword attack up start_" + orientation, FRAME_DURATION);
+					} else{
+						this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					}
 				}
 				break;
 				
@@ -1568,6 +1681,9 @@ public class Player extends Character {
 				} else if(this.combatCanDefense && combatDefense){
 					this.combatCanDefense = false;
 					this.setCurrentAnimation("sword defense start_" + orientation, FRAME_DURATION);
+				} else if(this.combatCanAttack && this.combatAttack){
+					this.combatCanAttack = false;
+					this.setCurrentAnimation("sword attack start_" + orientation, FRAME_DURATION);
 				}
 				
 				break;

@@ -1502,6 +1502,39 @@ public class Player extends Character {
 			}
 			break;
 			
+		case "sword defense start_left":
+		case "sword defense start_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
 		case "sword idle_left":
 		case "sword idle_right":
 
@@ -1526,23 +1559,15 @@ public class Player extends Character {
 				this.setMoveSpeed(0);
 				if(this.combatCanMove && combatStepRight){
 					this.combatCanMove = false;
-					if(this.getOrientation().equals("right")){
-						this.setMoveSpeed(-MOVE_SPEED/2);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED/2);
-					}
+					this.setMoveSpeed(MOVE_SPEED);
 					this.setCurrentAnimation("sword walking_" + orientation, FRAME_DURATION);
 				} else if(this.combatCanMove && combatStepLeft){
 					this.combatCanMove = false;
-					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED/2);
-					} else{
-						this.setMoveSpeed(MOVE_SPEED/2);
-					}
+					this.setMoveSpeed(-MOVE_SPEED);
 					this.setCurrentAnimation("sword walking_" + orientation, FRAME_DURATION);
 				} else if(this.combatCanDefense && combatDefense){
 					this.combatCanDefense = false;
-					this.setCurrentAnimation("sword defense_" + orientation, FRAME_DURATION);
+					this.setCurrentAnimation("sword defense start_" + orientation, FRAME_DURATION);
 				}
 				
 				break;
@@ -1575,9 +1600,9 @@ public class Player extends Character {
 				
 			case COMBAT:
 				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 				}
-				
 				break;
 				
 			default:

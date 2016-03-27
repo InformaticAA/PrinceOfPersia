@@ -36,7 +36,11 @@ public abstract class Entity {
 	public void update(long elapsedTime) {
 		
 		/* Updates animation */
-		currentAnimation.update(elapsedTime);
+		boolean debug = false;
+		if(typeOfEntity.equals("Character")){
+			debug = true;
+		}
+		currentAnimation.update(elapsedTime, debug);
 	}
 	
 	/**

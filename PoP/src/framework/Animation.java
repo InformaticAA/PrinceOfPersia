@@ -46,12 +46,9 @@ public class Animation {
 		return frames.get(i);
 	}
 	
-	public void update(long elapsedTime, boolean debug) {
+	public void update(long elapsedTime) {
 		if (frames.size() > 1) {
 			animTime += elapsedTime;
-			if(debug){
-//				System.out.println("Updateando... ->" + currentFrame + "    Current time     " + animTime);
-			}
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;

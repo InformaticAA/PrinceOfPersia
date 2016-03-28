@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Hashtable;
 
@@ -13,7 +14,7 @@ public class Player extends Character {
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
-	private final int FRAME_DURATION = 6;
+	private final int FRAME_DURATION = 20;
 	private final int MOVE_SPEED = 2;
 	
 	private boolean up_pressed;
@@ -39,6 +40,9 @@ public class Player extends Character {
 	private boolean combatCanMove;
 	private boolean combatCanAttack;
 	private boolean combatCanDefense;
+	private boolean wantCombat;
+	
+	private SwordFighting sword;
 	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
@@ -71,6 +75,8 @@ public class Player extends Character {
 		this.combatCanMove = true;
 		this.combatCanAttack = true;
 		this.combatCanDefense = true;
+		this.wantCombat = true;
+		
 	}
 	
 	@Override
@@ -102,9 +108,19 @@ public class Player extends Character {
 		if(up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
 			this.currentState = PlayerState.JUMP;
 		}
-		
+		if(sword!=null){
+			sword.update(elapsedTime);
+		}
 		manageAnimations();
 		this.moveCharacter();
+	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		super.drawSelf(g);
+		if(sword!=null){
+			sword.drawSelf(g);
+		}
 	}
 	
 	public void setCollided(){
@@ -176,6 +192,9 @@ public class Player extends Character {
 			
 		} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
 			if(this.currentState != PlayerState.COMBAT){
+				if(enemySaw){
+					wantCombat = true;
+				}
 				shift_pressed = true;
 			} else{
 				if(!this.combatAttack){
@@ -702,7 +721,7 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				this.setMoveSpeed(0);
-				if(!enemySaw){
+				if(!enemySaw || !wantCombat){
 					if(changed_position){
 						changed_position = false;
 					} else if(down_pressed){
@@ -715,7 +734,7 @@ public class Player extends Character {
 				
 			case JUMP:
 				this.setMoveSpeed(0);
-				if(!enemySaw){
+				if(!enemySaw || !wantCombat){
 					if(right_pressed || left_pressed){
 						if(right_pressed && this.currentAnimation.equals("right")){
 							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
@@ -734,7 +753,7 @@ public class Player extends Character {
 				
 			case MOVE:
 				this.setMoveSpeed(0);
-				if(!enemySaw){
+				if(!enemySaw || !wantCombat){
 					if(changed_position){
 						this.setMoveSpeed(0);
 						changed_position = false;
@@ -766,7 +785,6 @@ public class Player extends Character {
 						} else{
 							this.setMoveSpeed(MOVE_SPEED);
 						}
-	//					System.out.printf("starts running: ");
 						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 					}
 				} else{
@@ -813,6 +831,7 @@ public class Player extends Character {
 				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.wantCombat = false;
 					this.currentState = PlayerState.IDLE;
 				}
 				break;
@@ -1502,6 +1521,7 @@ public class Player extends Character {
 				break;
 				
 			case COMBAT:
+				manageSword("start attacking", this.currentAnimation.getCurrentFrame(), false);
 				if(this.currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("sword attack end_" + orientation, FRAME_DURATION);
@@ -1669,21 +1689,27 @@ public class Player extends Character {
 				break;
 				
 			case COMBAT:
+				manageSword("idle",0,false);
 				this.setMoveSpeed(0);
 				if(this.combatCanMove && combatStepRight){
 					this.combatCanMove = false;
 					this.setMoveSpeed(MOVE_SPEED);
 					this.setCurrentAnimation("sword walking_" + orientation, FRAME_DURATION);
+					manageSword("moving",0,false);
 				} else if(this.combatCanMove && combatStepLeft){
 					this.combatCanMove = false;
 					this.setMoveSpeed(-MOVE_SPEED);
 					this.setCurrentAnimation("sword walking_" + orientation, FRAME_DURATION);
+					manageSword("moving",0,false);
 				} else if(this.combatCanDefense && combatDefense){
 					this.combatCanDefense = false;
 					this.setCurrentAnimation("sword defense start_" + orientation, FRAME_DURATION);
 				} else if(this.combatCanAttack && this.combatAttack){
 					this.combatCanAttack = false;
 					this.setCurrentAnimation("sword attack start_" + orientation, FRAME_DURATION);
+					manageSword("start attacking", 0, false);
+				} else if(down_pressed){
+					this.setCurrentAnimation("putting down sword_" + orientation, FRAME_DURATION);
 				}
 				
 				break;
@@ -1715,9 +1741,11 @@ public class Player extends Character {
 				break;
 				
 			case COMBAT:
+				manageSword("moving", this.currentAnimation.getCurrentFrame(), false);
 				if(this.currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					manageSword("idle", 0, false);
 				}
 				break;
 				
@@ -1751,6 +1779,7 @@ public class Player extends Character {
 				this.setMoveSpeed(0);
 				if(this.currentAnimation.isOver(false)){
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					manageSword("idle", 0, true);
 				}
 				break;
 				
@@ -1961,5 +1990,58 @@ public class Player extends Character {
 			System.out.println("ANIMATION NOT RECOGNIZED");
 			break;
 		}
+	}
+	
+	public void manageSword(String animation, int currentFrame, boolean newSword){
+		int x_offset = 0;
+		int y_offset = -46;
+		switch(animation){
+		
+		case "idle":
+			
+			if(this.getOrientation().equals("right")){
+				x_offset = 56;
+			} else{
+				x_offset = -56;
+			}
+			if(newSword){
+				this.sword = new SwordFighting(this.x,this.y,x_offset,y_offset,this.loader,"idle_" + orientation);
+			} else{
+				this.sword.setCurrentAnimation("idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
+			}
+			break;
+			
+		case "moving":
+			if(currentFrame == 0){
+				if(this.getOrientation().equals("right")){
+					x_offset = 40;
+				} else{
+					x_offset = -40;
+				}
+			} else if(currentFrame == 1){
+				if(this.getOrientation().equals("right")){
+					x_offset = 44;
+				} else{
+					x_offset = -44;
+				}
+			}
+			this.sword.setCurrentAnimation("idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
+			break;
+			
+		case "start attacking":
+			if(currentFrame == 0){
+				
+			} else if(currentFrame == 1){
+				
+			} else if(currentFrame == 2){
+				
+			}
+			this.sword.setCurrentAnimation("start attacking_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+			break;
+		
+		default:
+			break;
+		}
+		
 	}
 }

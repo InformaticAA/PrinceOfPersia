@@ -36,11 +36,7 @@ public abstract class Entity {
 	public void update(long elapsedTime) {
 		
 		/* Updates animation */
-		boolean debug = false;
-		if(typeOfEntity.equals("Character")){
-			debug = true;
-		}
-		currentAnimation.update(elapsedTime, debug);
+		currentAnimation.update(elapsedTime);
 	}
 	
 	/**
@@ -55,14 +51,14 @@ public abstract class Entity {
 				y - currentAnimation.getImage().getHeight(), null);
 		
 		/* Draws the entity's bounding box */
-		if (boundingBox != null) {
-			g.setColor(boundingBoxColor);
-			g.drawRect((int) boundingBox.getX(),
-					(int) boundingBox.getY(),
-					(int) boundingBox.getWidth(),
-					(int) boundingBox.getHeight());
-			g.setColor(Color.BLACK);
-		}
+//		if (boundingBox != null) {
+//			g.setColor(boundingBoxColor);
+//			g.drawRect((int) boundingBox.getX(),
+//					(int) boundingBox.getY(),
+//					(int) boundingBox.getWidth(),
+//					(int) boundingBox.getHeight());
+//			g.setColor(Color.BLACK);
+//		}
 	}
 	
 	/**

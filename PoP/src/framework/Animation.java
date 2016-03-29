@@ -14,6 +14,7 @@ public class Animation {
 	private boolean infinite;
 	private long animTime;
 	private long totalDuration;
+	private boolean isOver;
 	
 	public Animation(String id, ArrayList<Frame> frames, boolean infinite) {
 		this.id = id;
@@ -25,6 +26,7 @@ public class Animation {
 		initialFrame = 0;
 		animTime = 0;
 		totalDuration = 0;
+		this.isOver = false;
 		for (int i = 0; i < frames.size(); i++) {
 			totalDuration = totalDuration + frames.get(i).getEndtime();
 		}
@@ -47,68 +49,77 @@ public class Animation {
 	public void update(long elapsedTime) {
 		if (frames.size() > 1) {
 			animTime += elapsedTime;
+			
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;
 				animTime = 0;
 				currentUpdates = 0;
+				isOver = true;
 			}
 			else {
 				
 				if (currentUpdates == frameDuration - 1) {
 					currentFrame = (currentFrame + 1) % frames.size();
 					currentUpdates = 0;
+					isOver = false;
 				}
 				else {
 					currentUpdates++;
+					isOver = false;
 				}
 			}
 			
 		}
 	}
 	
-	public void update(long elapsedTime, boolean reverse) {
-		if (frames.size() > 1) {
-			animTime += elapsedTime;
-			
-			if (!reverse) {
-				
-				if (animTime >= totalDuration) {
-					animTime = animTime % totalDuration;
-					currentFrame = initialFrame;
-				}
-	
-				if (currentFrame < frames.size() - 1) {
-					currentFrame= (currentFrame + 1) % frames.size();
-				}
-			}
-			else {
-				
-				/* Inverse animation */
-				if (animTime >= totalDuration) {
-					animTime = animTime % totalDuration;
-					currentFrame = frames.size() - 1;
-				}
-	
-				if (currentFrame > 0) {
-					currentFrame--;
-				}
-			}
-			
-		}
-	}
+//	public void update(long elapsedTime, boolean reverse) {
+//		System.out.println("hola");
+//		if (frames.size() > 1) {
+//			animTime += elapsedTime;
+//			
+//			if (!reverse) {
+//				if (animTime >= totalDuration) {
+//					animTime = animTime % totalDuration;
+//					currentFrame = initialFrame;
+//				}
+//	
+//				if (currentFrame < frames.size() - 1) {
+//					currentFrame= (currentFrame + 1) % frames.size();
+//				}
+//			}
+//			else {
+//				
+//				/* Inverse animation */
+//				if (animTime >= totalDuration) {
+//					animTime = animTime % totalDuration;
+//					currentFrame = frames.size() - 1;
+//				}
+//	
+//				if (currentFrame > 0) {
+//					currentFrame--;
+//				}
+//			}
+//			
+//		}
+//	}
 
 	public boolean isOver(boolean reverse) {
-		boolean over = false;
+		return isOver;
 		
-		if (!reverse) {
-			over = (currentFrame == frames.size() - 1);
-		}
-		else {
-			over = (currentFrame == 0);
-		}
 		
-		return over;
+//		boolean over = false;
+//		
+//		if (!reverse) {
+//			System.out.println("Anim time " +  animTime + " -Total duration- " + totalDuration +  " -Frame duration- " + this.frameDuration );
+////			over = this.isOver && this.currentFrame == 0;
+//			return isOver;
+//		}
+//		else {
+//			over = (currentFrame == 0);
+//		}
+//		
+//		return over;
 	}
 	
 	public String getId() {
@@ -135,8 +146,15 @@ public class Animation {
 	}
 	
 	public void reset() {
-		currentFrame = 0;
+		currentUpdates = 0;
+		currentFrame = initialFrame;
+		frameDuration = 1;
 		animTime = 0;
+		totalDuration = 0;
+		this.isOver = false;
+		for (int i = 0; i < frames.size(); i++) {
+			totalDuration = totalDuration + frames.get(i).getEndtime();
+		}
 	}
 
 }

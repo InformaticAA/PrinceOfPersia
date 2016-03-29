@@ -1,6 +1,5 @@
 package entities;
 
-import java.awt.Rectangle;
 import java.util.Hashtable;
 
 import framework.Animation;
@@ -13,9 +12,9 @@ public class Character extends Entity {
 	protected int maxHp;
 	
 	/* Movement constants */
-	protected final int gravity = 2;
+	protected final int gravity = 1;
 	protected final int maxxSpeed = 10;
-	protected final int maxySpeed = 7;
+	protected final int maxySpeed = 5;
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
@@ -25,6 +24,8 @@ public class Character extends Entity {
 	protected int ySpeed;
 	protected boolean leftBlocked;
 	protected boolean rightBlocked;
+	protected boolean falling;
+	protected boolean grounded;
 	
 	/* Animations */
 	protected String orientation;
@@ -32,6 +33,8 @@ public class Character extends Entity {
 	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);
 		this.orientation = orientation;
+		this.falling = true;
+		this.grounded = false;
 	}
 	
 	@Override
@@ -44,44 +47,71 @@ public class Character extends Entity {
 	
 	public void moveCharacter(){
 		
-		/* If character is blocked sideways, he cant move horizontally */
+		/* If character is blocked sideways, it cant move horizontally */
 		if (leftBlocked || rightBlocked) {
 			xSpeed = 0;
 		}
 		
+		/* Applies gravity if falling */
+		if (!grounded && falling) {
+			int newySpeed = ySpeed + gravity;
+			
+			if (newySpeed > maxySpeed) {
+				newySpeed = maxySpeed;
+			}
+			
+			setySpeed(newySpeed);
+		}
+		else if (grounded) {
+			
+			/* Character is on the ground */
+			ySpeed = 0;
+		}
+		
+		/* Moves the character and its bounding box */
 		setX(x + xSpeed);
 		setY(y + ySpeed);
-		this.boundingBox.translate(xSpeed, ySpeed);
+		boundingBox.translate(xSpeed, ySpeed);
 	}
 	
-	/**
-	 * Checks collision with other characters
-	 * @return true if both rectangle collide,
-	 * false otherwise
-	 */
-	@Override
-	public boolean intersects(Entity entity, long elapsedTime) {
-		boolean intersection = false;
+	public void move(int x, int y) {
 		
-		/* Creates the bounding box for the next step */
-		Rectangle nextStep = new Rectangle((int) boundingBox.getX(),
-					(int) boundingBox.getY(),
-					(int) boundingBox.getWidth(),
-					(int) boundingBox.getHeight());
-	
-		nextStep.translate(xSpeed, ySpeed);
+		// moves the character
+		this.x += x;
+		this.y += y;
 		
-		Rectangle r2 = entity.getBoundingBox();
-		
-		/* Checks if collision will take place in the next step */
-		if (nextStep != null && r2 != null) {
-			intersection = nextStep.intersects(r2);
-		}
-		else {
-			intersection = false;
-		}
-		return intersection;
+		// moves the bounding box
+		this.boundingBox.translate(x, y);
 	}
+	
+//	/**
+//	 * Checks collision with other characters
+//	 * @return true if both rectangle collide,
+//	 * false otherwise
+//	 */
+//	@Override
+//	public boolean intersects(Entity entity, long elapsedTime) {
+//		boolean intersection = false;
+//		
+//		/* Creates the bounding box for the next step */
+//		Rectangle nextStep = new Rectangle((int) boundingBox.getX(),
+//					(int) boundingBox.getY(),
+//					(int) boundingBox.getWidth(),
+//					(int) boundingBox.getHeight());
+//	
+//		nextStep.translate(xSpeed, ySpeed);
+//		
+//		Rectangle r2 = entity.getBoundingBox();
+//		
+//		/* Checks if collision will take place in the next step */
+//		if (nextStep != null && r2 != null) {
+//			intersection = nextStep.intersects(r2);
+//		}
+//		else {
+//			intersection = false;
+//		}
+//		return intersection;
+//	}
 	
 	public void setMoveSpeed(int moveSpeed) {
 		
@@ -245,6 +275,34 @@ public class Character extends Entity {
 	 */
 	public int getFallSpeed() {
 		return fallSpeed;
+	}
+
+	/**
+	 * @return the isFalling
+	 */
+	public boolean isFalling() {
+		return falling;
+	}
+
+	/**
+	 * @param isFalling the isFalling to set
+	 */
+	public void setFalling(boolean falling) {
+		this.falling = falling;
+	}
+
+	/**
+	 * @return the grounded
+	 */
+	public boolean isGrounded() {
+		return grounded;
+	}
+
+	/**
+	 * @param grounded the grounded to set
+	 */
+	public void setGrounded(boolean grounded) {
+		this.grounded = grounded;
 	}
 
 	@Override

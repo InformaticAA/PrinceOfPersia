@@ -95,23 +95,23 @@ public abstract class Entity {
 	 * false otherwise
 	 */
 	public boolean intersects(Entity entity, long elapsedTime) {
-		boolean intersection = false;
-		
-		/* Creates a copy of the actual entity */
-//		Entity newEntity = entity.copy();
-//		newEntity.update(elapsedTime);
-//		Rectangle r1 = newEntity.getBoundingBox();
+		boolean intersects = false;
 
 		Rectangle r1 = boundingBox;
 		Rectangle r2 = entity.getBoundingBox();
 		
 		if (r1 != null && r2 != null) {
-			intersection = r1.intersects(r2);
+			intersects = r1.intersects(r2);
+			
+//			/* Debug */
+//			Rectangle intersection = r1.intersection(r2);
+//			System.out.println(intersection.x + ", " + intersection.y + 
+//					", " + intersection.width + ", " + intersection.height);
 		}
 		else {
-			intersection = false;
+			intersects = false;
 		}
-		return intersection;
+		return intersects;
 	}
 	
 	/**

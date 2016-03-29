@@ -53,7 +53,7 @@ public class LevelState extends State{
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 //			}
-			player = new Player(100,130,loader, "left");
+			player = new Player(400,120,loader, "left");
 			player.setySpeed(4);
 			
 			currentRoom.addCharacter(player);
@@ -172,13 +172,17 @@ public class LevelState extends State{
 			}
 		}
 	}
-	
-	
-	public void initPlayer(){
-		
-	}
 
+	/**
+	 * Checks every collision in the current room between a
+	 * character and the background
+	 * @param elapsedTime
+	 */
 	private void checkCollisions(long elapsedTime) {
+		
+		boolean collidingB = false;
+		boolean collidingF = false;
+		player.setGrounded(false);
 		
 		/* Checks for collisions in the currentRoom */
 		ArrayList<Entity> bgEntities = currentRoom.getBackground();
@@ -189,98 +193,131 @@ public class LevelState extends State{
 			
 			/* Collisions with background */
 			for (Entity bgE : bgEntities) {
-				
-				if (c.intersects(bgE, elapsedTime)) {
-					
-					/* x axis */
-					if (c.getBoundingBox().getMinX() >= bgE.getBoundingBox().getMaxX()) {
-						
-						/* Collision with wall in the character's left side */
-						System.out.println("Face stack collision detected (background)");
-						c.setMoveSpeed(0, "left");
-						
-						/* Sets new animation for player */
-						c.setCurrentAnimation("running collided_left", 4);
-						c.enableBoundingBox();
-						
-					} else if (c.getBoundingBox().getMaxX() <= bgE.getBoundingBox().getMinX()) {
-						
-						/* Collision with wall in the character's right side */
-						System.out.println("Left stack collision detected (background)");
-						c.setMoveSpeed(0, "right");
-						
-						/* Sets new animation for player */
-						c.setCurrentAnimation("running collided_left", 4);
-						c.enableBoundingBox();
-						
-					}
-					
-					/* y axis */
-					if (c.getBoundingBox().getMinY() >= bgE.getBoundingBox().getMaxY()) {
-						
-						/* Collision with wall in the character's up side */
-						
-						
-					} else if (c.getBoundingBox().getMaxY() <= bgE.getBoundingBox().getMinY()) {
-						
-						/* Collision with wall in the character's down side */
-						System.out.println("Floor collision detected (background)");
-						c.setySpeed(0);
-					} else {
-						
-						/* Player is not colliding with anything, thus he must fall */
-						c.setySpeed(c.getGravity());
-					}
-					
-					bgE.setBoundingBoxColor(Color.YELLOW);
-					c.setBoundingBoxColor(Color.YELLOW);
-				}
-				else {
-					bgE.setBoundingBoxColor(Color.RED);
-					c.setBoundingBoxColor(Color.RED);
-				}
+				collidingB = handleCollision(c, bgE, elapsedTime);
 			}
 			
 			/* Collisions with foreground */
 			for (Entity fgE : fgEntities) {
-				if (c.intersects(fgE, elapsedTime)) {
-					
-					/* x axis */
-					if (c.getBoundingBox().getMinX() >= fgE.getBoundingBox().getMaxX()) {
-						
-						/* Collision with wall in the character's left side */
-						System.out.println("Face stack collision detected (foreground)");
-						c.setMoveSpeed(0, "left");
-						
-						
-					} else if (c.getBoundingBox().getMaxX() <= fgE.getBoundingBox().getMinX()) {
-						
-						/* Collision with wall in the character's right side */
-						System.out.println("Left stack collision detected (foreground)");
-						c.setMoveSpeed(0, "right");
-					}
-					
-					/* y axis */
-					if (c.getBoundingBox().getMinY() >= fgE.getBoundingBox().getMaxY()) {
-						
-						/* Collision with wall in the character's up side */
-						
-						
-					} else if (c.getBoundingBox().getMaxY() <= fgE.getBoundingBox().getMinY()) {
-						
-						/* Collision with wall in the character's down side */
-//						System.out.println("Floor collision detected (foreground)");
-						c.setySpeed(0);
-					}
-					
-					fgE.setBoundingBoxColor(Color.YELLOW);
-					c.setBoundingBoxColor(Color.YELLOW);
-				}
-				else {
-					fgE.setBoundingBoxColor(Color.RED);
-					c.setBoundingBoxColor(Color.RED);
-				}
+				collidingF = handleCollision(c, fgE, elapsedTime);
 			}
+			
+			if (!collidingB && !collidingF) {
+				c.setBoundingBoxColor(Color.RED);
+			}
+			
 		}
 	}
+	
+	/**
+	 * Handles a single collision between a character and
+	 * a background/foreground entity
+	 * @param c character colliding
+	 * @param e background/foreground entity colliding
+	 * @param elapsedTime
+	 */
+	private boolean handleCollision(Character c, Entity e, long elapsedTime) {
+		
+		boolean colliding = false;
+
+		if (e.getBoundingBox() != null) {
+			
+			/* Character's bounding box */
+			int cLeft = (int) c.getBoundingBox().getMinX();
+			int cRight = (int) c.getBoundingBox().getMaxX();
+			int cTop = (int) c.getBoundingBox().getMinY();
+			int cBottom = (int) c.getBoundingBox().getMaxY();
+			
+			/* Background entity's bounding box */
+			int bgLeft = (int) e.getBoundingBox().getMinX();
+			int bgRight = (int) e.getBoundingBox().getMaxX();
+			int bgTop = (int) e.getBoundingBox().getMinY();
+			int bgBottom = (int) e.getBoundingBox().getMaxY();
+			
+			if (c.intersects(e, elapsedTime)) {
+				
+				int vSpeed = c.getySpeed();
+				int hSpeed = c.getxSpeed();
+				
+				Rectangle intersection = c.getBoundingBox().intersection(e.getBoundingBox());
+				
+				boolean vertical = intersection.width > intersection.height;
+				boolean horizontal = intersection.height >= intersection.width;
+				
+//				boolean vertical = Math.abs(vSpeed) >= Math.abs(hSpeed);
+//				boolean horizontal = Math.abs(vSpeed) < Math.abs(hSpeed);
+				
+				/* Checks vertical collisions */
+				if ( vertical && (vSpeed < 0) && (cTop < bgBottom)  ) {
+					
+					/* Player was jumping */
+					while( c.intersects(e, elapsedTime) && (cTop <= bgBottom) ) {
+						c.move(0, 1);
+						cTop = (int) c.getBoundingBox().getMinY();
+						bgBottom = (int) e.getBoundingBox().getMaxY();
+					}
+					
+				}
+				else if ( vertical && (vSpeed > 0) && (cBottom > bgTop) ) {
+					
+					/* Player was falling */
+					while ( c.intersects(e, elapsedTime) || (cBottom >= bgTop) ) {
+						c.move(0, -1);
+						cBottom = (int) c.getBoundingBox().getMaxY();
+						bgTop = (int) e.getBoundingBox().getMinY();
+					}
+					c.setGrounded(true);
+					
+				}
+				
+				/* Checks horizontal collisions */
+				if ( horizontal && (hSpeed > 0) && (cRight > bgLeft)  ) {
+					
+					/* Character was heading right */
+					while( c.intersects(e, elapsedTime) && (cRight >= bgLeft) ) {
+						c.move(-1, 0);
+						cRight = (int) c.getBoundingBox().getMaxX();
+						bgLeft = (int) e.getBoundingBox().getMinX();
+					}
+					player.setCollided();
+				}
+				else if ( horizontal && (hSpeed < 0) && (cLeft < bgRight) ) {
+					
+					/* Character was heading left */
+					while ( c.intersects(e, elapsedTime) && (cLeft <= bgRight) ) {
+						c.move(1, 0);
+						cLeft = (int) c.getBoundingBox().getMinX();
+						bgRight = (int) e.getBoundingBox().getMaxX();
+					}
+					player.setCollided();
+				}
+				
+				/* Debug */
+				e.setBoundingBoxColor(Color.YELLOW);
+				c.setBoundingBoxColor(Color.YELLOW);
+				colliding = true;
+			}
+			else {
+				
+				/* Objects dont collide (floor) */
+				if ( (cBottom + 1) == bgTop ) {
+					
+					/* Character is walking over the floor */
+					if ( (cLeft > bgLeft && cLeft < bgRight) ||
+							(cRight > bgLeft && cRight < bgRight) ||
+							(cLeft > bgLeft && cRight < bgRight) ||
+							(cLeft < bgLeft && cRight > bgRight) ){
+						
+						/* Character walking over one particular floor panel,
+						 * thus it is grounded */
+						c.setGrounded(true);
+					}
+				}
+				
+				/* Debug */
+				e.setBoundingBoxColor(Color.RED);
+			}
+		}
+		return colliding;
+	}
+	
 }

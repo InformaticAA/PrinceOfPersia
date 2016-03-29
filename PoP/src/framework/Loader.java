@@ -15,6 +15,8 @@ import data.Level;
 import data.Room;
 import data.Square;
 import entities.Base;
+import entities.Character;
+import entities.Corner;
 import entities.Door;
 import entities.DoorFrame;
 import entities.Entity;
@@ -23,7 +25,6 @@ import entities.LooseFloor;
 import entities.Pillar;
 import entities.Torch;
 import entities.Wall;
-import entities.Character;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 
@@ -300,8 +301,9 @@ public class Loader {
 		Square square = new Square();
 		Scanner readSquare = new Scanner(squareContent);
 		
+		/* Calculates the coordinates based on the selected square */
 		int px = 64 + y * 64;
-		int py = (int)(6 + x * 126);
+		int py = (int)(6 + x * 126); 
 		
 		while (readSquare.hasNext()) {
 			
@@ -397,6 +399,12 @@ public class Loader {
 				background.add(newEntity);
 			} else if(entity.equals("rsb")){
 				newEntity = new Base(px,py,this,"right_stack_base");
+				background.add(newEntity);
+			} else if(entity.equals("lc")){
+				newEntity = new Corner(px,py,0,-6,this,"normal_left");
+				background.add(newEntity);
+			} else if(entity.equals("rc")){
+				newEntity = new Corner(px,py,-12,-2,this,"normal_right");
 				background.add(newEntity);
 			} else if(entity.equals("lf")){
 				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");

@@ -183,6 +183,18 @@ public abstract class Entity {
 		this.boundingBoxColor = boundingBoxColor;
 	}
 	
+	/**
+	 * 
+	 * @return square coords in the room corresponding to the
+	 * current x,y coords of the entity
+	 */
+	public int[] getSquare() {
+		int i = (y - 6) / 126;
+		int j = (x - 64) / 64;
+		
+		return new int[]{i,j};
+	}
+	
 	public abstract Entity copy();
 	
 }

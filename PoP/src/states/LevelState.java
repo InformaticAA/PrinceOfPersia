@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import data.Level;
 import data.Room;
+import data.Square;
 import entities.Character;
 import entities.Entity;
 import entities.Player;
@@ -114,6 +115,9 @@ public class LevelState extends State{
 		manageKeys();
 		currentLevel.update(elapsedTime);
 		checkCollisions(elapsedTime);
+		
+//		int[] ps = player.getSquare();
+//		System.out.println("(" + ps[0] + ", " + ps[1] + ")");
 	}
 
 	@Override
@@ -238,13 +242,10 @@ public class LevelState extends State{
 				int vSpeed = c.getySpeed();
 				int hSpeed = c.getxSpeed();
 				
+				/* Checks if the collision was horizontal or vertical */
 				Rectangle intersection = c.getBoundingBox().intersection(e.getBoundingBox());
-				
 				boolean vertical = intersection.width > intersection.height;
 				boolean horizontal = intersection.height >= intersection.width;
-				
-//				boolean vertical = Math.abs(vSpeed) >= Math.abs(hSpeed);
-//				boolean horizontal = Math.abs(vSpeed) < Math.abs(hSpeed);
 				
 				/* Checks vertical collisions */
 				if ( vertical && (vSpeed < 0) && (cTop < bgBottom)  ) {
@@ -270,7 +271,7 @@ public class LevelState extends State{
 				}
 				
 				/* Checks horizontal collisions */
-				if ( horizontal && (hSpeed > 0) && (cRight > bgLeft)  ) {
+				if ( horizontal && (hSpeed > 0) && (cRight > bgLeft) ){
 					
 					/* Character was heading right */
 					while( c.intersects(e, elapsedTime) && (cRight >= bgLeft) ) {
@@ -278,7 +279,7 @@ public class LevelState extends State{
 						cRight = (int) c.getBoundingBox().getMaxX();
 						bgLeft = (int) e.getBoundingBox().getMinX();
 					}
-					player.setCollided();
+					
 				}
 				else if ( horizontal && (hSpeed < 0) && (cLeft < bgRight) ) {
 					
@@ -288,12 +289,14 @@ public class LevelState extends State{
 						cLeft = (int) c.getBoundingBox().getMinX();
 						bgRight = (int) e.getBoundingBox().getMaxX();
 					}
-					player.setCollided();
+
 				}
 				
 				/* Debug */
 				e.setBoundingBoxColor(Color.YELLOW);
 				c.setBoundingBoxColor(Color.YELLOW);
+				
+				player.setCollided();
 				colliding = true;
 			}
 			else {

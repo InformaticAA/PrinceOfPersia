@@ -47,8 +47,8 @@ public class Animation {
 	}
 	
 	public void update(long elapsedTime) {
+		animTime += elapsedTime;
 		if (frames.size() > 1) {
-			animTime += elapsedTime;
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;
@@ -68,7 +68,11 @@ public class Animation {
 					isOver = false;
 				}
 			}
-			
+		} else{
+			if(animTime >= totalDuration){
+				isOver = true;
+				animTime = 0;
+			}
 		}
 	}
 	
@@ -130,6 +134,7 @@ public class Animation {
 	}
 	
 	public void setCurrentFrame(int numFrame) {
+		animTime = animTime + numFrame * frameDuration;
 		this.currentFrame = numFrame;
 	}
 	
@@ -154,6 +159,18 @@ public class Animation {
 		for (int i = 0; i < frames.size(); i++) {
 			totalDuration = totalDuration + frames.get(i).getEndtime();
 		}
+	}
+	
+	public long getAnimTime() {
+		return animTime;
+	}
+	
+	public long getTotalDuration() {
+		return totalDuration;
+	}
+	
+	public int getFrameDuration() {
+		return frameDuration;
 	}
 
 }

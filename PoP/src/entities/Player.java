@@ -77,6 +77,7 @@ public class Player extends Character {
 		this.combatCanDefense = true;
 		this.wantCombat = true;
 		
+		this.splash = new Splash(0,0,0,0,loader,"red");
 	}
 	
 	@Override
@@ -86,7 +87,6 @@ public class Player extends Character {
 		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
 			currentState = PlayerState.IDLE;
 		} 
-
 		if(this.currentState != PlayerState.COLLIDED && this.currentState != PlayerState.COMBAT){
 			if(right_pressed || left_pressed){
 				if(right_pressed && !left_pressed){
@@ -104,7 +104,6 @@ public class Player extends Character {
 				} 
 			}
 		}
-		
 		if(up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
 			this.currentState = PlayerState.JUMP;
 		}
@@ -120,6 +119,7 @@ public class Player extends Character {
 		super.drawSelf(g);
 		if(sword!=null){
 			sword.drawSelf(g);
+			splash.drawSelf(g);
 		}
 	}
 	
@@ -204,6 +204,8 @@ public class Player extends Character {
 			}
 			
 		} else if(key_pressed == keys_mapped.get(Key.D)){
+			
+			this.setCurrentAnimation("sword hit_" + orientation, FRAME_DURATION);
 			System.out.println("State: " + this.currentState + "\n" + 
 					"Animation: " + this.getCurrentAnimation().getId() + "\n" + 
 					"Orientation: " + this.getOrientation() + "\n" +
@@ -1675,6 +1677,44 @@ public class Player extends Character {
 				break;
 			}
 			break;
+		
+		case "sword hit_left":
+		case "sword hit_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				manageSword("hit",this.getCurrentAnimation().getCurrentFrame(),false);
+				if(this.currentAnimation.isOver(false)){
+					this.setMoveSpeed(0);
+					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					manageSword("idle",0,false);
+					setCanShowSplash(true);
+				}
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		
 			
 		case "sword idle_left":
 		case "sword idle_right":
@@ -2086,6 +2126,27 @@ public class Player extends Character {
 			y_offset = y_offsets[currentFrame];
 				
 			this.sword.setCurrentAnimation("defending_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+			break;
+			
+		case "hit":
+			x_offsets = new int[]{0,0,0,0,0,-16,0,-42,32,-44};
+			y_offsets = new int[]{0,0,-32,-16,-36};
+			
+			if(this.getOrientation().equals("right")){
+				x_offset = x_offsets[2 * currentFrame];
+			} else{
+				x_offset = x_offsets[2 * currentFrame + 1];
+			}
+			y_offset = y_offsets[currentFrame];
+			
+			if(currentFrame == 0){
+				setSplashVisible(true);
+			} else if(currentFrame == 1){
+				setSplashVisible(false);
+				setCanShowSplash(false);
+			}
+				
+			this.sword.setCurrentAnimation("hit_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
 			break;
 		
 		default:

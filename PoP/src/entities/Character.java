@@ -29,9 +29,14 @@ public class Character extends Entity {
 	/* Animations */
 	protected String orientation;
 	
+	/* Splash */
+	protected Splash splash;
+	protected boolean canShowSplash;
+	
 	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);
 		this.orientation = orientation;
+		this.canShowSplash = true;
 	}
 	
 	@Override
@@ -255,6 +260,20 @@ public class Character extends Entity {
 		
 		
 		return newCharacter;
+	}
+	
+	protected void setSplashVisible(boolean visible){
+		if(visible && canShowSplash){
+			this.splash.setX(this.x);
+			this.splash.setY(this.y - 16);
+			this.splash.setVisible(true);
+		} else{
+			this.splash.setVisible(false);
+		}
+	}
+	
+	public void setCanShowSplash(boolean canShowSplash) {
+		this.canShowSplash = canShowSplash;
 	}
 
 }

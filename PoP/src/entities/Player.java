@@ -132,6 +132,23 @@ public class Player extends Character {
 		this.beenBlocked = true;
 	}
 	
+	public boolean isAttacking(){
+		return (this.getCurrentAnimation().getId().startsWith("sword attack start")
+				|| this.getCurrentAnimation().getId().startsWith("sword attack up start"));
+	}
+	
+	public boolean checkAttack(){
+		boolean checkAttack = false;
+		if(this.getCurrentAnimation().getId().startsWith("sword attack start")
+				|| this.getCurrentAnimation().getId().startsWith("sword attack up start")){
+			if(this.getCurrentAnimation().getCurrentFrame() == 3){
+				checkAttack = true;
+			}
+		}
+		
+		return checkAttack;
+	}
+	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
 		if(key_pressed == keys_mapped.get(Key.UP)){
 			if(this.currentState != PlayerState.COMBAT){
@@ -211,7 +228,9 @@ public class Player extends Character {
 					"left_pressed: " + left_pressed + "\n" + 
 					"right_pressed: " + right_pressed + "\n" + 
 					"up_pressed: " + up_pressed + "\n" + 
-					"down_pressed: " + down_pressed + "\n");
+					"down_pressed: " + down_pressed + "\n" +
+					"x: " + this.x + "\n" + 
+					"y: " + this.y + "\n");
 		}
 	}
 	

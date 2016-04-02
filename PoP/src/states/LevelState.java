@@ -2,7 +2,6 @@ package states;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import data.Level;
 import data.Room;
 import entities.Character;
+import entities.Enemy;
 import entities.Entity;
 import entities.Player;
 import framework.Loader;
@@ -56,8 +56,11 @@ public class LevelState extends State{
 			player = new Player(200,130,loader, "right");
 			player.setySpeed(4);
 			
+			Enemy e = (Enemy)currentRoom.getCharacters().get(0);
+			
 			currentRoom.addCharacter(player);
 			player.isEnemySaw(true);
+			e.setPlayer(true, player);
 		}
 		
 		else{

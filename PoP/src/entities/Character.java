@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Hashtable;
 
@@ -19,6 +20,8 @@ public class Character extends Entity {
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
+	protected final int FRAME_DURATION = 40; //6
+	protected final int MOVE_SPEED = 2;
 
 	/* Movement variables */
 	protected int xSpeed;
@@ -33,6 +36,9 @@ public class Character extends Entity {
 	protected Splash splash;
 	protected boolean canShowSplash;
 	
+	/* Sword */
+	protected SwordFighting sword;
+	
 	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);
 		this.orientation = orientation;
@@ -46,6 +52,17 @@ public class Character extends Entity {
 		/* Updates the position of the bounding box */
 		enableBoundingBox();
 	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		super.drawSelf(g);
+		if(sword!=null){
+			sword.drawSelf(g);
+			splash.drawSelf(g);
+		}
+	}
+	
+	
 	
 	public void moveCharacter(){
 		
@@ -275,5 +292,4 @@ public class Character extends Entity {
 	public void setCanShowSplash(boolean canShowSplash) {
 		this.canShowSplash = canShowSplash;
 	}
-
 }

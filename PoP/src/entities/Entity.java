@@ -183,6 +183,10 @@ public abstract class Entity {
 		this.boundingBoxColor = boundingBoxColor;
 	}
 	
+	public int xDistance(Entity e){
+		return Math.abs(this.getX() - e.getX());
+	}
+	
 	public abstract Entity copy();
 	
 }

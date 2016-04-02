@@ -14,8 +14,6 @@ public class Player extends Character {
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
-	private final int FRAME_DURATION = 40; //6
-	private final int MOVE_SPEED = 2;
 	
 	private boolean up_pressed;
 	private boolean down_pressed;
@@ -43,8 +41,6 @@ public class Player extends Character {
 	private boolean wantCombat;
 	private boolean beenBlocked;
 	private boolean hasBlocked;
-	
-	private SwordFighting sword;
 	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
@@ -116,15 +112,6 @@ public class Player extends Character {
 		}
 		manageAnimations();
 		this.moveCharacter();
-	}
-	
-	@Override
-	public void drawSelf(Graphics g){
-		super.drawSelf(g);
-		if(sword!=null){
-			sword.drawSelf(g);
-			splash.drawSelf(g);
-		}
 	}
 	
 	public void setCollided(){

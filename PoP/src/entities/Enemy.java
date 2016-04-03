@@ -1,6 +1,7 @@
 package entities;
 
 import java.awt.Rectangle;
+import java.util.Random;
 
 import framework.Loader;
 
@@ -10,6 +11,13 @@ public class Enemy extends Character {
 	
 	private final int SAFE_DISTANCE = 100;
 	private final int ATTACK_DISTANCE = 80;
+	private final int AGRESIVE_DISTANCE = 60;
+	private final long MOVE_COOLDOWN = 200;
+	private final long ATTACK_COOLDOWN = 300;
+	
+	private final double BASE_BLOCK_PERCENTAJE = 0.5;
+	private final double BASE_COUNTER_PERCENTAJE = 0.2;
+	
 	
 	private EnemyState currentState;
 	private int health;
@@ -20,9 +28,12 @@ public class Enemy extends Character {
 	private Player player;
 	
 	private boolean success;
+	private boolean goingToAttack;
+	private boolean decidedToBlock;
 	
-	/* Aux */
-	private double counter;
+	/* Cooldowns */
+	private long counterMove;
+	private long counterAttack;
 
 	public Enemy(int x, int y, Loader loader, String orientation, String colour, int health, int difficulty) {
 		super(x, y - 20, loader, orientation);
@@ -43,6 +54,11 @@ public class Enemy extends Character {
 		this.playerSaw = false;
 		
 		this.success = true;
+		this.goingToAttack = true;
+		
+		this.counterMove = restartCounterMove();
+		this.counterAttack = restartCounterAttack();
+		this.decidedToBlock = true;
 	}
 	
 	@Override
@@ -50,7 +66,7 @@ public class Enemy extends Character {
 		super.update(elapsedTime);
 		
 		if(playerSaw){
-			manageIA();
+			manageIA(elapsedTime);
 			this.moveCharacter();
 		}
 	}
@@ -68,7 +84,7 @@ public class Enemy extends Character {
 		}
 	}
 	
-	public void manageIA(){
+	public void manageIA(long elapsedTime){
 		if(player.getX() < this.getX() && this.getOrientation().equals("right")){
 			this.setOrientation("left");
 		} else if(player.getX() > this.getX() && this.getOrientation().equals("left")){
@@ -80,14 +96,61 @@ public class Enemy extends Character {
 		case "idle combat_right":
 			
 			if(this.xDistance(player)>SAFE_DISTANCE){
-				startMove();
+				
+				/* Move towards the player */
+				startMove(false);
 			} else{
+				
 				if(this.xDistance(player) > ATTACK_DISTANCE){
 					if(!player.isAttacking()){
-						startMove();
+						
+						/* Player not attacking -> we go towards him to attack */
+						if(counterMove < MOVE_COOLDOWN){
+							counterMove = counterMove + elapsedTime;
+						} else{
+							counterMove = restartCounterMove();
+							if(random(0.5)){
+								
+								/* 50% probability to move and attack player */
+								startMove(true);
+							}
+						}
+					} else{
+						counterMove = 0;
 					}
 				} else{
-					startAttack();
+					if(this.xDistance(player) < AGRESIVE_DISTANCE){
+						
+						/* Player very close to the enemy -> Attack */
+						startAttack();
+					} else{
+						
+						/* Check first if player is attacking */
+						if(player.isAttacking()){
+							
+							/* TODO: gestionar que avise al level state de que quiere bloquear, y que tome esta decision solo una vez
+							 * Cambiar la animacion de bloqueo del player tambien */
+							
+							
+							/* Can block, so check if we have to block */
+							if(random(BASE_COUNTER_PERCENTAJE + ((double)difficulty)/10) || decidedToBlock){
+								if(player.getCurrentAnimation().getCurrentFrame() != 3){
+									decidedToBlock = true;
+								} else{
+									
+								}
+							}
+						}
+						if(counterAttack < ATTACK_COOLDOWN){
+							counterAttack = counterAttack + elapsedTime;
+						} else{
+							counterAttack = restartCounterAttack();
+							if(random(0.5)){
+								startAttack();
+							}
+						}
+						
+					}
 				}
 			}
 			break;
@@ -95,10 +158,15 @@ public class Enemy extends Character {
 		case "walking_left":
 		case "walking_right":
 			if(this.getCurrentAnimation().isOver(false)){
-				if(this.xDistance(player)>SAFE_DISTANCE){
-					idle();
+				if(goingToAttack){
+					goingToAttack = false;
+					startAttack();
 				} else{
-					endMove();
+					if(this.xDistance(player)>SAFE_DISTANCE){
+						idle();
+					} else{
+						endMove();
+					}
 				}
 			}
 			break;
@@ -137,13 +205,14 @@ public class Enemy extends Character {
 		}
 	}
 	
-	public void startMove(){
+	public void startMove(boolean goingToAttack){
 		if(this.getOrientation().equals("left")){
 			this.setMoveSpeed(-MOVE_SPEED/2);
 		} else{
 			this.setMoveSpeed(MOVE_SPEED/2);
 		}
 		
+		this.goingToAttack = goingToAttack;
 		this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
 		manageSword("walking", 0, false);
 	}
@@ -184,7 +253,21 @@ public class Enemy extends Character {
 	}
 	
 	public boolean random(double probability){
-		return Math.random() > probability;
+		return Math.random() < probability;
+	}
+	
+	public int random(int min, int max){
+		Random rn = new Random();
+		int range = max - min + 1;
+		return rn.nextInt(range) + min;
+	}
+	
+	public int restartCounterAttack(){
+		return random(0,(int)ATTACK_COOLDOWN);
+	}
+	
+	public int restartCounterMove(){
+		return random(0,(int)(MOVE_COOLDOWN/2));
 	}
 	
 	public void manageSword(String animation, int currentFrame, boolean newSword){

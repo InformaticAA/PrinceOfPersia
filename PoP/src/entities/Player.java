@@ -133,8 +133,9 @@ public class Player extends Character {
 	}
 	
 	public boolean isAttacking(){
-		return (this.getCurrentAnimation().getId().startsWith("sword attack start")
-				|| this.getCurrentAnimation().getId().startsWith("sword attack up start"));
+//		return (this.getCurrentAnimation().getId().startsWith("sword attack start")
+//				|| this.getCurrentAnimation().getId().startsWith("sword attack up start"));
+		return (this.getCurrentAnimation().getId().startsWith("sword attack"));
 	}
 	
 	public boolean checkAttack(){

@@ -20,7 +20,7 @@ public class Character extends Entity {
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
-	protected final int FRAME_DURATION = 40; //6
+	protected final int FRAME_DURATION = 6; //6
 	protected final int MOVE_SPEED = 2;
 
 	/* Movement variables */

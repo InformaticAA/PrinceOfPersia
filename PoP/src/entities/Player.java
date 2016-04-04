@@ -136,6 +136,17 @@ public class Player extends Character {
 		return (this.getCurrentAnimation().getId().startsWith("sword attack"));
 	}
 	
+	public boolean isBeingBocked(){
+		return ((this.getCurrentAnimation().getId().startsWith("sword blocked and block") ||
+				this.getCurrentAnimation().getId().startsWith("sword attack end blocked")) &&
+				this.getCurrentAnimation().getCurrentFrame() == 0);
+	}
+	
+	public boolean isBlocking(){
+		
+		return this.getCurrentAnimation().getId().startsWith("sword defense end");
+	}
+	
 	public boolean checkAttack(){
 		boolean checkAttack = false;
 		if(this.getCurrentAnimation().getId().startsWith("sword attack start")
@@ -1556,6 +1567,7 @@ public class Player extends Character {
 							this.setCurrentAnimation("sword blocked and block_" + orientation, FRAME_DURATION);
 							manageSword("defending after block",0,false);
 						} else{
+							System.out.println("He sido bloquiado");
 							this.setCurrentAnimation("sword attack end blocked_" + orientation, FRAME_DURATION);
 							manageSword("end attacking blocked",0,false);
 						}
@@ -2311,8 +2323,8 @@ public class Player extends Character {
 			break;
 			
 		case "defending after block":
-			x_offsets = new int[]{28,-70,22,-40};
-			y_offsets = new int[]{-46,-36};
+			x_offsets = new int[]{42,-84,28,-70,22,-40};
+			y_offsets = new int[]{-38,-46,-36};
 			
 			if(this.getOrientation().equals("right")){
 				x_offset = x_offsets[2 * currentFrame];

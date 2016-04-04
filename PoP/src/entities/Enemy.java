@@ -206,15 +206,15 @@ public class Enemy extends Character {
 	}
 	
 	public void startMove(boolean goingToAttack){
-		if(this.getOrientation().equals("left")){
-			this.setMoveSpeed(-MOVE_SPEED/2);
-		} else{
-			this.setMoveSpeed(MOVE_SPEED/2);
-		}
-		
-		this.goingToAttack = goingToAttack;
-		this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
-		manageSword("walking", 0, false);
+//		if(this.getOrientation().equals("left")){
+//			this.setMoveSpeed(-MOVE_SPEED/2);
+//		} else{
+//			this.setMoveSpeed(MOVE_SPEED/2);
+//		}
+//		
+//		this.goingToAttack = goingToAttack;
+//		this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
+//		manageSword("walking", 0, false);
 	}
 	
 	public void endMove(){

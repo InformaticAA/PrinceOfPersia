@@ -9,13 +9,13 @@ public class Enemy extends Character {
 	
 	private enum EnemyState {IDLE, COMBAT, DIED};
 	
-	private final int SAFE_DISTANCE = 100;
-	private final int ATTACK_DISTANCE = 80;
+	private final int SAFE_DISTANCE = 150;
+	private final int ATTACK_DISTANCE = 110;
 	private final int AGRESIVE_DISTANCE = 0;
 	private final long MOVE_COOLDOWN = 200;
-	private final long ATTACK_COOLDOWN = 10000;
+	private final long ATTACK_COOLDOWN = 400;
 	
-	private final double BASE_BLOCK_PERCENTAJE = 0.5;
+	private final double BASE_BLOCK_PERCENTAJE = 0.3;
 	private final double BASE_COUNTER_PERCENTAJE = 0.2;
 	
 	
@@ -60,6 +60,9 @@ public class Enemy extends Character {
 		this.counterAttack = restartCounterAttack();
 		this.decidedToBlock = false;
 		this.blockDecission = false;
+		
+		this.splash = new Splash(0,0,0,0,loader,"guard_" + colour);
+		this.sword = new SwordFighting(this.x,this.y,0,0,this.loader,"idle_" + orientation, "guard");
 	}
 	
 	@Override
@@ -69,6 +72,12 @@ public class Enemy extends Character {
 		if(playerSaw){
 			manageIA(elapsedTime);
 			this.moveCharacter();
+			if(this.xDistanceChar(player) <= ATTACK_DISTANCE && player.isHitting()){
+				setCanShowSplash(true);
+				beenHit();
+			}
+		} else{
+			normalIdle();
 		}
 	}
 	
@@ -77,7 +86,7 @@ public class Enemy extends Character {
 		if(saw){
 			this.player = p;
 			this.currentState = EnemyState.COMBAT;
-			this.setCurrentAnimation("idle combat_" + orientation, FRAME_DURATION);
+			this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 		} else{
 			this.player = null;
 			this.currentState = EnemyState.IDLE;
@@ -93,71 +102,81 @@ public class Enemy extends Character {
 		}
 		switch(this.getCurrentAnimation().getId()){
 			
-		case "idle combat_left":
-		case "idle combat_right":
+		case "sword idle_left":
+		case "sword idle_right":
 			
-			if(this.xDistance(player)>SAFE_DISTANCE){
+			idle();
+			if(this.xDistanceChar(player)>=SAFE_DISTANCE){
 				
 				/* Move towards the player */
 				startMove(false);
 			} else{
 				
-				if(this.xDistance(player) > ATTACK_DISTANCE){
-					if(!player.isAttacking()){
-						
-						/* Player not attacking -> we go towards him to attack */
-						if(counterMove < MOVE_COOLDOWN){
-							counterMove = counterMove + elapsedTime;
-						} else{
-							counterMove = restartCounterMove();
-							if(random(0.5)){
-								
-								/* 50% probability to move and attack player */
-								startMove(true);
+				if(player.isWalking() && random(0.05)){
+					startAttack();
+				} else{
+				
+					if(this.xDistanceChar(player) >= ATTACK_DISTANCE){
+						if(!player.isAttacking()){
+							
+							/* Player not attacking -> we go towards him to attack */
+							if(counterMove < MOVE_COOLDOWN){
+								counterMove = counterMove + elapsedTime;
+							} else{
+								counterMove = restartCounterMove();
+								if(random(0.5)){
+									
+									/* 50% probability to move and attack player */
+									startMove(true);
+								}
 							}
+						} else{
+							counterMove = 0;
 						}
 					} else{
-						counterMove = 0;
-					}
-				} else{
-					if(this.xDistance(player) < AGRESIVE_DISTANCE){
-						
-						/* Player very close to the enemy -> Attack */
-						startAttack();
-					} else{
-						
-						if(!player.checkAttack() || 
-								(player.checkAttack() && decidedToBlock && !blockDecission)){
-							/* Player is not attacking */
-							/* or Player is attacking and we decided not to block it */
-							/* -> We decide if attacking or not*/
-							if(counterAttack < ATTACK_COOLDOWN){
-								counterAttack = counterAttack + elapsedTime;
-							} else{
-								counterAttack = restartCounterAttack();
-								if(random(0.5)){
-									startAttack();
-								}
-							} 
+						if(this.xDistanceChar(player) < AGRESIVE_DISTANCE){
+							
+							/* Player very close to the enemy -> Attack */
+							startAttack();
+						} else{
 							
 							if(decidedToBlock && blockDecission && 
-									player.isBeingBocked()){
+									player.isBeingBlocked()){
+								System.out.println("Player being blocked");
+								decidedToBlock = false;
 								block();
 							} 
 							
-							if(!player.checkAttack() && decidedToBlock){
-								decidedToBlock = false;
+							if(!player.checkAttack() || 
+									(player.checkAttack() && decidedToBlock && !blockDecission)){
+								/* Player is not attacking */
+								/* or Player is attacking and we decided not to block it */
+								/* -> We decide if attacking or not*/
+								
+								
+								
+								if(counterAttack < ATTACK_COOLDOWN){
+									counterAttack = counterAttack + elapsedTime;
+								} else{
+									counterAttack = restartCounterAttack();
+									if(random(0.5)){
+										startAttack();
+									}
+								} 
+								
+							} else if(player.checkAttack() && !decidedToBlock){
+								
+								System.out.println("Player atacando");
+								
+								/* Player is attacking, and we have not decided if we
+								 * are going to block it */
+								decidedToBlock = true;
+								blockDecission = random(BASE_BLOCK_PERCENTAJE + ((double)difficulty)/10);
+								if(blockDecission){
+									player.hasBeenBlocked();
+								}
 							} 
-						} else if(player.checkAttack() && !decidedToBlock){
-							
-							/* Player is attacking, and we have not decided if we
-							 * are going to block it */
-							decidedToBlock = true;
-							blockDecission = random(BASE_BLOCK_PERCENTAJE + ((double)difficulty)/10);
-							if(blockDecission){
-								player.hasBeenBlocked();
-							}
-						} 
+						}
 					}
 				}
 			}
@@ -165,12 +184,13 @@ public class Enemy extends Character {
 			
 		case "walking_left":
 		case "walking_right":
+			manageSword("walking",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				if(goingToAttack){
 					goingToAttack = false;
 					startAttack();
 				} else{
-					if(this.xDistance(player)>SAFE_DISTANCE){
+					if(this.xDistanceChar(player)>SAFE_DISTANCE){
 						idle();
 					} else{
 						endMove();
@@ -181,6 +201,7 @@ public class Enemy extends Character {
 			
 		case "walking end_left":
 		case "walking end_right":
+			manageSword("walking end",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				idle();
 			}
@@ -188,6 +209,7 @@ public class Enemy extends Character {
 			
 		case "attack start_left":
 		case "attack start_right":
+			manageSword("attack start",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				endAttack(!player.isBlocking());
 			}
@@ -195,6 +217,7 @@ public class Enemy extends Character {
 			
 		case "attack end success_left":
 		case "attack end success_right":
+			manageSword("attack end",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				idle();
 			}
@@ -202,6 +225,7 @@ public class Enemy extends Character {
 			
 		case "attack end blocked_left":
 		case "attack end blocked_right":
+			manageSword("attack end blocked",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				idle();
 			}
@@ -209,6 +233,7 @@ public class Enemy extends Character {
 			
 		case "block and attack_left":
 		case "block and attack_right":
+			manageSword("block and attack",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				endAttack(!player.isBlocking());
 			}
@@ -217,6 +242,7 @@ public class Enemy extends Character {
 			
 		case "block only_left":
 		case "block only_right":
+			manageSword("block only",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				idle();
 			}
@@ -225,6 +251,7 @@ public class Enemy extends Character {
 			
 		case "blocked_left":
 		case "blocked_right":
+			manageSword("blocked",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				blockedAndBlock();
 			}
@@ -232,6 +259,7 @@ public class Enemy extends Character {
 			
 		case "blocked and prepare block_left":
 		case "blocked and prepare block_right":
+			manageSword("blocked and prepare block",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				block();
 			}
@@ -250,11 +278,25 @@ public class Enemy extends Character {
 			
 		case "dying_left":
 		case "dying_right":
+			manageSword("dying",this.getCurrentAnimation().getCurrentFrame(),false);
+			if(this.getCurrentAnimation().isOver(false)){
+				//died();
+			}
 			
 			break;
 			
 		case "hit_left":
 		case "hit_right":
+			manageSword("hit",this.getCurrentAnimation().getCurrentFrame(),false);
+			if(this.getCurrentAnimation().getCurrentFrame() == 0){
+				this.setSplashVisible(true);
+			} else if(this.getCurrentAnimation().getCurrentFrame() == 1){
+				this.setSplashVisible(false);
+				this.setCanShowSplash(false);
+			}
+			if(this.getCurrentAnimation().isOver(false)){
+				idle();
+			}
 			
 			break;
 			
@@ -265,6 +307,7 @@ public class Enemy extends Character {
 			
 		case "idle_left":
 		case "idle_right":
+			manageSword("idle", 0, false);
 			
 			break;
 			
@@ -275,27 +318,33 @@ public class Enemy extends Character {
 	}
 	
 	public void startMove(boolean goingToAttack){
-		if(this.getOrientation().equals("left")){
-			this.setMoveSpeed(-MOVE_SPEED/2);
-		} else{
-			this.setMoveSpeed(MOVE_SPEED/2);
-		}
+//		if(this.getOrientation().equals("left")){
+//			this.setMoveSpeed(-MOVE_SPEED/2);
+//		} else{
+//			this.setMoveSpeed(MOVE_SPEED/2);
+//		}
 		
 		this.goingToAttack = goingToAttack;
-		this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
-		manageSword("walking", 0, false);
+//		this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
+//		manageSword("walking", 0, false);
 	}
 	
 	public void endMove(){
 		this.setMoveSpeed(0);
 		this.setCurrentAnimation("walking end_" + orientation, FRAME_DURATION);
-		manageSword("end walking",0,false);
+		manageSword("walking end",0,false);
+	}
+	
+	public void normalIdle(){
+		this.setMoveSpeed(0);
+		this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+		manageSword("idle",0,false);
 	}
 	
 	public void idle(){
 		this.setMoveSpeed(0);
-		this.setCurrentAnimation("idle combat_" + orientation, FRAME_DURATION);
-		manageSword("idle combat", 0, false);
+		this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+		manageSword("sword idle", 0, false);
 	}
 	
 	public void startAttack(){
@@ -307,7 +356,7 @@ public class Enemy extends Character {
 	
 	public void blockedAndBlock(){
 		if(player.isAttacking() && random(BASE_BLOCK_PERCENTAJE + ((double)difficulty)/10)){
-			
+			player.hasBeenBlocked();
 			this.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION);
 			manageSword("blocked and prepare block", 0, false);
 		} else{
@@ -327,6 +376,9 @@ public class Enemy extends Character {
 			success = false;
 			this.setCurrentAnimation("attack end success_" + orientation, FRAME_DURATION);
 			manageSword("attack end success", 0, false);
+			if(this.xDistanceChar(player) <= ATTACK_DISTANCE){
+				player.beenHit();
+			}
 		} else{
 			
 			this.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION);
@@ -342,11 +394,13 @@ public class Enemy extends Character {
 			
 			/* Block and counter */
 			this.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION);
+			manageSword("block and attack", 0, false);
 		}
 		else{
 			
 			/* Only block */
 			this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
+			manageSword("block only", 0, false);
 		}
 	}
 	
@@ -357,8 +411,19 @@ public class Enemy extends Character {
 		}
 	}
 	
+	public void beenHit(){
+		if(this.getOrientation().equals("left")){
+			this.setMoveSpeed(MOVE_SPEED);
+		} else{
+			this.setMoveSpeed(-MOVE_SPEED);
+		}
+		this.setCurrentAnimation("hit_" + this.orientation, FRAME_DURATION);
+		manageSword("hit", 0, false);
+	}
+	
 	public boolean random(double probability){
-		return Math.random() < probability;
+		double p = Math.random();
+		return p < probability;
 	}
 	
 	public int random(int min, int max){
@@ -376,30 +441,36 @@ public class Enemy extends Character {
 	}
 	
 	public void manageSword(String animation, int currentFrame, boolean newSword){
-//		int x_offset = 0;
-//		int y_offset = -46;
-//		int[] x_offsets;
-//		int[] y_offsets;
-//		
-//		switch(animation){
-//		
-//		case "idle":
-//			if(this.getOrientation().equals("right")){
-//				x_offset = 56;
-//			} else{
-//				x_offset = -56;
-//			}
-//			if(newSword){
-//				this.sword = new SwordFighting(this.x,this.y,x_offset,y_offset,this.loader,"idle_" + orientation);
-//			} else{
-//				this.sword.setCurrentAnimation("idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
-//			}
-//			break;
-//		
-//		default:
-//			break;
-//		
-//		}
+		int x_offset = 0;
+		int y_offset = -18;
+		int[] x_offsets;
+		int[] y_offsets;
+		
+		switch(animation){
+		
+		case "idle":
+			if(this.getOrientation().equals("right")){
+				x_offset = 24;
+			} else{
+				x_offset = -36;
+			}
+			this.sword.setCurrentAnimation("idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
+			break;
+			
+		case "sword idle":
+			if(this.getOrientation().equals("right")){
+				x_offset = 32;
+			} else{
+				x_offset = -46;
+			}
+			y_offset = -38;
+			this.sword.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
+			break;
+		
+		default:
+			break;
+		
+		}
 	}
 
 }

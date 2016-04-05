@@ -126,6 +126,10 @@ public abstract class Entity {
 	public void setX(int x) {
 		this.x = x;
 	}
+	
+	public int getXCentre(){
+		return this.getX() - this.getCurrentAnimation().getImage().getWidth()/2;
+	}
 	/**
 	 * @return the y
 	 */
@@ -183,8 +187,8 @@ public abstract class Entity {
 		this.boundingBoxColor = boundingBoxColor;
 	}
 	
-	public int xDistance(Entity e){
-		return Math.abs(this.getX() - e.getX());
+	public int xDistanceEntity(Entity e){
+		return Math.abs(this.getXCentre() - e.getXCentre());
 	}
 	
 	public abstract Entity copy();

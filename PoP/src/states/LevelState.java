@@ -53,7 +53,7 @@ public class LevelState extends State{
 //			for(String key : loader.getAnimations("wall").keySet()){
 //				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 //			}
-			player = new Player(200,130,loader, "right");
+			player = new Player(400,130,loader, "left");
 			player.setySpeed(4);
 			
 			Enemy e = (Enemy)currentRoom.getCharacters().get(0);

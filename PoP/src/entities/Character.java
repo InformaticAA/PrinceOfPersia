@@ -20,7 +20,7 @@ public class Character extends Entity {
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
-	protected final int FRAME_DURATION = 6; //6
+	protected final int FRAME_DURATION = 7; //6
 	protected final int MOVE_SPEED = 2;
 
 	/* Movement variables */
@@ -55,11 +55,11 @@ public class Character extends Entity {
 	
 	@Override
 	public void drawSelf(Graphics g){
-		super.drawSelf(g);
 		if(sword!=null){
 			sword.drawSelf(g);
-			splash.drawSelf(g);
 		}
+		super.drawSelf(g);
+		splash.drawSelf(g);
 	}
 	
 	
@@ -291,5 +291,13 @@ public class Character extends Entity {
 	
 	public void setCanShowSplash(boolean canShowSplash) {
 		this.canShowSplash = canShowSplash;
+	}
+//	
+	public int getCharCentre(){
+		return this.getX() - this.getAnimations().get("sword idle_left").getFrame(0).getImage().getWidth();
+	}
+	
+	public int xDistanceChar(Character e){
+		return Math.abs(this.getCharCentre() - e.getCharCentre());
 	}
 }

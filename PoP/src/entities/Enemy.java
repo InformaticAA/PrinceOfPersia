@@ -12,7 +12,8 @@ public class Enemy extends Character {
 	private final int SAFE_DISTANCE = 150;
 	private final int NO_COMBAT_ATTACK_DISTANCE = 190;
 	private final int ATTACK_DISTANCE = 110;
-	private final int AGRESIVE_DISTANCE = 0;
+	private final int AGRESIVE_DISTANCE = 80;
+	private final int TURN_DISTANCE = 50;
 	private final long MOVE_COOLDOWN = 200;
 	private final long ATTACK_COOLDOWN = 400;
 	
@@ -160,8 +161,23 @@ public class Enemy extends Character {
 					} else{
 						if(this.xDistanceChar(player) < AGRESIVE_DISTANCE){
 							
-							/* Player very close to the enemy -> Attack */
-							startAttack();
+							if(this.xDistanceChar(player) < TURN_DISTANCE){
+								if(this.getOrientation().equals("right")){
+									this.setOrientation("left");
+									this.setX(this.getX() + 40);
+									player.setOrientation("right");
+									player.setX(player.getX() - 40);
+								} else{
+									this.setOrientation("right");
+									this.setX(this.getX() - 40);
+									player.setOrientation("left");
+									player.setX(player.getX() + 40);
+								}
+							} else{
+								
+								/* Player very close to the enemy -> Attack */
+								startAttack();
+							}
 						} else{
 							
 							if(decidedToBlock && blockDecission && 

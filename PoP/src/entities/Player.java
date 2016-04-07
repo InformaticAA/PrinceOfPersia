@@ -43,6 +43,7 @@ public class Player extends Character {
 	private boolean hasBlocked;
 	private boolean goingToBlock;
 	private boolean goingToAttack;
+	private boolean goingToCounter;
 	
 	public Player(int x, int y, Loader loader, int hp, String orientation) {
 		super(x, y, loader, orientation);
@@ -83,6 +84,7 @@ public class Player extends Character {
 		this.hasBlocked = false;
 		this.goingToBlock = false;
 		this.goingToAttack = false;
+		this.goingToCounter = false;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");
 	}
@@ -1662,15 +1664,20 @@ public class Player extends Character {
 				
 			case COMBAT:
 				manageSword("start attacking", this.currentAnimation.getCurrentFrame(), false);
+				if(combatCanDefense && combatDefense){
+					this.goingToCounter = true;
+					this.combatCanDefense = false;
+				}
 				if(this.currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					if(!beenBlocked){
+						this.goingToCounter = false;
 						this.setCurrentAnimation("sword attack end_" + orientation, FRAME_DURATION);
 						manageSword("end attacking",0,false);
 					} else{
 						beenBlocked = false;
-						if(this.combatCanDefense && combatDefense){
-							this.combatCanDefense = false;
+						if(goingToCounter){
+							this.goingToCounter = false;
 							this.setCurrentAnimation("sword blocked and block_" + orientation, FRAME_DURATION);
 							manageSword("defending after block",0,false);
 						} else{

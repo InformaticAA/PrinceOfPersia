@@ -10,6 +10,7 @@ public class Enemy extends Character {
 	private enum EnemyState {IDLE, COMBAT, DIED};
 	
 	private final int SAFE_DISTANCE = 150;
+	private final int NO_COMBAT_ATTACK_DISTANCE = 190;
 	private final int ATTACK_DISTANCE = 110;
 	private final int AGRESIVE_DISTANCE = 0;
 	private final long MOVE_COOLDOWN = 200;
@@ -20,8 +21,6 @@ public class Enemy extends Character {
 	
 	
 	private EnemyState currentState;
-	private int health;
-	private int maxHealth;
 	private int difficulty;
 	private boolean playerSaw;
 	
@@ -32,14 +31,16 @@ public class Enemy extends Character {
 	private boolean decidedToBlock;
 	private boolean blockDecission;
 	
+	private boolean canBeHit;
+	
 	/* Cooldowns */
 	private long counterMove;
 	private long counterAttack;
 
 	public Enemy(int x, int y, Loader loader, String orientation, String colour, int health, int difficulty) {
 		super(x, y - 20, loader, orientation);
-		this.health = health;
-		this.maxHealth = health;
+		this.hp = health;
+		this.maxHp = health;
 		
 		animations = loader.getAnimations("Guard_" + colour);
 		currentAnimation = animations.get("idle_" + this.orientation);
@@ -63,18 +64,37 @@ public class Enemy extends Character {
 		
 		this.splash = new Splash(0,0,0,0,loader,"guard_" + colour);
 		this.sword = new SwordFighting(this.x,this.y,0,0,this.loader,"idle_" + orientation, "guard");
+		this.canBeHit = true;
 	}
 	
 	@Override
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if(playerSaw){
+		if(this.currentState == EnemyState.DIED){
+			if(this.currentAnimation.getId().startsWith("dying_")){
+				if(this.getCurrentAnimation().getCurrentFrame() == 0){
+					this.setSplashVisible(true);
+				} else if(this.getCurrentAnimation().getCurrentFrame() == 1){
+					this.setSplashVisible(false);
+					this.setCanShowSplash(false);
+				}
+				if(this.getCurrentAnimation().isOver(false)){
+					dead();
+				}
+			} else if(this.currentAnimation.getId().startsWith("died_")){
+				
+			}
+		} else if(playerSaw){
 			manageIA(elapsedTime);
 			this.moveCharacter();
-			if(this.xDistanceChar(player) <= ATTACK_DISTANCE && player.isHitting()){
+			if(this.xDistanceChar(player) <= ATTACK_DISTANCE && player.isHitting() && canBeHit){
 				setCanShowSplash(true);
 				beenHit();
+			}
+			if(player.isDead()){
+				playerSaw = false;
+				player = null;
 			}
 		} else{
 			normalIdle();
@@ -109,15 +129,17 @@ public class Enemy extends Character {
 			
 			idle();
 			if(this.xDistanceChar(player)>=SAFE_DISTANCE){
-				
-				/* Move towards the player */
-				startMove(false);
+				if(player.isRunning(this.getOrientation())){
+					
+				} else{
+					/* Move towards the player */
+					startMove(false);
+				}
 			} else{
 				
-				if(player.isWalking() && random(0.05)){
+				if(!player.isInCombat() || (player.isWalking() && random(0.05))){
 					startAttack();
 				} else{
-				
 					if(this.xDistanceChar(player) >= ATTACK_DISTANCE){
 						if(!player.isAttacking()){
 							
@@ -300,6 +322,7 @@ public class Enemy extends Character {
 			}
 			if(this.getCurrentAnimation().isOver(false)){
 				idle();
+				canBeHit = true;
 			}
 			
 			break;
@@ -417,13 +440,33 @@ public class Enemy extends Character {
 	}
 	
 	public void beenHit(){
-		if(this.getOrientation().equals("left")){
-			this.setMoveSpeed(MOVE_SPEED);
+		canBeHit = false;
+		this.hp = hp - 1;
+		if(this.hp == 0){
+			dying();
 		} else{
-			this.setMoveSpeed(-MOVE_SPEED);
+			if(this.getOrientation().equals("left")){
+				this.setMoveSpeed(MOVE_SPEED);
+			} else{
+				this.setMoveSpeed(-MOVE_SPEED);
+			}
+			this.setCurrentAnimation("hit_" + this.orientation, FRAME_DURATION);
+			manageSword("hit", 0, false);
 		}
-		this.setCurrentAnimation("hit_" + this.orientation, FRAME_DURATION);
-		manageSword("hit", 0, false);
+	}
+	
+	public void dying(){
+		this.setMoveSpeed(0);
+		this.currentState = EnemyState.DIED;
+		this.setCurrentAnimation("dying_" + orientation, FRAME_DURATION);
+		this.sword = null;
+	}
+	
+	public void dead(){
+		this.setMoveSpeed(0);
+		player.putSwordDown();
+		this.setCurrentAnimation("died_" + orientation, FRAME_DURATION);
+		this.sword = null;
 	}
 	
 	public boolean random(double probability){

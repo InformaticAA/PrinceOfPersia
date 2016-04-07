@@ -44,7 +44,7 @@ public class Player extends Character {
 	private boolean goingToBlock;
 	private boolean goingToAttack;
 	
-	public Player(int x, int y, Loader loader, String orientation) {
+	public Player(int x, int y, Loader loader, int hp, String orientation) {
 		super(x, y, loader, orientation);
 		animations = loader.getAnimations("Dastan");
 		
@@ -68,6 +68,9 @@ public class Player extends Character {
 		
 		this.enemySaw = false;
 		
+		this.hp = hp;
+		this.maxHp = this.hp;
+		
 		this.combatStepRight = false;
 		this.combatStepLeft = false;
 		this.combatAttack = false;
@@ -88,10 +91,12 @@ public class Player extends Character {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
+		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED
+				&& currentState != PlayerState.COMBAT && currentState != PlayerState.DIED){
 			currentState = PlayerState.IDLE;
 		} 
-		if(this.currentState != PlayerState.COLLIDED && this.currentState != PlayerState.COMBAT){
+		if(this.currentState != PlayerState.COLLIDED && this.currentState != PlayerState.COMBAT
+				&& this.currentState != PlayerState.DIED){
 			if(right_pressed || left_pressed){
 				if(right_pressed && !left_pressed){
 					if(this.getOrientation().equals("left") && !changed_position){
@@ -108,7 +113,8 @@ public class Player extends Character {
 				} 
 			}
 		}
-		if(up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT){
+		if(up_pressed && currentState != PlayerState.COLLIDED && currentState != PlayerState.COMBAT
+				&& currentState != PlayerState.DIED){
 			this.currentState = PlayerState.JUMP;
 		}
 		if(sword!=null){
@@ -155,6 +161,21 @@ public class Player extends Character {
 		return this.getCurrentAnimation().getId().startsWith("sword walking");
 	}
 	
+	public boolean isRunning(String enemyDirection){
+		if(enemyDirection.equals("left")){
+			return this.currentState != PlayerState.COMBAT && 
+					(this.getOrientation().equals("right") && this.xSpeed > 0);
+		} else{
+			return this.currentState != PlayerState.COMBAT &&  
+					(this.getOrientation().equals("left") && this.xSpeed < 0);
+		}
+	}
+	
+	public void putSwordDown(){
+		this.setCurrentAnimation("putting down sword_" + orientation, FRAME_DURATION);
+		this.sword = null;
+	}
+	
 	public boolean checkAttack(){
 		boolean checkAttack = false;
 		if(this.getCurrentAnimation().getId().startsWith("sword attack start")
@@ -166,7 +187,14 @@ public class Player extends Character {
 	}
 	
 	public void beenHit(){
-		this.setCurrentAnimation("sword hit_" + orientation, FRAME_DURATION);
+		this.hp = this.hp - 1;
+		if(this.currentState != PlayerState.COMBAT || this.hp == 0){
+			this.currentState = PlayerState.DIED;
+			this.sword = null;
+			this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
+		} else{
+			this.setCurrentAnimation("sword hit_" + orientation, FRAME_DURATION);
+		}
 		this.beenBlocked = false;
 		this.hasBlocked = false;
 	}
@@ -176,57 +204,71 @@ public class Player extends Character {
 				this.getCurrentAnimation().getCurrentFrame() == 1;
 	}
 	
+	public boolean isDead(){
+		return this.currentState == PlayerState.DIED;
+	}
+	
+	public boolean isInCombat(){
+		return this.currentState == PlayerState.COMBAT;
+	}
+	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
 		if(key_pressed == keys_mapped.get(Key.UP)){
-			if(this.currentState != PlayerState.COMBAT){
-				up_pressed = true;
-				currentState = PlayerState.JUMP;
-			} else{
-				if(!this.combatDefense){
-					combatDefense = true;
-					combatCanDefense = true;
+			if(this.currentState != PlayerState.DIED){
+				if(this.currentState != PlayerState.COMBAT){
+					up_pressed = true;
+					currentState = PlayerState.JUMP;
+				} else{
+					if(!this.combatDefense){
+						combatDefense = true;
+						combatCanDefense = true;
+					}
 				}
 			}
 			
 		} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
-			if(this.currentState != PlayerState.COMBAT){
-				if(!right_pressed){
-					canMakeStep = true;
-					canWalkCrouched = true;
-				}
-				if(this.currentState != PlayerState.JUMP){
-					currentState = PlayerState.MOVE;
-					if(this.getOrientation().equals("left")){
-						this.changed_position = true;
-						this.newOrientation = "right";
+			if(this.currentState != PlayerState.DIED){
+				if(this.currentState != PlayerState.COMBAT){
+					if(!right_pressed){
+						canMakeStep = true;
+						canWalkCrouched = true;
 					}
-				}
-				right_pressed = true;
-			} else{
-				if(!this.combatStepRight){
-					this.combatStepRight = true;
-					this.combatCanMove = true;
+					if(this.currentState != PlayerState.JUMP){
+						currentState = PlayerState.MOVE;
+						if(this.getOrientation().equals("left")){
+							this.changed_position = true;
+							this.newOrientation = "right";
+						}
+					}
+					right_pressed = true;
+				} else{
+					if(!this.combatStepRight){
+						this.combatStepRight = true;
+						this.combatCanMove = true;
+					}
 				}
 			}
 			
 		} else if(key_pressed == keys_mapped.get(Key.LEFT)){
-			if(this.currentState != PlayerState.COMBAT){
-				if(!left_pressed){
-					canMakeStep = true;
-					canWalkCrouched = true;
-				}
-				if(this.currentState != PlayerState.JUMP){
-					currentState = PlayerState.MOVE;
-					if(this.getOrientation().equals("right")){
-						this.changed_position = true;
-						this.newOrientation = "left";
+			if(this.currentState != PlayerState.DIED){
+				if(this.currentState != PlayerState.COMBAT){
+					if(!left_pressed){
+						canMakeStep = true;
+						canWalkCrouched = true;
 					}
-				}
-				left_pressed = true;
-			} else{
-				if(!this.combatStepLeft){
-					this.combatStepLeft = true;
-					this.combatCanMove = true;
+					if(this.currentState != PlayerState.JUMP){
+						currentState = PlayerState.MOVE;
+						if(this.getOrientation().equals("right")){
+							this.changed_position = true;
+							this.newOrientation = "left";
+						}
+					}
+					left_pressed = true;
+				} else{
+					if(!this.combatStepLeft){
+						this.combatStepLeft = true;
+						this.combatCanMove = true;
+					}
 				}
 			}
 			
@@ -234,15 +276,17 @@ public class Player extends Character {
 			down_pressed = true;
 			
 		} else if(key_pressed == keys_mapped.get(Key.SHIFT)){
-			if(this.currentState != PlayerState.COMBAT){
-				if(enemySaw){
-					wantCombat = true;
-				}
-				shift_pressed = true;
-			} else{
-				if(!this.combatAttack){
-					this.combatCanAttack = true;
-					this.combatAttack = true;
+			if(this.currentState != PlayerState.DIED){
+				if(this.currentState != PlayerState.COMBAT){
+					if(enemySaw){
+						wantCombat = true;
+					}
+					shift_pressed = true;
+				} else{
+					if(!this.combatAttack){
+						this.combatCanAttack = true;
+						this.combatAttack = true;
+					}
 				}
 			}
 			
@@ -262,21 +306,23 @@ public class Player extends Character {
 	
 	public void manageKeyReleased(int key_released, Hashtable<String,Integer> keys_mapped){
 		if(key_released == keys_mapped.get(Key.UP)){
-			if(currentState != PlayerState.COMBAT){
+			if(currentState != PlayerState.COMBAT && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
 			up_pressed = false;
 			combatDefense = false;
 			
 		} else if(key_released == keys_mapped.get(Key.RIGHT)){
-			if(currentState != PlayerState.JUMP && currentState != PlayerState.COMBAT && this.getOrientation().equals("right")){
+			if(currentState != PlayerState.JUMP && currentState != PlayerState.COMBAT
+					&& this.getOrientation().equals("right") && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
 			right_pressed = false;
 			combatStepRight = false;
 			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
-			if(currentState != PlayerState.JUMP && currentState != PlayerState.COMBAT && this.getOrientation().equals("left")){
+			if(currentState != PlayerState.JUMP && currentState != PlayerState.COMBAT 
+					&& this.getOrientation().equals("left") && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
 			left_pressed = false;
@@ -575,6 +621,20 @@ public class Player extends Character {
 			case COMBAT:
 				break;
 				
+			case DIED:
+				this.setMoveSpeed(0);
+				if(this.getCurrentAnimation().getCurrentFrame() == 0){
+					setSplashVisible(true);
+				} else if(this.getCurrentAnimation().getCurrentFrame() == 1){
+					setSplashVisible(false);
+					setCanShowSplash(false);
+				}
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("normal dead_" + orientation, FRAME_DURATION);
+					//TODO: CHANGE POSITION WHEN DEAD
+				}
+				break;
+				
 				
 			default:
 				
@@ -845,6 +905,40 @@ public class Player extends Character {
 			case COMBAT:
 				this.setMoveSpeed(0);
 				this.setCurrentAnimation("taking sword out_" + orientation, FRAME_DURATION);
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "normal dead_left":
+		case "normal dead_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+
+				break;
+				
+			case COMBAT:
+				
+				break;
+				
+			case DIED:
+				
 				break;
 				
 			default:

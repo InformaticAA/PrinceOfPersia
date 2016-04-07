@@ -281,7 +281,7 @@ public class Character extends Entity {
 	
 	protected void setSplashVisible(boolean visible){
 		if(visible && canShowSplash){
-			this.splash.setX(this.x);
+			this.splash.setX(this.getActualCentre() + this.splash.getCurrentAnimation().getImage().getWidth()/2);
 			this.splash.setY(this.y - 16);
 			this.splash.setVisible(true);
 		} else{
@@ -292,9 +292,13 @@ public class Character extends Entity {
 	public void setCanShowSplash(boolean canShowSplash) {
 		this.canShowSplash = canShowSplash;
 	}
+	
+	public int getActualCentre(){
+		return this.getX() - this.getCurrentAnimation().getImage().getWidth()/2;
+	}
 //	
 	public int getCharCentre(){
-		return this.getX() - this.getAnimations().get("sword idle_left").getFrame(0).getImage().getWidth();
+		return this.getX() - this.getAnimations().get("sword idle_left").getFrame(0).getImage().getWidth()/2;
 	}
 	
 	public int xDistanceChar(Character e){

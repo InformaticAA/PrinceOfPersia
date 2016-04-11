@@ -97,7 +97,7 @@ public class MenuState extends State{
 			//campaign
 		}
 		else if(currentChoice == 1){
-			//multiplayer
+			gsm.setState(3);
 		}
 		else if(currentChoice == 2){
 			//start settings

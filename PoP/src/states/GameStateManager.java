@@ -15,9 +15,11 @@ public class GameStateManager {
 	private ArrayList<State> gameStates;
 	private int currentState;
 	
-	public static final int TESTSTATE = -1;
-	public static final int MENUSTATE = 0;
-	public static final int MAINGAMESTATE = 1;
+	public static final int TESTSTATE = 0;
+	public static final int MENUSTATE = 1;
+	public static final int MAINGAMESTATE = 2;
+	public static final int MULTIPLAYERMENUSTATE = 3;
+	public static final int VERSUS = 4;
 	
 	public GameStateManager(ConcurrentLinkedQueue<Key> keys, Loader loader){
 		
@@ -31,6 +33,7 @@ public class GameStateManager {
 		gameStates.add(new Test(this, keys, keys_mapped, loader));
 		gameStates.add(new MenuState(this,keys, keys_mapped, loader));
 		gameStates.add(new LevelState(this, keys, keys_mapped, loader, true));
+		gameStates.add(new MultiplayerMenuState(this,keys,keys_mapped,loader));
 	}
 	
 	public void setState(int state){

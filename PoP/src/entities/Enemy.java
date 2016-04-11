@@ -509,6 +509,7 @@ public class Enemy extends Character {
 				(this.getCurrentAnimation().getCurrentFrame() == 3);
 	}
 	
+	@Override
 	public void manageSword(String animation, int currentFrame, boolean newSword){
 		int x_offset = 0;
 		int y_offset = -18;

@@ -304,4 +304,6 @@ public class Character extends Entity {
 	public int xDistanceChar(Character e){
 		return Math.abs(this.getCharCentre() - e.getCharCentre());
 	}
+	
+	public void manageSword(String animation, int currentFrame, boolean newSword){}
 }

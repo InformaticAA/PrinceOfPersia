@@ -10,7 +10,13 @@ public class Key {
 	public static final String SHIFT = "SHIFT";
 	public static final String ESCAPE = "ESCAPE";
 	public static final String CONTROL = "CONTROL";
+	public static final String W = "W";
+	public static final String A = "A";
+	public static final String S = "S";
 	public static final String D = "D";
+	public static final String M = "M";
+	public static final String C = "C";
+	public static final String SPACE = "SPACE";
 	
 	private boolean pressed;
 	private int keycode;

@@ -2385,6 +2385,7 @@ public class Player extends Character {
 //		System.out.println("----" + this.getCurrentAnimation().getId() + "   Frame: " + this.getCurrentAnimation().getCurrentFrame());
 	}
 	
+	@Override
 	public void manageSword(String animation, int currentFrame, boolean newSword){
 		int x_offset = 0;
 		int y_offset = -46;

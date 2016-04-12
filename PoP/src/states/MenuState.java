@@ -93,11 +93,12 @@ public class MenuState extends State{
 	public void select(){
 		if(currentChoice == 0){
 			menu.stop();
-			gsm.setState(2);
+			gsm.setState(GameStateManager.MAINGAMESTATE);
 			//campaign
 		}
 		else if(currentChoice == 1){
-			gsm.setState(3);
+			menu.stop();
+			gsm.setState(GameStateManager.MULTIPLAYERMENUSTATE);
 		}
 		else if(currentChoice == 2){
 			//start settings

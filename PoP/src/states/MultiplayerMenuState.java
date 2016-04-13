@@ -153,10 +153,6 @@ public class MultiplayerMenuState extends State{
 		
 		t1.drawSelf(g);
 		t2.drawSelf(g);
-		
-//		g.drawImage(sword, 
-//				Game.WIDTH/2 - options[currentChoice].getWidth()/2 - sword.getWidth() - 10*Game.SCALE,
-//				Game.HEIGHT/2 - 47*Game.SCALE + currentChoice*20*Game.SCALE,null);
 	}
 	
 	public void selectP1(){
@@ -205,7 +201,6 @@ public class MultiplayerMenuState extends State{
 				gsm.setState(GameStateManager.VERSUS);
 			}
 		} else if(currentChoiceP1 == 3){
-			System.out.println("jjejejeje");
 			choosing.play();
 			menu.stop();
 			prince = -1;
@@ -268,24 +263,68 @@ public class MultiplayerMenuState extends State{
 					/* key pressed */
 					int key_pressed = e.getKeycode();
 					System.out.println(key_pressed);
+					if(key_pressed == keys_mapped.get(Key.A) || 
+							key_pressed == keys_mapped.get(Key.D)){
+						if(prince != 1 && guard != 1){
+							if(currentChoiceP1 < 2){
+								moving.play();
+								currentChoiceP1 = (currentChoiceP1 + 1)%2;
+								if(prince == 0 && currentChoiceP1 == 0){
+									currentChoiceP1 = 1;
+								} else if(guard == 0 && currentChoiceP1 == 1){
+									currentChoiceP1 = 0;
+								}
+							}
+						}
+					}
 					
-					if(key_pressed == keys_mapped.get(Key.W) || key_pressed == keys_mapped.get(Key.A)){
+					else if(key_pressed == keys_mapped.get(Key.W)){
 						moving.play();
-						currentChoiceP1 = (currentChoiceP1 + 3)%4;
-						if(currentChoiceP1 == 2 && (prince == -1 || guard == -1)){
-							currentChoiceP1 = 1;
-						} 
-						if(currentChoiceP1 == 1 && guard == 1){
-							currentChoiceP1 = 0;
-						} else if(currentChoiceP1 == 1 && (prince == 0 || guard == 0)){
+						if(currentChoiceP1 < 2){
 							currentChoiceP1 = 3;
+						} else if(currentChoiceP1 == 3){
+							if(prince == -1 || guard == -1){
+								if(prince == 0 || guard == 1){
+									currentChoiceP1 = 0;
+								} else{
+									currentChoiceP1 = 1;
+								}
+							} else{
+								currentChoiceP1 = 2;
+							}
+						} else {
+							if(prince == -1 || guard == -1){
+								if(prince == 0 || guard == 1){
+									currentChoiceP1 = 0;
+								} else{
+									currentChoiceP1 = 1;
+								}
+							} else{
+								currentChoiceP1 = 3;
+							}
 						}
-						if(currentChoiceP1 == 0 && prince == 1){
+						
+					} else if(key_pressed == keys_mapped.get(Key.S)){
+						moving.play();
+						if(currentChoiceP1 < 2){
+							if(prince == -1 || guard == -1){
+								currentChoiceP1 = 3;
+							} else{
+								currentChoiceP1 = 2;
+							}
+						} else if(currentChoiceP1 == 2){
 							currentChoiceP1 = 3;
-						} else if(currentChoiceP1 == 0 && (prince == 0 || guard == 0)){
-							currentChoiceP1 = 3;
+						} else{
+							if(prince == -1 || guard == -1){
+								if(prince == 0 || guard == 1){
+									currentChoiceP1 = 0;
+								} else{
+									currentChoiceP1 = 1;
+								}
+							} else{
+								currentChoiceP1 = 2;
+							}
 						}
-						System.out.println(currentChoiceP1);
 					} else if(key_pressed == keys_mapped.get(Key.S) || key_pressed == keys_mapped.get(Key.D)){
 						moving.play();
 						currentChoiceP1 = (currentChoiceP1 + 1)%4;
@@ -303,10 +342,8 @@ public class MultiplayerMenuState extends State{
 							currentChoiceP1 = 3;
 						}
 						System.out.println(currentChoiceP1);
-					} else if(key_pressed == keys_mapped.get(Key.UP) ||
-							key_pressed == keys_mapped.get(Key.LEFT) ||
-							key_pressed == keys_mapped.get(Key.RIGHT)||
-							key_pressed == keys_mapped.get(Key.DOWN)){
+					} else if(key_pressed == keys_mapped.get(Key.LEFT) ||
+							key_pressed == keys_mapped.get(Key.RIGHT)){
 						if(prince != 1 && guard != 1){
 							moving.play();
 							currentChoiceP2 = (currentChoiceP2 + 1)%2;

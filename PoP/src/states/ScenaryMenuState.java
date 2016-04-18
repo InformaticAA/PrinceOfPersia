@@ -9,6 +9,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
+import entities.Character;
+import entities.Enemy;
+import entities.Player;
 import entities.Torch;
 import framework.Loader;
 import game.Game;
@@ -25,6 +28,7 @@ public class ScenaryMenuState extends State{
 	private BufferedImage sword;
 	private BufferedImage[] options;
 	private BufferedImage[] fights;
+	private Character[] characters;
 	
 	private int currentChoice;
 	
@@ -39,11 +43,19 @@ public class ScenaryMenuState extends State{
 		moving = loader.getSound("sword moving");
 		choosing = loader.getSound("sword vs sword");
 		menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+	
 	}
 
 	@Override
 	public void init() {
 		menu.play(true);
+		characters = new Character[2];
+		characters[0] = new Player(200,240,loader,3,"right");
+		characters[1] = new Enemy(460,260,loader,"left", "red", 3, 3);
+		characters[0].setCurrentAnimation("sword idle_right", 7);
+		characters[0].manageSword("idle", 0, true);
+		characters[1].setCurrentAnimation("sword idle_left", 7);
+		characters[1].manageSword("sword idle",0,true);
 		bg = new MobileBackground("resources/Sprites_400/Menu/Scenaries/test1.png",0,0);
 		bg.setDrawArrows(true);
 		bg.addImage("resources/Sprites_400/Menu/Scenaries/test2.png");
@@ -68,6 +80,7 @@ public class ScenaryMenuState extends State{
 	public void update(long elapsedTime) {
 		manageKeys();
 		bg.update(elapsedTime);
+		characters[0].update(elapsedTime);
 		if(bg.getVelx()!=0){
 			options[0] = fights[1];
 		} else{
@@ -80,6 +93,10 @@ public class ScenaryMenuState extends State{
 	@Override
 	public void draw(Graphics2D g) {
 		bg.draw(g);
+		
+		for (int i = 0; i < characters.length; i++) {
+			characters[i].drawSelf(g);
+		}
 		
 		for (int i = 0; i < options.length; i++) {
 			g.drawImage(options[i], Game.WIDTH/2 - options[i].getWidth()/2,

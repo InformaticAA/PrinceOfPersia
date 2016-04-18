@@ -38,7 +38,7 @@ public class ScenaryMenuState extends State{
 			
 		moving = loader.getSound("sword moving");
 		choosing = loader.getSound("sword vs sword");
-		menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
+		menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
 	}
 
 	@Override
@@ -95,9 +95,11 @@ public class ScenaryMenuState extends State{
 	public void select(){
 		if(currentChoice == 0){
 			if(bg.getVelx()==0){
+				menu.stop();
 				choosing.play();
 			}
 		} else{
+			menu.stop();
 			choosing.play();
 			gsm.setState(3);
 		}

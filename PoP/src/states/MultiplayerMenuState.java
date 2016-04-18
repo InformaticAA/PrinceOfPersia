@@ -51,16 +51,15 @@ public class MultiplayerMenuState extends State{
 		
 		try{
 			bg = new MobileBackground("resources/Sprites_400/Menu/room_won.png");
+			bg.addImage("resources/Sprites_400/Menu/walls_base.png");
 			bg.addImage("resources/Sprites_400/Menu/walls.png");
 			bg.addImage("resources/Sprites_400/Menu/walls.png");
 			bg.addImage("resources/Sprites_400/Menu/walls.png");
-			bg.addImage("resources/Sprites_400/Menu/walls.png");
-			bg.addImage("resources/Sprites_400/Menu/walls.png");
+			bg.addImage("resources/Sprites_400/Menu/wall_dungeon.png");
 			bg.addImage("resources/Sprites_400/Menu/Scenaries/test1.png");
 			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
-			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
-			t1 = new Torch(232,265,loader,true);
-			t2 = new Torch(468,265,loader,true);
+			menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+			
 			
 		} catch(Exception e){
 			e.printStackTrace();
@@ -69,6 +68,10 @@ public class MultiplayerMenuState extends State{
 
 	@Override
 	public void init() {
+		offset = 0;
+		t1 = new Torch(232,265,loader,true);
+		t2 = new Torch(468,265,loader,true);
+		bg.setCurrentBackground(0);
 		bg.setDrawArrows(false);
 		yvel = YVEL;
 		bg.setVel(0, yvel);
@@ -84,7 +87,6 @@ public class MultiplayerMenuState extends State{
 		
 		moving = loader.getSound("sword moving");
 		choosing = loader.getSound("sword vs sword");
-		menu.play(true);
 		currentChoiceP1 = 0;
 		currentChoiceP2 = 1;
 		prince = -1;
@@ -111,6 +113,7 @@ public class MultiplayerMenuState extends State{
 			options[0].update(elapsedTime);
 			bg.update(elapsedTime);
 			if(bg.getCurrentBackground()==6){
+				menu.play(true);
 				initialAnimation = false;
 				bg.setVel(0, 0);
 				menuOptions = new BufferedImage[2];
@@ -155,14 +158,14 @@ public class MultiplayerMenuState extends State{
 				g.drawImage(p1,Game.WIDTH/2-150-p1.getWidth()/2,Game.HEIGHT/2 - 70,null);
 				g.drawImage(p2,Game.WIDTH/2-150+p2.getWidth()/2,Game.HEIGHT/2 - 70,null);
 			} else if(currentChoiceP1 == 1 && currentChoiceP2 == 1){
-				g.drawImage(p1,Game.WIDTH/2+106-p1.getWidth()/2,Game.HEIGHT/2 - 70,null);
-				g.drawImage(p2,Game.WIDTH/2+106+p2.getWidth()/2,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p1,Game.WIDTH/2+100-p1.getWidth()/2,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p2,Game.WIDTH/2+100+p2.getWidth()/2,Game.HEIGHT/2 - 70,null);
 			} 
 			
 			if(currentChoiceP1 == 0 && currentChoiceP2 != 0){
 				g.drawImage(p1,Game.WIDTH/2-146,Game.HEIGHT/2 - 70,null);
 			} else if(currentChoiceP1 == 1 && currentChoiceP2 != 1){
-				g.drawImage(p1,Game.WIDTH/2+110,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p1,Game.WIDTH/2+104,Game.HEIGHT/2 - 70,null);
 			} else if(currentChoiceP1 >= 2 && currentChoiceP1 <=3){
 				g.drawImage(sword, 
 						Game.WIDTH/2 - menuOptions[currentChoiceP1 - 2].getWidth()/2 - sword.getWidth() - 10*Game.SCALE,
@@ -172,19 +175,19 @@ public class MultiplayerMenuState extends State{
 			if(currentChoiceP2 == 0 && currentChoiceP1 != 0){
 				g.drawImage(p2,Game.WIDTH/2-148,Game.HEIGHT/2 - 70,null);
 			} else if(currentChoiceP2 == 1 && currentChoiceP1 != 1){
-				g.drawImage(p2,Game.WIDTH/2+108,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p2,Game.WIDTH/2+104,Game.HEIGHT/2 - 70,null);
 			}
 			
 			if(prince == 0){
 				g.drawImage(p1,Game.WIDTH/2-146,Game.HEIGHT/2 - 70,null);
 			} else if(prince == 1){
-				g.drawImage(p2,Game.WIDTH/2-112,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p2,Game.WIDTH/2-148,Game.HEIGHT/2 - 70,null);
 			}
 			
 			if(guard == 0){
-				g.drawImage(p1,Game.WIDTH/2+136,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p1,Game.WIDTH/2+104,Game.HEIGHT/2 - 70,null);
 			} else if(guard == 1){
-				g.drawImage(p2,Game.WIDTH/2+108,Game.HEIGHT/2 - 70,null);
+				g.drawImage(p2,Game.WIDTH/2+104,Game.HEIGHT/2 - 70,null);
 			}
 		}
 		

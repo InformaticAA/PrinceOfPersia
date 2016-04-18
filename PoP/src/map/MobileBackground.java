@@ -14,9 +14,11 @@ public class MobileBackground extends Background{
 	
 	private ArrayList<BufferedImage> backgrounds;
 	private int posAuxX;
+	private int posAuxY;
 	private int currentBackground;
 	private BufferedImage arrow_left;
 	private BufferedImage arrow_right;
+	private boolean drawArrows;
 
 	public MobileBackground(String s) {
 		super(s);
@@ -24,6 +26,7 @@ public class MobileBackground extends Background{
 		backgrounds = new ArrayList<BufferedImage>();
 		backgrounds.add(super.image);
 		posAuxX = 0;
+		posAuxY = 0;
 		currentBackground = 0;
 		try {
 			arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
@@ -39,6 +42,7 @@ public class MobileBackground extends Background{
 		backgrounds = new ArrayList<BufferedImage>();
 		backgrounds.add(super.image);
 		posAuxX = 0;
+		posAuxY = 0;
 		currentBackground = 0;
 		try {
 			arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
@@ -77,8 +81,15 @@ public class MobileBackground extends Background{
 	public void update(long elapsedTime){
 		this.x = (x + dx) % (640*backgrounds.size());
 		this.posAuxX = posAuxX + dx;
+		this.posAuxY = posAuxY + dy;
 		this.y = y + dy;
-		if(Math.abs(posAuxX) == 640){
+		if(Math.abs(posAuxY) == backgrounds.get(currentBackground).getHeight()){
+			posAuxY = 0;
+			this.x = 0;
+			this.y = 0;
+			currentBackground = (currentBackground + 1) % backgrounds.size();
+		}
+		else if(Math.abs(posAuxX) == 640){
 			posAuxX = 0;
 			this.x = 0;
 			this.y = 0;
@@ -101,6 +112,11 @@ public class MobileBackground extends Background{
 	
 	public void draw(Graphics2D g){
 		g.drawImage(backgrounds.get(currentBackground), x, y, null);
+		
+		if(y < 0){
+			g.drawImage(backgrounds.get((currentBackground+1)%backgrounds.size()),
+					x, y + Game.HEIGHT,	null);
+		}
 		if(x < 0){
 			g.drawImage(backgrounds.get((currentBackground + 1)%backgrounds.size()),
 					x + Game.WIDTH, y, null);
@@ -110,10 +126,17 @@ public class MobileBackground extends Background{
 					x - Game.WIDTH, y, null);
 		}
 		
-		g.drawImage(arrow_left, 10,
-				Game.HEIGHT/2 - arrow_left.getHeight()/2, null);
-		g.drawImage(arrow_right, Game.WIDTH - arrow_right.getWidth() - 10,
-				Game.HEIGHT/2 - arrow_right.getHeight()/2, null);
+		if(drawArrows){
+			g.drawImage(arrow_left, 10,
+					Game.HEIGHT/2 - arrow_left.getHeight()/2, null);
+			g.drawImage(arrow_right, Game.WIDTH - arrow_right.getWidth() - 10,
+					Game.HEIGHT/2 - arrow_right.getHeight()/2, null);
+		}
+		
+	}
+	
+	public void setDrawArrows(boolean drawArrows){
+		this.drawArrows = drawArrows;
 	}
 	
 	public void setCurrentBackground(int currentBackground){

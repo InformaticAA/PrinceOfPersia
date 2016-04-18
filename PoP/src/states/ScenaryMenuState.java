@@ -45,6 +45,7 @@ public class ScenaryMenuState extends State{
 	public void init() {
 		menu.play(true);
 		bg = new MobileBackground("resources/Sprites_400/Menu/Scenaries/test1.png",0,0);
+		bg.setDrawArrows(true);
 		bg.addImage("resources/Sprites_400/Menu/Scenaries/test2.png");
 		bg.addImage("resources/Sprites_400/Menu/Scenaries/test3.png");
 		bg.addImage("resources/Sprites_400/Menu/Scenaries/test4.png");

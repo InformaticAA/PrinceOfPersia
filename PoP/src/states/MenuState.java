@@ -36,7 +36,7 @@ public class MenuState extends State{
 		super(gsm, keys, keys_mapped, loader);
 		
 		try{
-			bg = new Background("/Sprites_400/Menu/room_won.png");
+			bg = new Background("resources/Sprites_400/Menu/room_won.png");
 			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
 			options = new BufferedImage[4];
 			options[0] = ImageIO.read(new File("resources/Sprites_400/Menu/campaign.png"));
@@ -121,17 +121,20 @@ public class MenuState extends State{
 					/* key pressed */
 					int key_pressed = e.getKeycode();
 					
-					if(key_pressed == keys_mapped.get(Key.UP)){
+					if(key_pressed == keys_mapped.get(Key.UP)||
+							key_pressed == keys_mapped.get(Key.W)){
 						moving.play();
 						currentChoice = (currentChoice + 3)%4;
-					} else if(key_pressed == keys_mapped.get(Key.DOWN)){
+					} else if(key_pressed == keys_mapped.get(Key.DOWN) ||
+							key_pressed == keys_mapped.get(Key.S)){
 						moving.play();
 						currentChoice = (currentChoice + 1)%4;
 					} else if(key_pressed == keys_mapped.get(Key.LEFT)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
 						
-					} else if(key_pressed == keys_mapped.get(Key.ENTER)){
+					} else if(key_pressed == keys_mapped.get(Key.ENTER)|| 
+							key_pressed == keys_mapped.get(Key.C)){
 						choosing.play();
 						select();
 					}

@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -45,7 +44,7 @@ public class MultiplayerMenuState extends State{
 		super(gsm, keys, keys_mapped, loader);
 		
 		try{
-			bg = new Background("/Sprites_400/Menu/room_won.png");
+			bg = new Background("resources/Sprites_400/Menu/room_won.png");
 			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
 			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
 			t1 = new Torch(232,265,loader,true);
@@ -354,7 +353,8 @@ public class MultiplayerMenuState extends State{
 							}
 						}
 						System.out.println(currentChoiceP2);
-					} else if(key_pressed == keys_mapped.get(Key.C)){
+					} else if(key_pressed == keys_mapped.get(Key.C) ||
+							key_pressed == keys_mapped.get(Key.ENTER)){
 						selectP1();
 					} else if(key_pressed == keys_mapped.get(Key.M)){
 						selectP2();

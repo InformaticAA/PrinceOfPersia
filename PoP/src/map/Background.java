@@ -6,15 +6,29 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import game.Game;
+
 public class Background {
 	
-	private BufferedImage image;
-	private int x,y;
+	protected BufferedImage image;
+	protected int x,y;
+	protected int dx,dy;
 	
 	public Background(String s){
 		
 		try{
-			image = ImageIO.read(new File("resources/Sprites_400/Menu/room_won.png"));
+			image = ImageIO.read(new File(s));
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public Background (String s, int x, int y){
+		try{
+			image = ImageIO.read(new File(s));
+			this.x = x;
+			this.y = y;
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -26,8 +40,24 @@ public class Background {
 		this.y = y;
 	}
 	
+	public void setVel(int dx, int dy){
+		this.dx = dx;
+		this.dy = dy;
+	}
+	
+	public void update(long elapsedTime){
+		this.x = (x + dx)%640;
+		this.y = y + dy;
+	}
+	
 	public void draw(Graphics2D g){
 		g.drawImage(image, x, y, null);
+		if(x < 0){
+			g.drawImage(image, x + Game.WIDTH, y, null);
+		}
+		if(x > 0){
+			g.drawImage(image, x - Game.WIDTH, y, null);
+		}
 	}
 
 }

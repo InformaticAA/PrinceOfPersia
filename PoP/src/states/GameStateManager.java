@@ -34,6 +34,11 @@ public class GameStateManager {
 		gameStates.add(new MenuState(this,keys, keys_mapped, loader));
 		gameStates.add(new LevelState(this, keys, keys_mapped, loader, true));
 		gameStates.add(new MultiplayerMenuState(this,keys,keys_mapped,loader));
+		gameStates.add(new ScenaryMenuState(this,keys,keys_mapped,loader));
+	}
+	
+	public ArrayList<State> getGameStates(){
+		return this.gameStates;
 	}
 	
 	public void setState(int state){

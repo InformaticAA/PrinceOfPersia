@@ -92,6 +92,7 @@ public class MenuState extends State{
 	
 	public void select(){
 		if(currentChoice == 0){
+			choosing.play();
 			menu.stop();
 			gsm.setState(GameStateManager.MAINGAMESTATE);
 			//campaign
@@ -101,9 +102,11 @@ public class MenuState extends State{
 			gsm.setState(GameStateManager.MULTIPLAYERMENUSTATE);
 		}
 		else if(currentChoice == 2){
+			choosing.play();
 			//start settings
 		}
 		else{
+			choosing.play();
 			System.exit(0);
 		}
 	}
@@ -135,7 +138,6 @@ public class MenuState extends State{
 						
 					} else if(key_pressed == keys_mapped.get(Key.ENTER)|| 
 							key_pressed == keys_mapped.get(Key.C)){
-						choosing.play();
 						select();
 					}
 				}

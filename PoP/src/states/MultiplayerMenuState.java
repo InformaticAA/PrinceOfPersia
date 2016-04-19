@@ -71,6 +71,8 @@ public class MultiplayerMenuState extends State{
 		offset = 0;
 		t1 = new Torch(232,265,loader,true);
 		t2 = new Torch(468,265,loader,true);
+		menu = TinySound.loadMusic(new File("resources/Music/find_mirror_and_find_shadow.ogg"));
+		menu.play(false);
 		bg.setCurrentBackground(0);
 		bg.setDrawArrows(false);
 		yvel = YVEL;
@@ -123,6 +125,9 @@ public class MultiplayerMenuState extends State{
 					p1 = ImageIO.read(new File("resources/Sprites_400/Menu/p1.png")); 
 					p2 = ImageIO.read(new File("resources/Sprites_400/Menu/p2.png")); 
 					sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
+					menu.stop();
+					menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+					menu.play(true);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -239,7 +244,7 @@ public class MultiplayerMenuState extends State{
 			if(prince != -1 && guard != -1){
 				choosing.play();
 				menu.stop();
-				gsm.setState(GameStateManager.VERSUS);
+				gsm.setState(GameStateManager.SCENARYMENUSTATE);
 			}
 		} else if(currentChoiceP1 == 3){
 			choosing.play();

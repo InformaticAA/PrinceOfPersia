@@ -19,7 +19,8 @@ public class GameStateManager {
 	public static final int MENUSTATE = 1;
 	public static final int MAINGAMESTATE = 2;
 	public static final int MULTIPLAYERMENUSTATE = 3;
-	public static final int VERSUS = 4;
+	public static final int SCENARYMENUSTATE = 4;
+	public static final int VERSUSSTATE = 5;
 	
 	public GameStateManager(ConcurrentLinkedQueue<Key> keys, Loader loader){
 		
@@ -35,10 +36,15 @@ public class GameStateManager {
 		gameStates.add(new LevelState(this, keys, keys_mapped, loader, true));
 		gameStates.add(new MultiplayerMenuState(this,keys,keys_mapped,loader));
 		gameStates.add(new ScenaryMenuState(this,keys,keys_mapped,loader));
+		gameStates.add(new VersusState(this,keys,keys_mapped,loader));
 	}
 	
 	public ArrayList<State> getGameStates(){
 		return this.gameStates;
+	}
+	
+	public State getState(int state){
+		return this.gameStates.get(state);
 	}
 	
 	public void setState(int state){

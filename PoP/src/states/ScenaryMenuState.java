@@ -12,15 +12,14 @@ import javax.imageio.ImageIO;
 import entities.Character;
 import entities.Enemy;
 import entities.Player;
-import entities.Torch;
 import framework.Loader;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
-import map.Background;
 import map.MobileBackground;
+import states.*;
 
 public class ScenaryMenuState extends State{
 	
@@ -112,8 +111,10 @@ public class ScenaryMenuState extends State{
 	public void select(){
 		if(currentChoice == 0){
 			if(bg.getVelx()==0){
-				menu.stop();
 				choosing.play();
+				menu.stop();
+				((VersusState) gsm.getState(GameStateManager.VERSUSSTATE)).setInitialParams(0, 1, bg.getCurrentBackground() + 1);;
+				gsm.setState(GameStateManager.VERSUSSTATE);
 			}
 		} else{
 			menu.stop();

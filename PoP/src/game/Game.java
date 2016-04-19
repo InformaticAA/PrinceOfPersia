@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import framework.Loader;
 import input.Key;
 import input.Listener;
-import kuusisto.tinysound.TinySound;
 import states.GameStateManager;
 
 public class Game extends JPanel implements Runnable{

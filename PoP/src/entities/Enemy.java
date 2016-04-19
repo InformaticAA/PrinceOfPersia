@@ -435,7 +435,6 @@ public class Enemy extends Character {
 		this.setMoveSpeed(0);
 		decidedToBlock = false;
 		if(random(this.BASE_COUNTER_PERCENTAJE + (this.difficulty - 1) * 0.15)){
-			
 			/* Block and counter */
 			this.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION);
 			manageSword("block and attack", 0, false);
@@ -505,8 +504,7 @@ public class Enemy extends Character {
 	}
 	
 	public boolean isHitting(){
-		return /*(this.getCurrentAnimation().getCurrentFrame() == 2)||*/
-				(this.getCurrentAnimation().getCurrentFrame() == 3);
+		return (this.getCurrentAnimation().getCurrentFrame() == 3);
 	}
 	
 	@Override

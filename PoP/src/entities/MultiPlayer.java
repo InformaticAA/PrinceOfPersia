@@ -50,7 +50,7 @@ public class MultiPlayer extends Character {
 		this.up_pressed = false;
 		this.down_pressed = false;
 		
-		this.hp = hp;
+		this.hp = 3;
 		this.maxHp = this.hp;
 		
 		boundingBox = new Rectangle(x,y,currentAnimation.getImage().getWidth(),
@@ -75,6 +75,9 @@ public class MultiPlayer extends Character {
 	@Override
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
+//		if(currentAnimation.getId().startsWith("block and attack")){
+//			System.out.println("Animation time -> " + currentAnimation.getAnimTime());
+//		}
 		
 		if(sword!=null){
 			sword.update(elapsedTime);
@@ -147,7 +150,7 @@ public class MultiPlayer extends Character {
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
-		if(key_pressed == keys_mapped.get(Key.UP)||
+		if(key_pressed == keys_mapped.get(Key.DOWN)||
 				key_pressed == keys_mapped.get(Key.W)){
 			if(this.currentState != MultiState.DIED){
 				if(!this.combatDefense){
@@ -174,7 +177,7 @@ public class MultiPlayer extends Character {
 				}
 			}
 			
-		} else if(key_pressed == keys_mapped.get(Key.DOWN)||
+		} else if(key_pressed == keys_mapped.get(Key.UP)||
 				key_pressed == keys_mapped.get(Key.S)){
 			down_pressed = true;
 			
@@ -192,7 +195,7 @@ public class MultiPlayer extends Character {
 	}
 	
 	public void manageKeyReleased(int key_released, Hashtable<String,Integer> keys_mapped){
-		if(key_released == keys_mapped.get(Key.UP)||
+		if(key_released == keys_mapped.get(Key.DOWN)||
 				key_released == keys_mapped.get(Key.W)){
 			up_pressed = false;
 			combatDefense = false;
@@ -207,7 +210,7 @@ public class MultiPlayer extends Character {
 			left_pressed = false;
 			combatStepLeft = false;
 			
-		} else if(key_released == keys_mapped.get(Key.DOWN)||
+		} else if(key_released == keys_mapped.get(Key.UP)||
 				key_released == keys_mapped.get(Key.S)){
 			down_pressed = false;
 			

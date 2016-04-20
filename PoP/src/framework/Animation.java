@@ -134,7 +134,11 @@ public class Animation {
 	}
 	
 	public void setCurrentFrame(int numFrame) {
-		animTime = animTime + numFrame * frameDuration;
+		long elapsedDuration = 0;
+		for(int i = 0; i < numFrame; i++){
+			elapsedDuration = elapsedDuration + frames.get(i).getEndtime();
+		}
+		animTime = animTime + elapsedDuration * this.frameDuration;
 		this.currentFrame = numFrame;
 	}
 	

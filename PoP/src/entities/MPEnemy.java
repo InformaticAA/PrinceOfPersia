@@ -14,6 +14,8 @@ public class MPEnemy extends MultiPlayer {
 	
 	private MPPrince player;
 	
+	private boolean canBeHit;
+	
 	public MPEnemy(int x, int y, Loader loader, int hp, String orientation, String colour, MPPrince player) {
 		super(x, y - 20, loader, hp, orientation);
 		
@@ -25,6 +27,7 @@ public class MPEnemy extends MultiPlayer {
 		manageSword("sword idle",0,false);
 		this.splash = new Splash(0,0,0,0,loader,"guard_" + colour);
 		this.player = player;
+		canBeHit = true;
 	}
 	
 	public boolean isHitting(){
@@ -113,6 +116,19 @@ public class MPEnemy extends MultiPlayer {
 			switch(currentState){
 			
 			case COMBAT:
+				manageSword("block and attack",this.getCurrentAnimation().getCurrentFrame(),false);
+				if(this.getCurrentAnimation().isOver(false)){
+					if(player.isBlocking()){
+						this.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION);
+						manageSword("blocked", 0, false);
+					} else{
+						this.setCurrentAnimation("attack end success_" + orientation, FRAME_DURATION);
+						manageSword("attack end success", 0, false);
+						if(this.xDistanceChar(player) <= ATTACK_DISTANCE){
+							player.beenHit();
+						}
+					}
+				}
 				break;
 				
 			case DIED:
@@ -128,6 +144,21 @@ public class MPEnemy extends MultiPlayer {
 			switch(currentState){
 			
 			case COMBAT:
+				manageSword("block only",this.getCurrentAnimation().getCurrentFrame(),false);
+				if(this.getCurrentAnimation().getCurrentFrame() == 0 && this.combatCanAttack && combatAttack){
+					this.goingToAttack = true;
+					this.combatCanAttack = false;
+				}
+				if(this.goingToAttack && this.getCurrentAnimation().getCurrentFrame() == 1){
+					this.goingToAttack = false;
+					this.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION);
+					this.getCurrentAnimation().setCurrentFrame(1);
+					manageSword("block and attack",1,false);
+				}
+				if(this.getCurrentAnimation().isOver(false)){
+					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					manageSword("sword idle", 0, false);
+				}
 				break;
 				
 			case DIED:
@@ -143,6 +174,21 @@ public class MPEnemy extends MultiPlayer {
 			switch(currentState){
 			
 			case COMBAT:
+				manageSword("blocked and prepare block",this.getCurrentAnimation().getCurrentFrame(),false);
+				if(combatCanAttack && combatAttack){
+					this.goingToAttack = true;
+					this.combatCanAttack = false;
+				}
+				if(this.getCurrentAnimation().isOver(false)){
+					if(this.goingToAttack){
+						this.goingToAttack = false;
+						this.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION);
+						manageSword("block and attack",0,false);
+					} else{
+						this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
+						manageSword("block only",0,false);
+					}
+				}
 				break;
 				
 			case DIED:
@@ -166,8 +212,12 @@ public class MPEnemy extends MultiPlayer {
 				if(this.currentAnimation.isOver(false)){
 					if(this.goingToBlock){
 						this.goingToBlock = false;
-						this.setCurrentAnimation("blocked and prepare block", FRAME_DURATION);
+						this.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION);
 						manageSword("blocked and prepare block",0,false);
+						if(player.isAttacking()){
+							System.out.println("Hemos bloquiado al player");
+							player.hasBeenBlocked();
+						}
 					} else{
 						if(this.getOrientation().equals("left")){
 							this.setMoveSpeed(MOVE_SPEED/2);
@@ -238,6 +288,18 @@ public class MPEnemy extends MultiPlayer {
 			switch(currentState){
 			
 			case COMBAT:
+				manageSword("hit", this.getCurrentAnimation().getCurrentFrame(),false);
+				if(this.getCurrentAnimation().getCurrentFrame() == 0){
+					this.setSplashVisible(true);
+				} else if(this.getCurrentAnimation().getCurrentFrame() == 1){
+					this.setSplashVisible(false);
+					this.setCanShowSplash(false);
+				}
+				if(this.getCurrentAnimation().isOver(false)){
+					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+					manageSword("sword idle",0,false);
+					canBeHit = true;
+				}
 				break;
 				
 			case DIED:
@@ -285,26 +347,44 @@ public class MPEnemy extends MultiPlayer {
 			case COMBAT:
 				manageSword("sword idle",0,false);
 				this.setMoveSpeed(0);
-				if(this.combatCanMove && combatStepRight){
-					this.combatCanMove = false;
-					this.setMoveSpeed(MOVE_SPEED);
-					this.setCurrentAnimation("walking_" + this.orientation, FRAME_DURATION);
-					manageSword("walking",0,false);
-				} else if(this.combatCanMove && combatStepLeft){
-					this.combatCanMove = false;
-					this.setMoveSpeed(-MOVE_SPEED);
-					this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
-					manageSword("walking",0,false);
-				} else if(this.combatCanDefense && this.combatDefense){
-					//TODO: MIRAR SI EL PLAYER ESTA ATACANDO PARA ESPERAR
-					//TODO: HACER QUE PUEDA BLOQUEAR Y ATACAR
-					this.combatCanDefense = false;
-					this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
-					manageSword("block only",0,false);
-				} else if(this.combatCanAttack && this.combatAttack){
-					this.combatCanAttack = false;
-					this.setCurrentAnimation("attack start_" + orientation, 7);
-					manageSword("attack start",0,false);
+				if(!goingToBlock){
+					if(this.combatCanMove && combatStepRight){
+						this.combatCanMove = false;
+						this.setMoveSpeed(MOVE_SPEED);
+						this.setCurrentAnimation("walking_" + this.orientation, FRAME_DURATION);
+						manageSword("walking",0,false);
+					} else if(this.combatCanMove && combatStepLeft){
+						this.combatCanMove = false;
+						this.setMoveSpeed(-MOVE_SPEED);
+						this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
+						manageSword("walking",0,false);
+					} else if(this.combatCanDefense && this.combatDefense){
+						//TODO: MIRAR SI EL PLAYER ESTA ATACANDO PARA ESPERAR
+						this.combatCanDefense = false;
+						if(player.checkAttack()){
+							this.goingToBlock = true;
+							player.hasBeenBlocked();
+						}else{
+							this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
+							manageSword("block only",0,false);
+						}
+					} else if(this.combatCanAttack && this.combatAttack){
+						this.combatCanAttack = false;
+						this.setCurrentAnimation("attack start_" + orientation, FRAME_DURATION);
+						manageSword("attack start",0,false);
+					}
+				} else{
+					if(player.isBeingBlocked()){
+						this.goingToBlock = false;
+						if(this.combatCanAttack && this.combatAttack){
+							this.combatCanAttack = false;
+							this.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION);
+							manageSword("block and attack",0,false);
+						} else{
+							this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
+							manageSword("bloc only",0,false);
+						}
+					}
 				}
 				break;
 				
@@ -341,7 +421,7 @@ public class MPEnemy extends MultiPlayer {
 					manageSword("block only",0,false);
 				} else if(this.combatCanAttack && this.combatAttack){
 					this.combatCanAttack = false;
-					this.setCurrentAnimation("attack start_" + orientation, 7);
+					this.setCurrentAnimation("attack start_" + orientation, FRAME_DURATION);
 					manageSword("attack start",0,false);
 				}
 				

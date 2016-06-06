@@ -34,6 +34,9 @@ public class VersusState extends State{
 	private int player2;
 	private int room;
 	
+	private boolean over;
+	private boolean paused;
+	
 	public VersusState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader) {
 		super(gsm, keys, keys_mapped, loader);
 	}
@@ -60,6 +63,8 @@ public class VersusState extends State{
 			
 		currentRoom.addCharacter(prince);
 		currentRoom.addCharacter(enemy);
+		over = false;
+		paused = false;
 //		enemy.setPlayer(true,prince);
 	}
 
@@ -67,7 +72,14 @@ public class VersusState extends State{
 	public void update(long elapsedTime) {
 
 		manageKeys();
-		currentLevel.update(elapsedTime);
+		if(!paused){
+			currentLevel.update(elapsedTime);
+		}
+		if(!over){
+			if(prince.getHp() == 0 || enemy.getHp() == 0){
+				over = true;
+			}
+		}
 		//checkCollisions(elapsedTime);
 	}
 
@@ -91,7 +103,13 @@ public class VersusState extends State{
 					
 					if(key_pressed == keys_mapped.get(Key.ESCAPE)){
 						
-					} else if(key_pressed == keys_mapped.get(Key.CONTROL)){
+					} else if(key_pressed == keys_mapped.get(Key.SPACE)){
+						if(over){
+							gsm.setState(GameStateManager.MENUSTATE);
+						} else{
+							paused = !paused;
+						}
+					}else if(key_pressed == keys_mapped.get(Key.CONTROL)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.W)||
 							key_pressed == keys_mapped.get(Key.A)||
@@ -99,21 +117,27 @@ public class VersusState extends State{
 							key_pressed == keys_mapped.get(Key.D)||
 							key_pressed == keys_mapped.get(Key.C)){
 						
-						/* Player1 key map */
-						if(player1 == 0){
-							prince.manageKeyPressed(key_pressed, keys_mapped);
-						} else{
-							enemy.manageKeyPressed(key_pressed, keys_mapped);
+						if(!paused){
+						
+							/* Player1 key map */
+							if(player1 == 0){
+								prince.manageKeyPressed(key_pressed, keys_mapped);
+							} else{
+								enemy.manageKeyPressed(key_pressed, keys_mapped);
+							}
 						}
 					} else if(key_pressed == keys_mapped.get(Key.UP)||
 							key_pressed == keys_mapped.get(Key.DOWN)||
 							key_pressed == keys_mapped.get(Key.LEFT)||
 							key_pressed == keys_mapped.get(Key.RIGHT)||
 							key_pressed == keys_mapped.get(Key.M)){
-						if(player2 == 0){
-							prince.manageKeyPressed(key_pressed, keys_mapped);
-						} else{
-							enemy.manageKeyPressed(key_pressed, keys_mapped);
+						
+						if(!paused){
+							if(player2 == 0){
+								prince.manageKeyPressed(key_pressed, keys_mapped);
+							} else{
+								enemy.manageKeyPressed(key_pressed, keys_mapped);
+							}
 						}
 					}
 				} else{

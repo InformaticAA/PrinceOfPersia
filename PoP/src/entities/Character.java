@@ -2,6 +2,7 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
 import framework.Animation;
@@ -38,6 +39,9 @@ public class Character extends Entity {
 	
 	/* Sword */
 	protected SwordFighting sword;
+	
+	/* Life */
+	protected Life[] life;
 	
 	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);

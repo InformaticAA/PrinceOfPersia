@@ -1,9 +1,11 @@
 package entities;
 
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Random;
 
 import framework.Loader;
+import game.Game;
 
 public class Enemy extends Character {
 	
@@ -33,6 +35,8 @@ public class Enemy extends Character {
 	private boolean blockDecission;
 	
 	private boolean canBeHit;
+	
+	private String colour;
 	
 	/* Cooldowns */
 	private long counterMove;
@@ -66,6 +70,18 @@ public class Enemy extends Character {
 		this.splash = new Splash(0,0,0,0,loader,"guard_" + colour);
 		this.sword = new SwordFighting(this.x,this.y,0,0,this.loader,"idle_" + orientation, "guard");
 		this.canBeHit = true;
+		
+		this.colour = colour;
+		this.life = new Life[this.maxHp];
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_empty");
+				this.life[i].setVisible(true);
+			}
+		}
 	}
 	
 	@Override
@@ -100,6 +116,24 @@ public class Enemy extends Character {
 		} else{
 			normalIdle();
 		}
+		
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_empty");
+				this.life[i].setVisible(true);
+			}
+		}
+	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		super.drawSelf(g);
+		for (int i = 0; i < life.length; i++) {
+			life[i].drawSelf(g);
+		}	
 	}
 	
 	public void setPlayer(boolean saw, Player p){
@@ -480,6 +514,7 @@ public class Enemy extends Character {
 	public void dead(){
 		this.setMoveSpeed(0);
 		player.putSwordDown();
+		player.isEnemySaw(false);
 		this.setCurrentAnimation("died_" + orientation, FRAME_DURATION);
 		this.sword = null;
 	}

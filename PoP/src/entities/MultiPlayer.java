@@ -123,19 +123,6 @@ public class MultiPlayer extends Character {
 		return checkAttack;
 	}
 	
-	public void beenHit(){
-		this.hp = this.hp - 1;
-		if(this.hp == 0){
-			this.currentState = MultiState.DIED;
-			this.sword = null;
-			this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
-		} else{
-			this.setCurrentAnimation("sword hit_" + orientation, FRAME_DURATION);
-		}
-		this.beenBlocked = false;
-		this.hasBlocked = false;
-	}
-	
 	public boolean isHitting(){
 		return this.getCurrentAnimation().getId().startsWith("sword attack end_") &&
 				this.getCurrentAnimation().getCurrentFrame() == 1;

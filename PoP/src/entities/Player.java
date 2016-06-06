@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.util.Hashtable;
 
 import framework.Loader;
+import game.Game;
 import input.Key;
 
 public class Player extends Character {
@@ -87,6 +88,16 @@ public class Player extends Character {
 		this.goingToCounter = false;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");
+		this.life = new Life[this.maxHp];
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_empty");
+				this.life[i].setVisible(true);
+			}
+		}
 	}
 	
 	@Override
@@ -124,6 +135,23 @@ public class Player extends Character {
 		}
 		manageAnimations();
 		this.moveCharacter();
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_empty");
+				this.life[i].setVisible(true);
+			}
+		}
+	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		super.drawSelf(g);
+		for (int i = 0; i < life.length; i++) {
+			life[i].drawSelf(g);
+		}	
 	}
 	
 	public void setCollided(){

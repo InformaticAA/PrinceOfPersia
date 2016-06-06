@@ -1,6 +1,9 @@
 package entities;
 
+import java.awt.Graphics;
+
 import framework.Loader;
+import game.Game;
 
 public class MPEnemy extends MultiPlayer {
 	
@@ -11,6 +14,7 @@ public class MPEnemy extends MultiPlayer {
 	private final int TURN_DISTANCE = 50;
 	private final long MOVE_COOLDOWN = 200;
 	private final long ATTACK_COOLDOWN = 400;
+	private String colour;
 	
 	private MPPrince player;
 	
@@ -22,12 +26,63 @@ public class MPEnemy extends MultiPlayer {
 		animations = loader.getAnimations("Guard_" + colour);
 		currentAnimation = animations.get("sword idle_" + this.orientation);
 		currentState = MultiState.COMBAT;
+		this.colour = colour;
 		
 		this.sword = new SwordFighting(this.x,this.y,0,0,this.loader,"sword idle_" + orientation, "guard");
 		manageSword("sword idle",0,false);
 		this.splash = new Splash(0,0,0,0,loader,"guard_" + colour);
 		this.player = player;
 		canBeHit = true;
+		this.life = new Life[this.maxHp];
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_empty");
+				this.life[i].setVisible(true);
+			}
+		}
+	}
+	
+	@Override
+	public void update(long elapsedTime){
+		super.update(elapsedTime);
+		if(this.xDistanceChar(player) <= ATTACK_DISTANCE && player.isHitting() && canBeHit){
+			setCanShowSplash(true);
+			beenHit();
+		}
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_empty");
+				this.life[i].setVisible(true);
+			}
+		}
+	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		super.drawSelf(g);
+		for (int i = 0; i < life.length; i++) {
+			life[i].drawSelf(g);
+		}	
+	}
+	
+	public void beenHit(){
+		this.hp = this.hp - 1;
+		if(this.hp == 0){
+			this.currentState = MultiState.DIED;
+			this.sword = null;
+			this.setCurrentAnimation("dying_" + orientation, FRAME_DURATION);
+		} else{
+			this.setCurrentAnimation("hit_" + orientation, FRAME_DURATION);
+		}
+		this.canBeHit = false;
+		this.beenBlocked = false;
+		this.hasBlocked = false;
 	}
 	
 	public boolean isHitting(){
@@ -276,6 +331,9 @@ public class MPEnemy extends MultiPlayer {
 				break;
 				
 			case DIED:
+				if(this.getCurrentAnimation().isOver(false)){
+					this.setCurrentAnimation("died_" + this.orientation, FRAME_DURATION);
+				}
 				break;
 				
 			default:

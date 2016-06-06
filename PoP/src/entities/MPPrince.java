@@ -1,6 +1,14 @@
 package entities;
 
+import java.awt.Graphics;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import entities.MultiPlayer.MultiState;
 import framework.Loader;
+import game.Game;
 
 public class MPPrince extends MultiPlayer {
 	
@@ -11,8 +19,52 @@ public class MPPrince extends MultiPlayer {
 		currentAnimation = animations.get("sword idle_" + this.orientation);
 		manageSword("idle",0,true);
 		currentState = MultiState.COMBAT;
-		
 		this.splash = new Splash(0,0,0,0,loader,"red");
+		this.life = new Life[this.maxHp];
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_empty");
+				this.life[i].setVisible(true);
+			}
+		}
+	}
+	
+	@Override
+	public void update(long elapsedTime){
+		super.update(elapsedTime);
+		for(int i = 0; i < this.maxHp; i++){
+			if(i < this.hp){
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_full");
+				this.life[i].setVisible(true);
+			} else{
+				this.life[i] = new Life(20 + i*16, Game.HEIGHT - 5, 0, 0, loader, "prince_empty");
+				this.life[i].setVisible(true);
+			}
+		}
+	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		super.drawSelf(g);
+		for (int i = 0; i < life.length; i++) {
+			life[i].drawSelf(g);
+		}	
+	}
+	
+	public void beenHit(){
+		this.hp = this.hp - 1;
+		if(this.hp == 0){
+			this.currentState = MultiState.DIED;
+			this.sword = null;
+			this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
+		} else{
+			this.setCurrentAnimation("sword hit_" + orientation, FRAME_DURATION);
+		}
+		this.beenBlocked = false;
+		this.hasBlocked = false;
 	}
 	
 	@Override

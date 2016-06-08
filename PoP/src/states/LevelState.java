@@ -17,6 +17,7 @@ import entities.Enemy;
 import entities.Entity;
 import entities.Player;
 import framework.Loader;
+import framework.Writter;
 import input.Key;
 
 public class LevelState extends State{
@@ -35,8 +36,8 @@ public class LevelState extends State{
 	private Player player;
 	
 	
-	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, boolean start) {
-		super(gsm, keys, keys_mapped, loader);
+	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, boolean start, Writter writter) {
+		super(gsm, keys, keys_mapped, loader, writter);
 
 		this.start = start;
 	}

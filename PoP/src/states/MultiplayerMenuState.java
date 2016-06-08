@@ -14,6 +14,7 @@ import entities.Enemy;
 import entities.Player;
 import entities.Torch;
 import framework.Loader;
+import framework.Writter;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
@@ -46,8 +47,8 @@ public class MultiplayerMenuState extends State{
 	private boolean initialAnimation;
 	private int yvel;
 	
-	public MultiplayerMenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader){
-		super(gsm, keys, keys_mapped, loader);
+	public MultiplayerMenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
+		super(gsm, keys, keys_mapped, loader, writter);
 		
 		try{
 			bg = new MobileBackground("resources/Sprites_400/Menu/room_won.png");

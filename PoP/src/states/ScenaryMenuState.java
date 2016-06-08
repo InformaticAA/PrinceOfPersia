@@ -13,13 +13,13 @@ import entities.Character;
 import entities.Enemy;
 import entities.Player;
 import framework.Loader;
+import framework.Writter;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 import map.MobileBackground;
-import states.*;
 
 public class ScenaryMenuState extends State{
 	
@@ -35,8 +35,8 @@ public class ScenaryMenuState extends State{
 	private Sound choosing;
 	private Music menu;
 	
-	public ScenaryMenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader){
-		super(gsm, keys, keys_mapped, loader);
+	public ScenaryMenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
+		super(gsm, keys, keys_mapped, loader, writter);
 		
 			
 		moving = loader.getSound("sword moving");

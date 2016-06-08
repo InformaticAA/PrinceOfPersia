@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import entities.Torch;
 import framework.Loader;
+import framework.Writter;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
@@ -32,8 +33,8 @@ public class MenuState extends State{
 	
 	private Torch t1,t2;
 	
-	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader){
-		super(gsm, keys, keys_mapped, loader);
+	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
+		super(gsm, keys, keys_mapped, loader, writter);
 		
 		try{
 			bg = new Background("resources/Sprites_400/Menu/room_won.png");

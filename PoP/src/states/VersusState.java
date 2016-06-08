@@ -8,12 +8,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import data.Level;
 import data.Room;
+import data.Text;
 import entities.Character;
 import entities.Entity;
 import entities.MPEnemy;
 import entities.MPPrince;
-import entities.MultiPlayer;
 import framework.Loader;
+import framework.Writter;
 import input.Key;
 
 public class VersusState extends State{
@@ -37,8 +38,10 @@ public class VersusState extends State{
 	private boolean over;
 	private boolean paused;
 	
-	public VersusState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader) {
-		super(gsm, keys, keys_mapped, loader);
+	private ArrayList<Text> texts;
+	
+	public VersusState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter) {
+		super(gsm, keys, keys_mapped, loader, writter);
 	}
 	
 	public void setInitialParams(int player1, int player2, int room){
@@ -66,6 +69,8 @@ public class VersusState extends State{
 		over = false;
 		paused = false;
 //		enemy.setPlayer(true,prince);
+		
+		texts = new ArrayList<Text>();
 	}
 
 	@Override
@@ -78,6 +83,12 @@ public class VersusState extends State{
 		if(!over){
 			if(prince.getHp() == 0 || enemy.getHp() == 0){
 				over = true;
+				if(prince.getHp() == 0 && player1 == 0){
+					texts.add(Writter.createText("P", 0, 0));
+				} else{
+					texts.add(Writter.createText("P", 0, 0));
+				}
+				
 			}
 		}
 		//checkCollisions(elapsedTime);
@@ -86,6 +97,9 @@ public class VersusState extends State{
 	@Override
 	public void draw(Graphics2D g) {
 		currentRoom.draw(g);
+		for(int i = 0; i < texts.size(); i++){
+			texts.get(i).drawSelf(g);
+		}
 	}
 
 	@Override

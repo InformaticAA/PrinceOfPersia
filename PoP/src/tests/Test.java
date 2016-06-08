@@ -9,6 +9,7 @@ import data.Room;
 import entities.Character;
 import framework.Animation;
 import framework.Loader;
+import framework.Writter;
 import input.Key;
 import states.GameStateManager;
 import states.State;
@@ -28,8 +29,8 @@ public class Test extends State {
 	
 	private boolean reverse = false;
 	
-	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String, Integer> keys_mapped, Loader loader) {
-		super(gsm,keys, keys_mapped, loader);
+	public Test(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String, Integer> keys_mapped, Loader loader, Writter writter) {
+		super(gsm,keys, keys_mapped, loader, writter);
 	}
 	
 	@Override

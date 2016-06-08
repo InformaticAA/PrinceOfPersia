@@ -331,6 +331,12 @@ public class MPEnemy extends MultiPlayer {
 				break;
 				
 			case DIED:
+				if(this.getCurrentAnimation().getCurrentFrame() == 0){
+					this.setSplashVisible(true);
+				} else if(this.getCurrentAnimation().getCurrentFrame() == 1){
+					this.setSplashVisible(false);
+					this.setCanShowSplash(false);
+				}
 				if(this.getCurrentAnimation().isOver(false)){
 					this.setCurrentAnimation("died_" + this.orientation, FRAME_DURATION);
 				}

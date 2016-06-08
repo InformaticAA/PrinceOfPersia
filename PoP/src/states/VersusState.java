@@ -15,6 +15,7 @@ import entities.MPEnemy;
 import entities.MPPrince;
 import framework.Loader;
 import framework.Writter;
+import game.Game;
 import input.Key;
 
 public class VersusState extends State{
@@ -83,11 +84,13 @@ public class VersusState extends State{
 		if(!over){
 			if(prince.getHp() == 0 || enemy.getHp() == 0){
 				over = true;
+				String message;
 				if(prince.getHp() == 0 && player1 == 0){
-					texts.add(Writter.createText("P", 0, 0));
+					message = "P2 WINS (ESPACIO PARA SALIR)"; 
 				} else{
-					texts.add(Writter.createText("P", 0, 0));
+					message = "P1 WINS (ESPACIO PARA SALIR)";
 				}
+				texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , Game.HEIGHT - 16));
 				
 			}
 		}

@@ -27,7 +27,8 @@ public class Writter {
 			equivalences.add(i + "");
 		}
 		equivalences.add(" ");
-		
+		equivalences.add("(");
+		equivalences.add(")");
 		try {
 			font = ImageIO.read(new File("resources/font.png"));
 		} catch (IOException e) {

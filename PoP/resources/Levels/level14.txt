@@ -1,6 +1,12 @@
-3 9
+1 4
 room 1 1
 ;;;;;;;;;
 ;;;;;;;;;
 rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b; rf lf b;rf lf b
+;;;;;;;;;
+
+room 1 2
+;;;;;;;;;
+;;;;;;;;;
+rf lf b;rf lf b;rf lf b;rf lf b;;rf lf b;rf lf b;rf lf b; rf lf b;rf lf b
 ;;;;;;;;;

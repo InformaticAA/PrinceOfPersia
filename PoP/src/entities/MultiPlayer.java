@@ -15,7 +15,6 @@ public class MultiPlayer extends Character {
 	protected final String RUNNING = "running";
 	
 	protected boolean up_pressed;
-	protected boolean down_pressed;
 	protected boolean right_pressed;
 	protected boolean left_pressed;
 	protected boolean shift_pressed;
@@ -36,7 +35,10 @@ public class MultiPlayer extends Character {
 	protected boolean goingToAttack;
 	protected boolean goingToCounter;
 	
-	public MultiPlayer(int x, int y, Loader loader, int hp, String orientation) {
+	protected int playerNumber;
+	protected boolean isPrince;
+	
+	public MultiPlayer(int x, int y, Loader loader, int hp, String orientation, int playerNumber) {
 		super(x, y, loader, orientation);
 		
 		//PERSONALIZAR DEPENDIENDO DEL PERSONAJE
@@ -48,7 +50,6 @@ public class MultiPlayer extends Character {
 		this.left_pressed = false;
 		this.shift_pressed = false;
 		this.up_pressed = false;
-		this.down_pressed = false;
 		
 		this.hp = 3;
 		this.maxHp = this.hp;
@@ -69,6 +70,8 @@ public class MultiPlayer extends Character {
 		this.goingToBlock = false;
 		this.goingToAttack = false;
 		this.goingToCounter = false;
+		
+		this.playerNumber = playerNumber;
 		
 	}
 	
@@ -137,8 +140,10 @@ public class MultiPlayer extends Character {
 	}
 	
 	public void manageKeyPressed(int key_pressed, Hashtable<String,Integer> keys_mapped){
-		if(key_pressed == keys_mapped.get(Key.DOWN)||
-				key_pressed == keys_mapped.get(Key.W)){
+		if(playerNumber == 1 && !isPrince && key_pressed == keys_mapped.get(Key.DOWN)||
+				playerNumber == 1 && isPrince && key_pressed == keys_mapped.get(Key.UP) ||
+				playerNumber == 0 && !isPrince && key_pressed == keys_mapped.get(Key.S) ||
+				playerNumber == 0  && isPrince && key_pressed == keys_mapped.get(Key.W)){
 			if(this.currentState != MultiState.DIED){
 				if(!this.combatDefense){
 					combatDefense = true;
@@ -164,10 +169,6 @@ public class MultiPlayer extends Character {
 				}
 			}
 			
-		} else if(key_pressed == keys_mapped.get(Key.UP)||
-				key_pressed == keys_mapped.get(Key.S)){
-			down_pressed = true;
-			
 		} else if(key_pressed == keys_mapped.get(Key.C) ||
 				key_pressed == keys_mapped.get(Key.M)){
 			if(this.currentState != MultiState.DIED){
@@ -182,8 +183,10 @@ public class MultiPlayer extends Character {
 	}
 	
 	public void manageKeyReleased(int key_released, Hashtable<String,Integer> keys_mapped){
-		if(key_released == keys_mapped.get(Key.DOWN)||
-				key_released == keys_mapped.get(Key.W)){
+		if(playerNumber == 1 && !isPrince && key_released == keys_mapped.get(Key.DOWN)||
+				playerNumber == 1 && isPrince && key_released == keys_mapped.get(Key.UP) ||
+				playerNumber == 0 && !isPrince && key_released == keys_mapped.get(Key.S) ||
+				playerNumber == 0  && isPrince && key_released == keys_mapped.get(Key.W)){
 			up_pressed = false;
 			combatDefense = false;
 			
@@ -196,10 +199,6 @@ public class MultiPlayer extends Character {
 				key_released == keys_mapped.get(Key.A)){
 			left_pressed = false;
 			combatStepLeft = false;
-			
-		} else if(key_released == keys_mapped.get(Key.UP)||
-				key_released == keys_mapped.get(Key.S)){
-			down_pressed = false;
 			
 		} else if(key_released == keys_mapped.get(Key.C)||
 				key_released == keys_mapped.get(Key.M)){

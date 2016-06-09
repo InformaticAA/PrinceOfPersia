@@ -35,6 +35,9 @@ public class ScenaryMenuState extends State{
 	private Sound choosing;
 	private Music menu;
 	
+	private int player1;
+	private int player2;
+	
 	public ScenaryMenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
 		super(gsm, keys, keys_mapped, loader, writter);
 		
@@ -108,12 +111,18 @@ public class ScenaryMenuState extends State{
 				Game.HEIGHT/2 + 128*Game.SCALE + currentChoice*30*Game.SCALE,null);
 	}
 	
+	public void setInitialParams(int player1, int player2){
+		// 0 = prince, 1 = enemy
+		this.player1 = player1; 
+		this.player2 = player2;
+	}
+	
 	public void select(){
 		if(currentChoice == 0){
 			if(bg.getVelx()==0){
 				choosing.play();
 				menu.stop();
-				((VersusState) gsm.getState(GameStateManager.VERSUSSTATE)).setInitialParams(0, 1, bg.getCurrentBackground() + 1);;
+				((VersusState) gsm.getState(GameStateManager.VERSUSSTATE)).setInitialParams(player1, player2, bg.getCurrentBackground() + 1);
 				gsm.setState(GameStateManager.VERSUSSTATE);
 			}
 		} else{

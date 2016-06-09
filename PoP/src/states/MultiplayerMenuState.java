@@ -245,6 +245,11 @@ public class MultiplayerMenuState extends State{
 			if(prince != -1 && guard != -1){
 				choosing.play();
 				menu.stop();
+				if(prince == 0){
+					((ScenaryMenuState) gsm.getState(GameStateManager.SCENARYMENUSTATE)).setInitialParams(0, 1);
+				} else{
+					((ScenaryMenuState) gsm.getState(GameStateManager.SCENARYMENUSTATE)).setInitialParams(1, 0);
+				}
 				gsm.setState(GameStateManager.SCENARYMENUSTATE);
 			}
 		} else if(currentChoiceP1 == 3){

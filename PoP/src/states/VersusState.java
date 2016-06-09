@@ -61,9 +61,9 @@ public class VersusState extends State{
 		currentLevel = loader.loadLevel(INITIAL_LEVEL);
 		currentRoom = currentLevel.getRoom(1, room);
 			
-		prince = new MPPrince(200,240,loader,3,"right");
+		prince = new MPPrince(200,240,loader,3,"right",player1);
 //		enemy = new MPPrince(460,260,loader,3,"left");
-		enemy = new MPEnemy(460,260,loader,3,"left","red",prince);
+		enemy = new MPEnemy(460,260,loader,3,"left","red",player2,prince);
 			
 		currentRoom.addCharacter(prince);
 		currentRoom.addCharacter(enemy);

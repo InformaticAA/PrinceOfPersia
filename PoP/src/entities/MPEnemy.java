@@ -20,8 +20,8 @@ public class MPEnemy extends MultiPlayer {
 	
 	private boolean canBeHit;
 	
-	public MPEnemy(int x, int y, Loader loader, int hp, String orientation, String colour, MPPrince player) {
-		super(x, y - 20, loader, hp, orientation);
+	public MPEnemy(int x, int y, Loader loader, int hp, String orientation, String colour, int playerNumber, MPPrince player) {
+		super(x, y - 20, loader, hp, orientation, playerNumber);
 		
 		animations = loader.getAnimations("Guard_" + colour);
 		currentAnimation = animations.get("sword idle_" + this.orientation);
@@ -43,6 +43,8 @@ public class MPEnemy extends MultiPlayer {
 				this.life[i].setVisible(true);
 			}
 		}
+		this.isPrince = false;
+		
 	}
 	
 	@Override

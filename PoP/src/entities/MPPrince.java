@@ -12,8 +12,8 @@ import game.Game;
 
 public class MPPrince extends MultiPlayer {
 	
-	public MPPrince(int x, int y, Loader loader, int hp, String orientation) {
-		super(x, y, loader, hp, orientation);
+	public MPPrince(int x, int y, Loader loader, int hp, String orientation, int playerNumber) {
+		super(x, y, loader, hp, orientation, playerNumber);
 		
 		animations = loader.getAnimations("Dastan");
 		currentAnimation = animations.get("sword idle_" + this.orientation);
@@ -30,6 +30,8 @@ public class MPPrince extends MultiPlayer {
 				this.life[i].setVisible(true);
 			}
 		}
+		
+		this.isPrince = true;
 	}
 	
 	@Override
@@ -423,8 +425,7 @@ public class MPPrince extends MultiPlayer {
 					this.combatCanAttack = false;
 					this.setCurrentAnimation("sword attack start_" + orientation, FRAME_DURATION);
 					manageSword("start attacking", 0, false);
-				} else if(down_pressed){
-				}
+				} 
 				
 				break;
 				

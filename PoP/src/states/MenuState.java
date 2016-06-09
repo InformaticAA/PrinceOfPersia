@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import entities.Torch;
 import framework.Loader;
+import framework.Writter;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
@@ -32,11 +33,11 @@ public class MenuState extends State{
 	
 	private Torch t1,t2;
 	
-	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader){
-		super(gsm, keys, keys_mapped, loader);
+	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
+		super(gsm, keys, keys_mapped, loader, writter);
 		
 		try{
-			bg = new Background("/Sprites_400/Menu/room_won.png");
+			bg = new Background("resources/Sprites_400/Menu/room_won.png");
 			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
 			options = new BufferedImage[4];
 			options[0] = ImageIO.read(new File("resources/Sprites_400/Menu/campaign.png"));
@@ -92,17 +93,21 @@ public class MenuState extends State{
 	
 	public void select(){
 		if(currentChoice == 0){
+			choosing.play();
 			menu.stop();
-			gsm.setState(2);
+			gsm.setState(GameStateManager.MAINGAMESTATE);
 			//campaign
 		}
 		else if(currentChoice == 1){
-			//multiplayer
+			menu.stop();
+			gsm.setState(GameStateManager.MULTIPLAYERMENUSTATE);
 		}
 		else if(currentChoice == 2){
+			choosing.play();
 			//start settings
 		}
 		else{
+			choosing.play();
 			System.exit(0);
 		}
 	}
@@ -120,18 +125,20 @@ public class MenuState extends State{
 					/* key pressed */
 					int key_pressed = e.getKeycode();
 					
-					if(key_pressed == keys_mapped.get(Key.UP)){
+					if(key_pressed == keys_mapped.get(Key.UP)||
+							key_pressed == keys_mapped.get(Key.W)){
 						moving.play();
 						currentChoice = (currentChoice + 3)%4;
-					} else if(key_pressed == keys_mapped.get(Key.DOWN)){
+					} else if(key_pressed == keys_mapped.get(Key.DOWN) ||
+							key_pressed == keys_mapped.get(Key.S)){
 						moving.play();
 						currentChoice = (currentChoice + 1)%4;
 					} else if(key_pressed == keys_mapped.get(Key.LEFT)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.RIGHT)){
 						
-					} else if(key_pressed == keys_mapped.get(Key.ENTER)){
-						choosing.play();
+					} else if(key_pressed == keys_mapped.get(Key.ENTER)|| 
+							key_pressed == keys_mapped.get(Key.C)){
 						select();
 					}
 				}

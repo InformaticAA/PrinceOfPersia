@@ -19,6 +19,7 @@ import entities.Character;
 import entities.Corner;
 import entities.Door;
 import entities.DoorFrame;
+import entities.Enemy;
 import entities.Entity;
 import entities.FloorPanel;
 import entities.LooseFloor;
@@ -562,6 +563,18 @@ public class Loader {
 			} else if(entity.equals("b")){
 				newEntity = new Base(px,py,this,"normal_base");
 				foreground.add(newEntity);
+			} else if(entity.startsWith("enemy")){
+				Scanner enemyType = new Scanner(entity.substring(6,entity.length()-1));
+				enemyType.useDelimiter(",");
+				String colour = enemyType.next();
+				String orientation = enemyType.next();
+				int health = enemyType.nextInt();
+				int difficulty = enemyType.nextInt();
+				enemyType.close();
+				System.out.println(py);
+				Character enemy = new Enemy(px, py, this, orientation, colour, health, difficulty);
+				/* Si principe a la izquierda -> foreground, si principe a la derecha -> background */
+				characters.add(enemy);
 			}
 			
 		}
@@ -578,7 +591,7 @@ public class Loader {
 		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
 		Hashtable<String, FrameList> entityFrameLists = totalAnimations.getFrameLists(entity);
 		for(String id : entityFrameLists.keySet()){
-			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames()));
+			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames(), false));
 		}
 		return animations;
 	}

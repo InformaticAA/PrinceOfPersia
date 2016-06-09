@@ -15,20 +15,18 @@ public class Animation {
 	private long totalDuration;
 	private boolean isOver;
 	private boolean lastFrame;
-	private boolean infinite;
 	
-	public Animation(String id, ArrayList<Frame> frames) {
+	public Animation(String id, ArrayList<Frame> frames, boolean infinite) {
 		this.id = id;
 		this.frames = frames;
-		
-		this.currentUpdates = 0;
-		this.currentFrame = 0;
-		this.frameDuration = 1;
-		this.initialFrame = 0;
-		this.animTime = 0;
-		this.totalDuration = 0;
+		currentUpdates = 0;
+		currentFrame = 0;
+		frameDuration = 1;
+		initialFrame = 0;
+		animTime = 0;
+		totalDuration = 0;
 		this.isOver = false;
-		this.lastFrame = true;
+		lastFrame = true;
 		
 		for (int i = 0; i < frames.size(); i++) {
 			totalDuration = totalDuration + frames.get(i).getEndtime();
@@ -50,14 +48,8 @@ public class Animation {
 	}
 	
 	public void update(long elapsedTime) {
-		
-		if (frames.size() == 1 && frames.get(0).isInfinite()) {
-			lastFrame = false;
-			isOver = true;
-		}
-		else if (frames.size() > 1) {
-			animTime += elapsedTime;
-			
+		animTime += elapsedTime;
+		if (frames.size() > 1) {
 			if (animTime >= totalDuration) {
 				animTime = animTime % totalDuration;
 				currentFrame = initialFrame;
@@ -80,7 +72,11 @@ public class Animation {
 					lastFrame = false;
 				}
 			}
-			
+		} else{
+			if(animTime >= totalDuration){
+				isOver = true;
+				animTime = 0;
+			}
 		}
 	}
 	
@@ -142,6 +138,11 @@ public class Animation {
 	}
 	
 	public void setCurrentFrame(int numFrame) {
+		long elapsedDuration = 0;
+		for(int i = 0; i < numFrame; i++){
+			elapsedDuration = elapsedDuration + frames.get(i).getEndtime();
+		}
+		animTime = animTime + elapsedDuration * this.frameDuration;
 		this.currentFrame = numFrame;
 	}
 	
@@ -166,6 +167,18 @@ public class Animation {
 		for (int i = 0; i < frames.size(); i++) {
 			totalDuration = totalDuration + frames.get(i).getEndtime();
 		}
+	}
+	
+	public long getAnimTime() {
+		return animTime;
+	}
+	
+	public long getTotalDuration() {
+		return totalDuration;
+	}
+	
+	public int getFrameDuration() {
+		return frameDuration;
 	}
 	
 	public int getFrameXSpeed(int idFrame, BufferedImage prevImage) {
@@ -214,19 +227,4 @@ public class Animation {
 	public boolean isLastFrame() {
 		return lastFrame;
 	}
-
-	/**
-	 * @return the infinite
-	 */
-	public boolean isInfinite() {
-		return infinite;
-	}
-
-	/**
-	 * @param infinite the infinite to set
-	 */
-	public void setInfinite(boolean infinite) {
-		this.infinite = infinite;
-	}
-
 }

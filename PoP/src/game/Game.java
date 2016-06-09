@@ -9,9 +9,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JPanel;
 
 import framework.Loader;
+import framework.Writter;
 import input.Key;
 import input.Listener;
-import kuusisto.tinysound.TinySound;
 import states.GameStateManager;
 
 public class Game extends JPanel implements Runnable{
@@ -45,6 +45,9 @@ public class Game extends JPanel implements Runnable{
 	/* Game Data */
 	private Loader loader;
 	
+	/* Writter */
+	private Writter writter;
+	
 	public Game(Loader loader){
 		super();
 		this.FPS = loader.getFPS();
@@ -70,10 +73,11 @@ public class Game extends JPanel implements Runnable{
 		
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		g = (Graphics2D) image.getGraphics();
+		writter = new Writter();
 		
 		running = true;
 		
-		gsm = new GameStateManager(keys,loader);
+		gsm = new GameStateManager(keys,loader, writter);
 		gsm.setState(1);
 	}
 	
@@ -129,5 +133,4 @@ public class Game extends JPanel implements Runnable{
 	public boolean isRunning(){
 		return this.running;
 	}
-
 }

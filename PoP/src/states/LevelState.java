@@ -15,6 +15,7 @@ import data.Square;
 import entities.Entity;
 import entities.Player;
 import framework.Loader;
+import framework.Writter;
 import input.Key;
 
 public class LevelState extends State{
@@ -33,14 +34,31 @@ public class LevelState extends State{
 	private Player player;
 	
 	
-	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, boolean start) {
-		super(gsm, keys, keys_mapped, loader);
+	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, 
+			Hashtable<String,Integer> keys_mapped, Loader loader, boolean start, Writter writter) {
+		super(gsm, keys, keys_mapped, loader, writter);
 
 		this.start = start;
 	}
 
 	@Override
 	public void init() {
+		
+		// TESTING ENEMY
+//		currentRoom = currentLevel.getRoom(1, 9);
+//		
+////		for(String key : loader.getAnimations("wall").keySet()){
+////			System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
+////		}
+//		player = new Player(100,130,loader, 3, "right");
+//		player.setySpeed(4);
+//		
+//		Enemy e = (Enemy)currentRoom.getCharacters().get(0);
+//		
+//		currentRoom.addCharacter(player);
+//		player.isEnemySaw(true);
+//		e.setPlayer(true, player);
+		
 		if(start){
 			
 			/* Start game */
@@ -48,7 +66,7 @@ public class LevelState extends State{
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
 			
-			player = new Player(500,60,loader, "left");
+			player = new Player(500,60,loader, 3, "left");
 			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			

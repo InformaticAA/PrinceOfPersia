@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
@@ -19,6 +20,18 @@ public class Character extends Entity {
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
+	protected final int FRAME_DURATION = 7; //6
+	protected final int MOVE_SPEED = 2;
+	
+	/* Splash */
+	protected Splash splash;
+	protected boolean canShowSplash;
+	
+	/* Sword */
+	protected SwordFighting sword;
+	
+	/* Life */
+	protected Life[] life;
 
 	/* Movement variables */
 	protected int moveSpeed;
@@ -44,6 +57,7 @@ public class Character extends Entity {
 		this.grounded = true;
 		this.freeFall = false;
 		this.jumping = false;
+		this.canShowSplash = true;
 	}
 	
 	protected void updateSpeed() {
@@ -404,5 +418,41 @@ public class Character extends Entity {
 		
 		return newCharacter;
 	}
+	
+	@Override
+	public void drawSelf(Graphics g){
+		if(sword!=null){
+			sword.drawSelf(g);
+		}
+		super.drawSelf(g);
+		splash.drawSelf(g);
+	}
+	
+	protected void setSplashVisible(boolean visible){
+		if(visible && canShowSplash){
+			this.splash.setX(this.getActualCentre() + this.splash.getCurrentAnimation().getImage().getWidth()/2);
+			this.splash.setY(this.y - 16);
+			this.splash.setVisible(true);
+		} else{
+			this.splash.setVisible(false);
+		}
+	}
+	
+	public void setCanShowSplash(boolean canShowSplash) {
+		this.canShowSplash = canShowSplash;
+	}
+	
+	public int getActualCentre(){
+		return this.getX() - this.getCurrentAnimation().getImage().getWidth()/2;
+	}
 
+	public int getCharCentre(){
+		return this.getX() - this.getAnimations().get("sword idle_left").getFrame(0).getImage().getWidth()/2;
+	}
+	
+	public int xDistanceChar(Character e){
+		return Math.abs(this.getCharCentre() - e.getCharCentre());
+	}
+	
+	public void manageSword(String animation, int currentFrame, boolean newSword){}
 }

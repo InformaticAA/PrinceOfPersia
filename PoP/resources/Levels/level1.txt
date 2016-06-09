@@ -17,7 +17,11 @@ room 1 8
 ;;;;;;;;;
 ;;;;;;;;;
 
-
+room 1 9
+;;;;;;;;;
+;;;;;;;;;
+rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;enemy(red,left,3,1) rf lf b;rf lf b
+;;;;;;;;;
 
 - = nothing
 b = base
@@ -52,3 +56,4 @@ br = broken right
 loose = loose floor
 doorfr = door frame right
 door(identificador, estado, frame) = door
+enemy(colour, orientacion, vida, dificultad)

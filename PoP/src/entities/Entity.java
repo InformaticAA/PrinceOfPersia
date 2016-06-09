@@ -245,6 +245,13 @@ public abstract class Entity {
 		return new int[]{xx,yy};
 	}
 	
-	public abstract Entity copy();
+	public int getXCentre(){
+		return this.getX() - this.getCurrentAnimation().getImage().getWidth()/2;
+	}
+
+	public int xDistanceEntity(Entity e){
+		return Math.abs(this.getXCentre() - e.getXCentre());
+	}
 	
+	public abstract Entity copy();
 }

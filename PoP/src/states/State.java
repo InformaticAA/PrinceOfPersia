@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import framework.Loader;
+import framework.Writter;
 import input.Key;
 
 public abstract class State {
@@ -14,7 +15,7 @@ public abstract class State {
 	protected Hashtable<String,Integer> keys_mapped;
 	protected Loader loader;
 	
-	public State(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader){
+	public State(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
 		this.gsm = gsm;
 		this.keys = keys;
 		this.keys_mapped = keys_mapped;

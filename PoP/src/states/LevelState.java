@@ -1,8 +1,6 @@
 package states;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,7 +12,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import data.Level;
 import data.Room;
 import data.Square;
-import entities.Character;
 import entities.Entity;
 import entities.Player;
 import framework.Loader;
@@ -51,10 +48,8 @@ public class LevelState extends State{
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
 			
-//			for(String key : loader.getAnimations("wall").keySet()){
-//				System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
-//			}
-			player = new Player(400,120,loader, "left");
+			player = new Player(500,60,loader, "left");
+			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			
 			currentRoom.addCharacter(player);
@@ -114,10 +109,7 @@ public class LevelState extends State{
 
 		manageKeys();
 		currentLevel.update(elapsedTime);
-		checkCollisions(elapsedTime);
-		
-//		int[] ps = player.getSquare();
-//		System.out.println("(" + ps[0] + ", " + ps[1] + ")");
+		checkPlayerCollisions(elapsedTime);
 	}
 
 	@Override
@@ -177,150 +169,572 @@ public class LevelState extends State{
 		}
 	}
 
-	/**
-	 * Checks every collision in the current room between a
-	 * character and the background
-	 * @param elapsedTime
-	 */
-	private void checkCollisions(long elapsedTime) {
+	private void checkPlayerCollisions(long elapsedTime) {
+		boolean floorPanel = false;
+		boolean looseFloor = false;
+		boolean cornerFloor = false;
+		boolean corner = false;
+		Entity wall = null;
 		
-		boolean collidingB = false;
-		boolean collidingF = false;
-		player.setGrounded(false);
-		
-		/* Checks for collisions in the currentRoom */
-		ArrayList<Entity> bgEntities = currentRoom.getBackground();
-		ArrayList<Character> characters = currentRoom.getCharacters();
-		ArrayList<Entity> fgEntities = currentRoom.getForeground();
-		
-		for (Character c : characters) {
+		if ( player.isColliding() ) {
 			
-			/* Collisions with background */
-			for (Entity bgE : bgEntities) {
-				collidingB = handleCollision(c, bgE, elapsedTime);
+		}
+		else if ( player.isJumping() ) {
+			
+			System.out.println("JUMPING");
+			
+			/* Checks if the player can land on the floor */
+			floorPanel = checkFloorPanel();
+			looseFloor = checkLooseFloor();
+			wall = checkWall();
+			
+			if (floorPanel || looseFloor) {
+
+				// player lands the jump
+				player.setGrounded(true);
 			}
-			
-			/* Collisions with foreground */
-			for (Entity fgE : fgEntities) {
-				collidingF = handleCollision(c, fgE, elapsedTime);
-			}
-			
-			if (!collidingB && !collidingF) {
-				c.setBoundingBoxColor(Color.RED);
+			else if (wall != null) {
+				
+				// player has collided with a wall
+				player.collide_jump();
 			}
 			
 		}
-	}
-	
-	/**
-	 * Handles a single collision between a character and
-	 * a background/foreground entity
-	 * @param c character colliding
-	 * @param e background/foreground entity colliding
-	 * @param elapsedTime
-	 */
-	private boolean handleCollision(Character c, Entity e, long elapsedTime) {
-		
-		boolean colliding = false;
-
-		if (e.getBoundingBox() != null) {
+		else if ( player.isFalling() ) {
 			
-			/* Character's bounding box */
-			int cLeft = (int) c.getBoundingBox().getMinX();
-			int cRight = (int) c.getBoundingBox().getMaxX();
-			int cTop = (int) c.getBoundingBox().getMinY();
-			int cBottom = (int) c.getBoundingBox().getMaxY();
+//			System.out.println("FALLING");
 			
-			/* Background entity's bounding box */
-			int bgLeft = (int) e.getBoundingBox().getMinX();
-			int bgRight = (int) e.getBoundingBox().getMaxX();
-			int bgTop = (int) e.getBoundingBox().getMinY();
-			int bgBottom = (int) e.getBoundingBox().getMaxY();
+			/* Increases player's fall distance */
+			int prevFallDistance = player.getFallDistance();
+			player.setFallDistance(prevFallDistance + 1);
 			
-			if (c.intersects(e, elapsedTime)) {
+			/* Checks if the player can walk over the floor */
+			floorPanel = checkFloorPanel();
+			looseFloor = checkLooseFloor();
+			wall = checkWall();
+			
+			if ( (floorPanel || looseFloor) ) {
 				
-				int vSpeed = c.getySpeed();
-				int hSpeed = c.getxSpeed();
-				
-				/* Checks if the collision was horizontal or vertical */
-				Rectangle intersection = c.getBoundingBox().intersection(e.getBoundingBox());
-				boolean vertical = intersection.width > intersection.height;
-				boolean horizontal = intersection.height >= intersection.width;
-				
-				/* Checks vertical collisions */
-				if ( vertical && (vSpeed < 0) && (cTop < bgBottom)  ) {
+				if ( player.getFallDistance() <= 150 ) {
 					
-					/* Player was jumping */
-					while( c.intersects(e, elapsedTime) && (cTop <= bgBottom) ) {
-						c.move(0, 1);
-						cTop = (int) c.getBoundingBox().getMinY();
-						bgBottom = (int) e.getBoundingBox().getMaxY();
-					}
-					
+					// short fall, player lands nicely
+					System.out.println("SAFE LAND");
+					player.safeLand();
 				}
-				else if ( vertical && (vSpeed > 0) && (cBottom > bgTop) ) {
+				else if ( player.getFallDistance() <= 300 ) {
 					
-					/* Player was falling */
-					while ( c.intersects(e, elapsedTime) || (cBottom >= bgTop) ) {
-						c.move(0, -1);
-						cBottom = (int) c.getBoundingBox().getMaxY();
-						bgTop = (int) e.getBoundingBox().getMinY();
-					}
-					c.setGrounded(true);
+					// long fall, but not dying
+					player.riskyLand();
+				}
+				else {
 					
+					// free fall, player dies
+					player.die();
 				}
 				
-				/* Checks horizontal collisions */
-				if ( horizontal && (hSpeed > 0) && (cRight > bgLeft) ){
-					
-					/* Character was heading right */
-					while( c.intersects(e, elapsedTime) && (cRight >= bgLeft) ) {
-						c.move(-1, 0);
-						cRight = (int) c.getBoundingBox().getMaxX();
-						bgLeft = (int) e.getBoundingBox().getMinX();
-					}
-					
-				}
-				else if ( horizontal && (hSpeed < 0) && (cLeft < bgRight) ) {
-					
-					/* Character was heading left */
-					while ( c.intersects(e, elapsedTime) && (cLeft <= bgRight) ) {
-						c.move(1, 0);
-						cLeft = (int) c.getBoundingBox().getMinX();
-						bgRight = (int) e.getBoundingBox().getMaxX();
-					}
-
-				}
+				player.setFreeFall(false);
+				player.setGrounded(true);
+			}
+			
+			if (wall !=  null) {
 				
-				/* Debug */
-				e.setBoundingBoxColor(Color.YELLOW);
-				c.setBoundingBoxColor(Color.YELLOW);
-				
-				player.setCollided();
-				colliding = true;
+				// player has collided with a wall
+			}
+			
+		}
+		else if (player.wasJumping()) {
+			
+			/* Checks if the player can stand on the floor */
+			floorPanel = checkFloorPanel();
+			looseFloor = checkLooseFloor();
+			cornerFloor = checkCornerFloor();
+			wall = checkWall();
+			
+			/* Check for corners */
+			corner = checkCorner();
+			
+			if (!floorPanel && !looseFloor) {
+				player.fall();
+				player.notJumping();
+			}
+			
+		}
+		else { /* Player is grounded */
+			
+//			System.out.println("GROUNDED");
+			
+			/* Checks if the player can stand on the floor */
+			floorPanel = checkFloorPanel();
+			looseFloor = checkLooseFloor();
+			cornerFloor = checkCornerFloor();
+			wall = checkWall();
+			
+			/* Check for corners */
+			corner = checkCorner();
+			
+			/* If there is a corner nearby, the player can climb it */
+			if (corner) {
+				player.setClimbing(true);
+				player.setGrounded(true);
+			}
+			
+			if (cornerFloor) {
+				player.setGrounded(true);
 			}
 			else {
 				
-				/* Objects dont collide (floor) */
-				if ( (cBottom + 1) == bgTop ) {
-					
-					/* Character is walking over the floor */
-					if ( (cLeft > bgLeft && cLeft < bgRight) ||
-							(cRight > bgLeft && cRight < bgRight) ||
-							(cLeft > bgLeft && cRight < bgRight) ||
-							(cLeft < bgLeft && cRight > bgRight) ){
-						
-						/* Character walking over one particular floor panel,
-						 * thus it is grounded */
-						c.setGrounded(true);
-					}
+				// There is nothing beneath the player, it falls
+				if (!player.isFalling()) {
+					player.fall();
 				}
+			}
+			
+			if (wall != null) {
 				
-				/* Debug */
-				e.setBoundingBoxColor(Color.RED);
+				// player has collided with a wall
+				player.collide(wall);
 			}
 		}
-		return colliding;
 	}
 	
+	/**
+	 * 
+	 * @return true if there is any type of floor beneath of player
+	 * where it can stand and stay grounded or land
+	 */
+	private boolean checkFloorPanel() {
+		boolean leftPanel = false;
+		boolean rightPanel = false;
+		boolean leftCorner = false;
+		boolean rightCorner = false;
+		boolean leftFall = false;
+		boolean rightFall = false;
+		
+		int securityGap = 5;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
+		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		int newPlayerX = playerCenter[0];
+		
+//		System.out.println("P_Coords: (" + playerCenter[0] + ", " + playerCenter[1] + ") - "  +
+//					"(" + playerSquare[0] + ", " + playerSquare[1] + ")");
+//		System.out.printf("SQUARE: (" + playerSquare[0] + ", " + playerSquare[1] + "): ");
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+		
+			/* Checks if there is a panel floor type object in current square */
+			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			ArrayList<Entity> fgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getForeground();
+			
+			bgEntities.addAll(fgEntities);
+				
+			for (Entity bgE : bgEntities) {
+	
+				String name = bgE.getTypeOfEntity();
+				if ( name.startsWith("FloorPanel_") ||
+					(name.startsWith("Pillar_") && !name.contains("shadow")) ) {
+					
+					int bgLeft = (int) bgE.getBoundingBox().getMinX();
+					int bgRight = (int) bgE.getBoundingBox().getMaxX();
+					int bgTop = (int) bgE.getBoundingBox().getMinY();
+					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
+					
+					int bgWidth = bgE.getCurrentAnimation().getImage().getWidth();
+					
+					int[] ec = bgE.getCenter();
+					int[] es = bgE.getSquare();
+					
+					// DEBUG entity and player centers
+//					System.out.println("ec: " + ec[0] + ", " + ec[1] + " -> " +
+//										"pc: " + playerCenter[0] + ", " + playerCenter[1]);
+//					System.out.println("ph2: " + playerHeight2);
+	
+					if (name.contains("left") &&
+							((ec[1] - playerCenter[1]) <= playerHeight2) ) {
+						
+						// player lands on the floor (according to y axis)
+						if ( (playerCenter[0] >= bgLeft) &&
+								(playerCenter[0] <= bgRight) ) {
+							
+							// player lands on the floor (according to x axis)
+//							System.out.println("LEFT LANDING");
+							leftPanel = true;
+							
+							/* Corrects the player's position on the floor */
+							int newPlayerY = ec[1] - 1;
+							player.setY(newPlayerY);
+						}
+						else {
+							// player falls, there is no floor beneath him
+							leftFall = true;
+							newPlayerX = ec[0] - bgWidth / 4;
+						}
+					}
+					else if (name.contains("right") &&
+							((ec[1] - playerCenter[1]) <= playerHeight2) ) {
+						
+						if ( (playerCenter[0] >= bgLeft) &&
+								(playerCenter[0] <= bgRight) ) {
+							
+//							System.out.println("RIGHT LANDING");
+							rightPanel = true;
+							
+							/* Corrects the player's position on the floor */
+							int newPlayerY = ec[1] - 1;
+							player.setY(newPlayerY);
+						}
+						else {
+							rightFall = true;
+							newPlayerX = ec[0] + bgWidth;
+						}
+					}
+				}
+				else if (name.startsWith("Corner_")) {
+					if (name.contains("left")) {
+						leftCorner = true;
+					}
+					else if (name.contains("right")) {
+						rightCorner = true;
+					}
+				}
+			}
+			
+			/* Player's behaviour */
+			if (leftFall && !leftCorner) leftPanel = true;
+			else if (leftFall && leftCorner) {
+				leftPanel = false;
+				player.setX(newPlayerX);
+			}
+			
+			if (rightFall && !rightCorner) rightPanel = true;
+			else if (rightFall && rightCorner) {
+				rightPanel = false;
+				player.setX(newPlayerX);
+			}
+		}
+		
+		return (leftPanel || rightPanel);
+	}
+	
+	/**
+	 * 
+	 * @return false if there the player can stand in a corner,
+	 * true if there is corner in the same square as the player, but
+	 * the player cant be on it, the player will fall
+	 */
+	private boolean checkCornerFloor() {
+		boolean corner = true;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
+		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+		
+			/* Checks if there is a panel floor type object in current square */
+			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			ArrayList<Entity> fgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getForeground();
+			
+			bgEntities.addAll(fgEntities);
+				
+			for (Entity bgE : bgEntities) {
+	
+				String name = bgE.getTypeOfEntity();
+				if ( name.startsWith("Corner_") ) {
+					
+					int bgLeft = (int) bgE.getBoundingBox().getMinX();
+					int bgRight = (int) bgE.getBoundingBox().getMaxX();
+					int bgTop = (int) bgE.getBoundingBox().getMinY();
+					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
+					
+					int[] ec = bgE.getCenter();
+					int[] es = bgE.getSquare();
+	
+					if (name.contains("left") &&
+							((bgTop - playerCenter[1]) <= playerHeight2) ) {
+						
+						if ( (playerCenter[0] >= bgLeft) &&
+								(playerCenter[0] <= bgRight) ) {
+							
+	//						leftCorner = true;
+						}
+						else {
+							corner = false;
+						}
+					}
+					else if (name.contains("right") &&
+							((bgTop - playerCenter[1]) <= playerHeight2) ) {
+						
+						if ( (playerCenter[0] >= bgLeft) &&
+								(playerCenter[0] <= bgRight) ) {
+							
+	//						rightCorner = true;
+						}
+						else {
+							corner = false;
+						}
+					}
+				}
+			}
+		}
+		
+		/* Player's behaviour */
+		return corner;
+	}
+	
+	/**
+	 * 
+	 * @return true if there is a loose floor panel beneath the player
+	 */
+	private boolean checkLooseFloor() {
+		boolean looseFloor = false;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
+		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+		
+			/* Checks if there is a loose floor type object in current square */
+			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			for (Entity bgE : bgEntities) {
+	
+				String name = bgE.getTypeOfEntity();
+				if ( name.startsWith("LooseFloor") ) {
+					
+					int bgLeft = (int) bgE.getBoundingBox().getMinX();
+					int bgRight = (int) bgE.getBoundingBox().getMaxX();
+					int bgTop = (int) bgE.getBoundingBox().getMinY();
+					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
+					
+					int[] ec = bgE.getCenter();
+					int[] es = bgE.getSquare();
+					
+					if ( (ec[1] - playerCenter[1]) <= playerHeight2 ) {
+						
+						int res = ec[1] - playerCenter[1];
+						
+						if ( (playerCenter[0] >= bgLeft) &&
+								(playerCenter[0] <= bgRight) ) {
+							
+							looseFloor = true;
+						}
+					}
+				}
+			}
+		}
+		return looseFloor;
+	}
+	
+	/**
+	 * 
+	 * @return true if there is a corner that the player can reach
+	 * doing a vertical jump
+	 */
+	private boolean checkCorner() {
+		boolean corner = false;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
+		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] > 0 && playerSquare[1] > 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] < 9) {
+			
+			/* Checks if there is a corner type object in upleft square */
+			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+					playerSquare[0] - 1, playerSquare[1] - 1).getBackground();
+			
+			for (Entity bgE : bgEntities) {
+
+				String name = bgE.getTypeOfEntity();
+				if ( name.startsWith("Corner") ) {
+					
+					int[] ec = bgE.getCenter();
+					int[] es = bgE.getSquare();
+					
+//					System.out.println(bgE.getTypeOfEntity() + "(" + es[0] + ", " + es[1] + "):");
+//					System.out.println("	E_Coords: (" + ec[0] + ", " + ec[1] + ")" +
+//										"/(" + playerSquare[0] + ", " + playerSquare[1] + ")");
+					
+					if ( (ec[0] < playerCenter[0]) &&
+							(player.getOrientation().equals("left")) ) {
+					
+						// corner is at player's left side and player is looking left
+						corner = true;
+					}
+				}
+			}
+			
+			/* Checks if there is a corner type object in upright square */
+			bgEntities = currentRoom.getSquare(
+					playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
+			
+			for (Entity bgE : bgEntities) {
+
+				String name = bgE.getTypeOfEntity();
+				if ( name.startsWith("Corner") ) {
+					
+					int[] ec = bgE.getCenter();
+					
+					if ( (ec[0] > playerCenter[0]) &&
+							(player.getOrientation().equals("right")) ) {
+					
+						// corner is at player's right side and player is looking right
+						corner = true;
+					}
+				}
+			}
+			
+			/* Sets the player in the correct position to climb */
+			if (corner) {
+				
+				// TODO: move the player to the correct jumping position
+			}
+		}
+		
+		return corner;
+	}
+	
+	/**
+	 * 
+	 * @return true if there is a corner that the player can reach
+	 * doing a vertical jump
+	 */
+	private Entity checkWall() {
+		Entity wall = null;
+		int gap = 15;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
+		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			/* Checks if there is a panel floor type object in current square */
+			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			ArrayList<Entity> fgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getForeground();
+			
+			bgEntities.addAll(fgEntities);
+			
+			for (Entity bgE : bgEntities) {
+				
+				if (bgE.getBoundingBox() != null) {
+					
+					int bgLeft = (int) bgE.getBoundingBox().getMinX();
+					int bgRight = (int) bgE.getBoundingBox().getMaxX();
+					int bgTop = (int) bgE.getBoundingBox().getMinY();
+					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
+					int bgWidth = bgE.getCurrentAnimation().getImage().getWidth();
+					
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("Wall_") ) {
+						
+						int[] ec = bgE.getCenter();
+						int[] es = bgE.getSquare();
+						
+						if ( ((playerCenter[0] - bgRight) <= playerWidth2) ) {
+							
+							int newPlayerX = 0;
+							
+							if (player.getOrientation().equals("right")) {
+								
+								// wall is at player's right side and player is looking right
+								Square targetSquare = currentRoom.getSquare(playerSquare[0], playerSquare[1]);
+								int[] newCoords = targetSquare.getCenter(playerSquare[0], playerSquare[1] + 1);
+								newPlayerX = newCoords[0];
+							}
+							else {
+								/* Corrects the player's distance from the wall*/
+								newPlayerX = ec[0] + bgWidth/2 + gap;
+							}
+							player.setX(newPlayerX);
+							wall = bgE;
+						}
+					}
+				}
+			}
+			
+			/* Checks if there is a panel floor type object in current square */
+			bgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			fgEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getForeground();
+			
+			bgEntities.addAll(fgEntities);
+			
+			for (Entity bgE : bgEntities) {
+				
+				if (bgE.getBoundingBox() != null) {
+					
+					int bgLeft = (int) bgE.getBoundingBox().getMinX();
+					int bgRight = (int) bgE.getBoundingBox().getMaxX();
+					int bgTop = (int) bgE.getBoundingBox().getMinY();
+					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
+					int bgWidth = bgE.getCurrentAnimation().getImage().getWidth();
+					
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("Wall_") ) {
+						
+						int[] ec = bgE.getCenter();
+						
+						if ( ((playerCenter[0] - bgLeft) <= playerWidth2) ) {
+							
+							int newPlayerX = 0;
+							
+							if (player.getOrientation().equals("left")) {
+								
+								System.out.println("HOLA");
+								
+								// wall is at player's right side and player is looking right
+								Square targetSquare = currentRoom.getSquare(playerSquare[0], playerSquare[1]);
+								int[] newCoords = targetSquare.getCenter(playerSquare[0], playerSquare[1]-1);
+								newPlayerX = newCoords[0] + 32;
+							}
+							else {
+								/* Corrects the player's distance from the wall*/
+								newPlayerX = ec[0] - gap/2;
+							}
+							player.setX(newPlayerX);
+							wall = bgE;
+						}
+					}
+				}
+			}
+		}
+		
+		return wall;
+	}
 }

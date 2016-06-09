@@ -12,7 +12,7 @@ public class LooseFloor extends Entity {
 	private Rectangle baseBoundingBox;
 
 	public LooseFloor(int x, int y, int x_offset, int y_offset, Loader loader, String loose_type) {
-		super("LooseFloor", x+x_offset, y+y_offset, loader);
+		super("LooseFloor" + loose_type, x+x_offset, y+y_offset, loader);
 		activated = false;
 		animations = loader.getAnimations("loose_floor");
 		currentAnimation = animations.get(loose_type);

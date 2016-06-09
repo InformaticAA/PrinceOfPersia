@@ -51,14 +51,31 @@ public abstract class Entity {
 				y - currentAnimation.getImage().getHeight(), null);
 		
 		/* Draws the entity's bounding box */
-		if (boundingBox != null) {
-			g.setColor(boundingBoxColor);
-			g.drawRect((int) boundingBox.getX(),
-					(int) boundingBox.getY(),
-					(int) boundingBox.getWidth(),
-					(int) boundingBox.getHeight());
-			g.setColor(Color.BLACK);
-		}
+//		if (boundingBox != null) {
+//			g.setColor(boundingBoxColor);
+//			g.drawRect((int) boundingBox.getX(),
+//					(int) boundingBox.getY(),
+//					(int) boundingBox.getWidth(),
+//					(int) boundingBox.getHeight());
+//			g.setColor(Color.BLACK);
+//		}
+		
+		/* Draws a red cross in the center of the entity */
+//		if (typeOfEntity.startsWith("FloorPanel_")) {
+//			
+//			if (typeOfEntity.contains("left")) g.setColor(Color.RED);
+//			else if (typeOfEntity.contains("right")) g.setColor(Color.YELLOW);
+//			
+//			int[] center = getCenter();
+//			int cx = center[0];
+//			int cy = center[1];
+//			int lineLength = 20;
+//			
+//			g.drawLine(cx - lineLength/2, cy - lineLength/2, cx + lineLength/2, cy + lineLength/2);
+//			g.drawLine(cx - lineLength/2, cy + lineLength/2, cx + lineLength/2, cy - lineLength/2);
+//			
+//			g.setColor(Color.BLACK);	
+//		}
 	}
 	
 	/**
@@ -71,6 +88,8 @@ public abstract class Entity {
 					y - currentAnimation.getImage().getHeight(),
 					currentAnimation.getImage().getWidth(),
 					currentAnimation.getImage().getHeight());
+			
+//			System.out.println("ebb: " + currentAnimation.getId() + ", f: " + currentAnimation.getCurrentFrame());
 		}
 	}
 	
@@ -189,10 +208,41 @@ public abstract class Entity {
 	 * current x,y coords of the entity
 	 */
 	public int[] getSquare() {
-		int i = (y - 6) / 126;
-		int j = (x - 64) / 64;
+		int i = y - 6;
 		
-		return new int[]{i,j};
+		if (i <= 0) i = 0;
+		else i = (i / 126) + 1;
+		
+		int j = x / 64;
+		return new int[]{i, j};
+	}
+	
+	/**
+	 * 
+	 * @return square coords in the room corresponding to the
+	 * current x,y coords of the entity
+	 */
+	public int[] getSquare(int xx, int yy) {
+		int i = yy - 6;
+		
+		if (i <= 0) i = 0;
+		else i = (i / 126) + 1;
+		
+		int j = xx / 64;
+		return new int[]{i, j};
+	}
+	
+	/**
+	 * 
+	 * @return the center coords of the entity
+	 */
+	public int[] getCenter() {
+		int width2 = currentAnimation.getImage().getWidth()/2;
+		int height2 = currentAnimation.getImage().getHeight()/2;
+		int xx = x - width2;
+		int yy = y - height2;
+		
+		return new int[]{xx,yy};
 	}
 	
 	public abstract Entity copy();

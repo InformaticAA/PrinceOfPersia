@@ -96,5 +96,14 @@ public class Square {
 	public void setForeground(ArrayList<Entity> foreground) {
 		this.foreground = foreground;
 	}
+	
+	public int[] getCenter(int i, int j) {
+		
+		/* Calculates the center of the square */
+		int px = 32 + j * 64;
+		int py = (int)(6 + 63 + i * 126);
+		
+		return new int[]{px, py};
+	}
 
 }

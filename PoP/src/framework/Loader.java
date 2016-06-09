@@ -29,6 +29,8 @@ import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 
 public class Loader {
+	
+	private final String frameInfoFile = "info.txt";
 
 	private long frameTime;
 	private int fps;
@@ -134,7 +136,7 @@ public class Loader {
 					if (f.isDirectory()) {
 						
 						/* folder f contains .png files */
-						FrameList anim = loadFrameList(f,false);
+						FrameList anim = loadFrameList(f);
 						animations.put(anim.getId(), anim);
 					}
 				}
@@ -151,10 +153,48 @@ public class Loader {
 	 * one animation
 	 * @return new animation loaded
 	 */
-	public FrameList loadFrameList(File f, boolean infinite) {
+	public FrameList loadFrameList(File f) {
 		FrameList animation = new FrameList(f.getName());
 		
+		/* Reads additional info about the animation (speed and offsets) */
+		boolean info = false;
+		ArrayList<Integer> xSpeeds = new ArrayList<Integer>();
+		ArrayList<Integer> ySpeeds = new ArrayList<Integer>();
+		ArrayList<Integer> xOffsets = new ArrayList<Integer>();
+		ArrayList<Integer> yOffsets = new ArrayList<Integer>();
+		boolean infinite = false;
+		
+		String infoPath = f.getPath() + "\\" + frameInfoFile;
+		File infoFile = new File(infoPath);
+		
+		if (infoFile.exists()) {
+			try {
+				Scanner readInfo = new Scanner(infoFile);
+				
+				while (readInfo.hasNextLine()) {
+					
+					if (!readInfo.hasNextInt()) {
+						String linea = readInfo.nextLine();
+						infinite = linea.equals("infinite");
+					}
+					
+					xSpeeds.add(readInfo.nextInt());
+					ySpeeds.add(readInfo.nextInt());
+					xOffsets.add(readInfo.nextInt());
+					yOffsets.add(readInfo.nextInt());
+					
+					readInfo.nextLine();
+				}
+				
+				info = true;
+				readInfo.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		File[] images = f.listFiles();
+		int img = 0;
 		for(File image : images) {
 			
 			/* Loads one image as a frame of the animation */
@@ -162,8 +202,18 @@ public class Loader {
 			if (name.substring(name.length() - 4, name.length()).equals(".png")) {
 				
 				Frame frame = loadFrame(image);
+				
+				if (info) {
+					frame.setInfinite(infinite);
+					frame.setxSpeed(xSpeeds.get(img));
+					frame.setySpeed(ySpeeds.get(img));
+					frame.setxOffset(xOffsets.get(img));
+					frame.setyOffset(yOffsets.get(img));
+				}
+				
 				animation.addFrame(frame);
 			}
+			img++;
 		}
 		
 		return animation;
@@ -419,7 +469,7 @@ public class Loader {
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
 			} else if(entity.equals("loose")){
-				newEntity = new LooseFloor(px,py,-12,0,this,"idle");
+				newEntity = new LooseFloor(px,py,52,0,this,"idle");
 				background.add(newEntity);
 			} else if(entity.equals("doorfr")){
 				newEntity = new DoorFrame(px,py,-12,-2,this,"door_frame_right");
@@ -528,7 +578,7 @@ public class Loader {
 		Hashtable<String, Animation> animations = new Hashtable<String, Animation>();
 		Hashtable<String, FrameList> entityFrameLists = totalAnimations.getFrameLists(entity);
 		for(String id : entityFrameLists.keySet()){
-			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames(),true));
+			animations.put(id, new Animation(id,entityFrameLists.get(id).getFrames()));
 		}
 		return animations;
 	}

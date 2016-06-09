@@ -5,7 +5,7 @@ import framework.Loader;
 public class Pillar extends Entity{
 
 	public Pillar(int x, int y, int x_offset, int y_offset, Loader loader, String type) {
-		super("Pillar", x + x_offset, y + y_offset, loader);
+		super("Pillar_" + type, x + x_offset, y + y_offset, loader);
 		animations = loader.getAnimations("pillar");
 		currentAnimation = animations.get(type);
 		
@@ -21,6 +21,20 @@ public class Pillar extends Entity{
 		}
 	}
 
+	/**
+	 * 
+	 * @return the center coords of the entity
+	 */
+	@Override
+	public int[] getCenter() {
+		int width2 = currentAnimation.getImage().getWidth()/2;
+		int height2 = (int) (this.getBoundingBox().getMaxY() - this.getBoundingBox().getMinY()) / 2;
+		int xx = x - width2;
+		int yy = y - height2;
+		
+		return new int[]{xx,yy};
+	}
+	
 	@Override
 	public Entity copy() {
 		return null;

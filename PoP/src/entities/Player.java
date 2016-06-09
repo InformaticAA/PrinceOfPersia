@@ -8,12 +8,12 @@ import input.Key;
 
 public class Player extends Character {
 
-	private enum PlayerState {IDLE, MOVE, JUMP, COMBAT, COLLIDED, DIED};
+	public enum PlayerState {IDLE, MOVE, JUMP, COMBAT, COLLIDED, DIED};
 	
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
-	private final int FRAME_DURATION = 6;
+	private final int FRAME_DURATION = 5;
 	private final int MOVE_SPEED = 2;
 	
 	private boolean up_pressed;
@@ -29,6 +29,9 @@ public class Player extends Character {
 	
 	private boolean canMakeStep;
 	private boolean canWalkCrouched;
+	private boolean canClimb;
+	
+	private int fallDistance;
 	
 	public Player(int x, int y, Loader loader, String orientation) {
 		super(x, y, loader, orientation);
@@ -51,6 +54,10 @@ public class Player extends Character {
 		
 		this.canMakeStep = true;
 		this.canWalkCrouched = true;
+		
+		this.canClimb = false;
+		
+		this.fallDistance = 0;
 	}
 	
 	@Override
@@ -84,7 +91,9 @@ public class Player extends Character {
 		}
 		
 		manageAnimations();
+		updateSpeed();
 		this.moveCharacter();
+		this.enableBoundingBox();
 	}
 	
 	public void setCollided(){
@@ -176,15 +185,24 @@ public class Player extends Character {
 			
 			switch(currentState){
 			case IDLE:
-				
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					canClimb = false;
+				}
 				break;
 				
 			case JUMP:
-				
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					canClimb = false;
+				}
 				break;
 				
 			case MOVE:
-				
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					canClimb = false;
+				}
 				break;
 				
 			case COLLIDED:
@@ -202,14 +220,12 @@ public class Player extends Character {
 			
 			switch(currentState){
 			case IDLE:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 				}
@@ -217,27 +233,25 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
 						changed_position = false;
 						this.currentState = PlayerState.IDLE;
-						this.setMoveSpeed(0);
 						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 					}
 					if(canWalkCrouched){
 						if(this.getOrientation().equals("left")){
-							this.setMoveSpeed(-MOVE_SPEED/2);
+
 						} else{
-							this.setMoveSpeed(MOVE_SPEED/2);
+
 						}
 						canWalkCrouched = false;
 						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
 					} else{
-						this.setMoveSpeed(0);
 						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 					}
 				}
@@ -245,9 +259,9 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -266,25 +280,22 @@ public class Player extends Character {
 				if(!down_pressed){
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
 				} 
-				this.setMoveSpeed(0);
 				break;
 				
 			case JUMP:
 				this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
-				this.setMoveSpeed(0);
 				break;
 				
 			case MOVE:
-				this.setMoveSpeed(0);
 				if(canWalkCrouched){
 					canWalkCrouched = false;
 					if(changed_position){
 						changed_position = false;
 					} else{
 						if(this.getOrientation().equals("left")){
-							this.setMoveSpeed(-MOVE_SPEED);
+
 						} else{
-							this.setMoveSpeed(MOVE_SPEED);
+
 						}
 						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
 					}
@@ -309,7 +320,6 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					canWalkCrouched = true;
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
@@ -317,7 +327,6 @@ public class Player extends Character {
 				break;
 				
 			case JUMP:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					canWalkCrouched = true;
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
@@ -325,7 +334,6 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					canWalkCrouched = true;
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
@@ -334,9 +342,9 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -353,16 +361,14 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+				
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(!down_pressed){
-						this.setMoveSpeed(0);
 						this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
 					} else{
-						this.setMoveSpeed(0);
 						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 					}
 				}
@@ -370,33 +376,31 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -462,27 +466,39 @@ public class Player extends Character {
 		case "falling_left":
 		case "falling_right":
 
-			switch(currentState){
-			case IDLE:
+			if (this.getCurrentAnimation().isOver(true)) {
+				this.setCurrentAnimation("falling idle_" + orientation, FRAME_DURATION);
 				
-				break;
-				
-			case JUMP:
-				
-				break;
-				
-			case MOVE:
-				
-				break;
-				
-			case COLLIDED:
-				
-				break;
-				
-			default:
-				
-				break;
+//				System.out.println("Starts free_fall");
+				this.setFreeFall(true);
 			}
+			
+//			switch(currentState){
+//			case IDLE:
+//				
+//				break;
+//				
+//			case JUMP:
+//				
+//				break;
+//				
+//			case MOVE:
+//				
+//				break;
+//				
+//			case COLLIDED:
+//				
+//				break;
+//				
+//			default:
+//				
+//				break;
+//			}
+			break;
+			
+		case "falling idle_left":
+		case "falling idle_right":
+			
 			break;
 			
 		case "got sword_left":
@@ -568,15 +584,15 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				
+				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				break;
 				
 			case JUMP:
-				
+				this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
 				break;
 				
 			case MOVE:
-				
+				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				break;
 				
 			case COLLIDED:
@@ -599,12 +615,9 @@ public class Player extends Character {
 				} else if(down_pressed){
 					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 				}
-				this.setMoveSpeed(0);
-				
 				break;
 				
 			case JUMP:
-				this.setMoveSpeed(0);
 				if(right_pressed || left_pressed){
 					if(right_pressed && this.currentAnimation.equals("right")){
 						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
@@ -620,35 +633,34 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(changed_position){
-					this.setMoveSpeed(0);
 					changed_position = false;
 					this.setOrientation(newOrientation);
 					this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
 				} else if(shift_pressed){
 					if(canMakeStep){
 						if(this.getOrientation().equals("left")){
-							this.setMoveSpeed(-MOVE_SPEED/2);
+
 						} else{
-							this.setMoveSpeed(MOVE_SPEED/2);
+
 						}
 						this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
 						canMakeStep = false;
 					} else{
-						this.setMoveSpeed(0);
+					
 					}
 				} else if(down_pressed){
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 				}
 				else{
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 //					System.out.printf("starts running: ");
 					this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
@@ -697,28 +709,24 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 					this.currentState = PlayerState.IDLE;
 				}
@@ -736,30 +744,30 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.fall();
 				}
 				break;
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.fall();
 				}
 				break;
 				
 			case MOVE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.fall();
 				}
 				break;
 				
 			case COLLIDED:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 					this.currentState = PlayerState.IDLE;
+					this.fall();
 				}
 				break;
 				
@@ -771,37 +779,44 @@ public class Player extends Character {
 		
 		case "running jump_left":
 		case "running jump_right":
+			
+			this.jumping = true;
 
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				
 				if(this.currentAnimation.isOver(false)){
+					
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+					
 				}
 				break;
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				
 				if(this.currentAnimation.isOver(false)){
+					
+					this.fall();
+					
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				}
@@ -809,23 +824,25 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+				
 				}
 				
 				if(this.currentAnimation.isOver(false)){
+					
+					this.fall();
+					
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
-				this.setMoveSpeed(0);
 				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -841,15 +858,15 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				}
@@ -857,25 +874,21 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
 						if(left_pressed){
 							this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-							this.setMoveSpeed(-MOVE_SPEED);
 						} else{
-							this.setMoveSpeed(0);
 							this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
 						}
 					} else{
 						if(right_pressed){
 							this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-							this.setMoveSpeed(MOVE_SPEED);
 						} else{
-							this.setMoveSpeed(0);
 							this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 						}
 					}
@@ -884,18 +897,16 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
-//				System.out.printf(currentAnimation.getCurrentFrame() + ", ");
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
 						changed_position = false;
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turn running_" + orientation, FRAME_DURATION);
 					} else{
-//						System.out.println();
 						this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
 					}
 				} 
@@ -903,9 +914,9 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -922,33 +933,31 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
-					this.setMoveSpeed(0);
 				}
 				break;
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
-					this.setMoveSpeed(0);
 				}
 				break;
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
@@ -964,9 +973,9 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -983,24 +992,22 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -1008,16 +1015,15 @@ public class Player extends Character {
 			case MOVE:
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
-						this.setMoveSpeed(0);
 						changed_position = false;
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
 						
 					} else{
 						if(this.getOrientation().equals("left")){
-							this.setMoveSpeed(-MOVE_SPEED);
+
 						} else{
-							this.setMoveSpeed(MOVE_SPEED);
+
 						}
 						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 					}
@@ -1026,10 +1032,11 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
+				
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -1044,11 +1051,6 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
-				} else{
-					this.setMoveSpeed(MOVE_SPEED);
-				}
 				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -1059,23 +1061,21 @@ public class Player extends Character {
 					} else{
 						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 					}
-					this.setMoveSpeed(-MOVE_SPEED);
 				} else{
 					if(right_pressed){
 						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
 					} else{
 						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 					}
-					this.setMoveSpeed(MOVE_SPEED);
 				}
 				
 				break;
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+					
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+					
 				}
 				if(changed_position){
 					changed_position = false;
@@ -1088,9 +1088,9 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+			
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+					
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -1103,11 +1103,12 @@ public class Player extends Character {
 			
 		case "scaling down_left":
 		case "scaling down_right":
+			
+			canClimb = false;
 
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -1120,7 +1121,6 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -1167,7 +1167,6 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("scaling up_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -1223,20 +1222,25 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+				if(this.currentAnimation.isOver(false) && canClimb){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				else if (this.currentAnimation.isOver(false) && !canClimb) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
-				if(this.currentAnimation.isOver(false)){
-					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				if(this.currentAnimation.isOver(false) && canClimb){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
-				if(this.currentAnimation.isOver(false)){
+				if(this.currentAnimation.isOver(false) && canClimb){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				else if (this.currentAnimation.isOver(false) && !canClimb) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -1257,45 +1261,42 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+					
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED);
+
 				}
 				
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
-				this.setMoveSpeed(0);
 				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -1365,15 +1366,15 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+
 					}
 					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				}
@@ -1381,32 +1382,30 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(MOVE_SPEED);
+
 				} else{
-					this.setMoveSpeed(-MOVE_SPEED);
+
 				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
 						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-						this.setMoveSpeed(-MOVE_SPEED);
 					} else{
 						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-						this.setMoveSpeed(MOVE_SPEED);
 					}
 				}
 				break;
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(MOVE_SPEED);
+					
 				} else{
-					this.setMoveSpeed(-MOVE_SPEED);
+					
 				}
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
-						this.setMoveSpeed(-MOVE_SPEED);
+						
 					} else{
-						this.setMoveSpeed(MOVE_SPEED);
+					
 					}
 					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
 					
@@ -1415,9 +1414,9 @@ public class Player extends Character {
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -1433,14 +1432,12 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
-				this.setMoveSpeed(0);
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
 				}
@@ -1449,27 +1446,26 @@ public class Player extends Character {
 			case MOVE:
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
-						this.setMoveSpeed(0);
 						changed_position = false;
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
 					} else if(shift_pressed){
 						if(canMakeStep){
 							if(this.getOrientation().equals("left")){
-								this.setMoveSpeed(-MOVE_SPEED/2);
+
 							} else{
-								this.setMoveSpeed(MOVE_SPEED/2);
+
 							}
 							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
 							canMakeStep = false;
 						} else{
-							this.setMoveSpeed(0);
+
 						}
 					} else{
 						if(this.getOrientation().equals("left")){
-							this.setMoveSpeed(-MOVE_SPEED);
+
 						} else{
-							this.setMoveSpeed(MOVE_SPEED);
+
 						}
 						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 					}
@@ -1492,45 +1488,42 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				if(currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(-MOVE_SPEED/2);
+
 				} else{
-					this.setMoveSpeed(MOVE_SPEED/2);
+
 				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
@@ -1546,4 +1539,206 @@ public class Player extends Character {
 			break;
 		}
 	}
+
+	/**
+	 * @return the currentState
+	 */
+	public PlayerState getCurrentState() {
+		return currentState;
+	}
+	
+	/**
+	 * @return the fallDistance
+	 */
+	public int getFallDistance() {
+		return fallDistance;
+	}
+
+	/**
+	 * @param fallDistance the fallDistance to set
+	 */
+	public void setFallDistance(int fallDistance) {
+		this.fallDistance = fallDistance;
+	}
+	
+	public void fall() {
+		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
+		
+		if (orientation.equals("left")) {
+			this.move(-10, 0);
+		}
+		else if (orientation.equals("right")) {
+			this.move(10, 0);
+		}
+		this.falling = true;
+	}
+	
+	public void safeLand() {
+		this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+		
+		// Only corrects player position if it is a short fall
+//		if (!isFreeFall()) {
+//			this.move(0, -20);
+//		}
+//		
+//		else {
+//			this.move(0, -1);
+//		}
+		
+		this.enableBoundingBox();
+	}
+	
+	public void riskyLand() {
+		this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+		this.enableBoundingBox();
+	}
+	
+	public void die() {
+		
+		// TODO
+	}
+	
+	/**
+	 * Sets the player's current animation to collided
+	 */
+	public void collide(Entity wall) {
+		this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+		this.enableBoundingBox();
+		
+		// player corrects its distance from wall
+//		int bgLeft = (int) wall.getBoundingBox().getMinX();
+//		int bgRight = (int) wall.getBoundingBox().getMaxX();
+//		int pC = this.getCenter()[0];
+//		int pW2 = this.getCurrentAnimation().getImage().getWidth()/2;
+//		int gap = 10;
+//		
+//		if (this.getOrientation().equals("left")) {
+//			
+//			while ( ( pC - pW2 ) < ( bgRight + gap ) ) {
+//				this.move(1, 0);
+//				
+//				pC = this.getCenter()[0];
+//				pW2 = this.getCurrentAnimation().getImage().getWidth()/2;
+//			}
+//		}
+//		else if (this.getOrientation().equals("right")) {
+//			
+//			while ( ( pC + pW2 ) > (bgLeft - gap ) ) {
+//				this.move(-1, 0);
+//				
+//				pC = this.getCenter()[0];
+//				pW2 = this.getCurrentAnimation().getImage().getWidth()/2;
+//			}
+//		}
+	}
+	
+	public void collide_jump() {
+		this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+		this.enableBoundingBox();
+		
+		int gap = 20;
+		
+		if (this.getOrientation().equals("left")) {
+			int newX = this.getX() + gap;
+			this.setX(newX);
+		}
+		else if (this.getOrientation().equals("right")) {
+			int newX = this.getX() - gap;
+			this.setX(newX);
+		}
+	}
+	
+	public boolean isColliding() {
+		return currentAnimation.getId().contains("collided");
+	}
+	
+	/**
+	 * @return the canClimb
+	 */
+	public boolean isClimbing() {
+		return canClimb;
+	}
+
+	/**
+	 * @param canClimb the canClimb to set
+	 */
+	public void setClimbing(boolean canClimb) {
+		this.canClimb = canClimb;
+	}
+	
+	/**
+	 * 
+	 * @return true if the player is executing one of its
+	 * jump animations
+	 */
+	public boolean isJumping() {
+		return currentAnimation.getId().contains("jump");
+	}
+	
+	/**
+	 * 
+	 * @return true if the player has just executed a jump
+	 */
+	public boolean wasJumping() {
+		return jumping;
+	}
+	
+	/**
+	 * 
+	 * sets the jumping value to false
+	 */
+	public boolean notJumping() {
+		return jumping = false;
+	}
+	
+	/**
+	 * 
+	 * @return true if the player is executing one of its
+	 * fall animations
+	 */
+	public boolean isFalling() {
+		return currentAnimation.getId().contains("fall");
+	}
+	
+	/**
+	 * 
+	 * @return true if the player is not neither
+	 * jumping nor falling
+	 */
+	public boolean isGrounded() {
+		return !isJumping() && !isFalling();
+	}
+	
+	@Override
+	public void moveCharacter(){
+		
+		/* If character is blocked sideways, it cant move horizontally */
+		if (leftBlocked || rightBlocked) {
+			xSpeed = 0;
+		}
+		
+		/* Applies gravity if falling */
+		if ( isFalling() ) {
+			int newySpeed = fallSpeed + gravity;
+			
+			
+			if (newySpeed > maxySpeed) {
+				newySpeed = maxySpeed;
+			}
+			
+			ySpeed = newySpeed;
+		}
+		else if ( isGrounded() ) {
+
+			/* Character is on the ground */
+			ySpeed = 0;
+			yFrameOffset = 0;
+		}
+		
+		/* Moves the character and its bounding box */
+		setX(x + xSpeed + xFrameOffset);
+		setY(y + ySpeed + yFrameOffset);
+		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
+	}
+
 }

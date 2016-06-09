@@ -105,7 +105,7 @@ public class Game extends JPanel implements Runnable{
 					e.printStackTrace();
 				}
 			} else{
-				System.out.println("Too slow");
+//				System.out.println("Too slow");
 			}
 		}
 	}

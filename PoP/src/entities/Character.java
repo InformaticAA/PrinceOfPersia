@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
 import framework.Animation;
@@ -14,27 +15,98 @@ public class Character extends Entity {
 	/* Movement constants */
 	protected final int gravity = 1;
 	protected final int maxxSpeed = 10;
-	protected final int maxySpeed = 5;
+	protected final int maxySpeed = 30;
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
 
 	/* Movement variables */
+	protected int moveSpeed;
 	protected int xSpeed;
 	protected int ySpeed;
 	protected boolean leftBlocked;
 	protected boolean rightBlocked;
 	protected boolean falling;
+	protected boolean freeFall;
 	protected boolean grounded;
+	protected boolean jumping;
 	
 	/* Animations */
 	protected String orientation;
+	protected BufferedImage prevImage;
+	protected int xFrameOffset;
+	protected int yFrameOffset;
 	
 	public Character(int x, int y, Loader loader, String orientation) {
 		super("Character", x,y,loader);
 		this.orientation = orientation;
-		this.falling = true;
-		this.grounded = false;
+		this.falling = false;
+		this.grounded = true;
+		this.freeFall = false;
+		this.jumping = false;
+	}
+	
+	protected void updateSpeed() {
+		
+		if (prevImage != null) {
+			
+			/* Sets charactes speed as current animation describes */
+			int currentFrame = currentAnimation.getCurrentFrame();
+			int newxSpeed = currentAnimation.getFrameXSpeed(currentFrame, prevImage);
+			int newySpeed = currentAnimation.getFrameYSpeed(currentFrame, prevImage);
+			int newxFrameOffset = currentAnimation.getFrameXOffset(currentFrame, prevImage);
+			int newyFrameOffset = currentAnimation.getFrameYOffset(currentFrame, prevImage);
+			
+			if (newxSpeed != 0 || newySpeed != 0 ||
+					xFrameOffset != 0 || yFrameOffset != 0) {
+				
+				if (currentAnimation.isLastFrame()) {
+					xSpeed = newxSpeed;
+					ySpeed = newySpeed;
+					
+					xFrameOffset = newxFrameOffset;
+					yFrameOffset = newyFrameOffset;
+					
+					// DEBUG
+//					if (currentAnimation.getId().equals("turning_left") || 
+//							currentAnimation.getId().equals("turning_right")) {
+//						
+//						System.out.println(currentAnimation.getId() + " -> " +
+//								"f: " + currentAnimation.getCurrentFrame() + 
+//								", xo: " + newxFrameOffset + ", yo: " + newyFrameOffset);
+//					}
+					// FIN DEBUG
+					
+				}
+				else {
+					xSpeed = 0;
+					ySpeed = 0;
+					xFrameOffset = 0;
+					yFrameOffset = 0;
+				}
+			}
+			else {
+				xSpeed = 0;
+				ySpeed = 0;
+				xFrameOffset = 0;
+				yFrameOffset = 0;
+			}
+			
+//			if (currentAnimation.getId().startsWith("idle")) {
+//				System.out.printf(currentAnimation.getId() + ": ");
+//				System.out.println("Frame: " + currentFrame +
+//						", xs: " + xSpeed + ", ys: " + ySpeed + 
+//						", xo: " + xFrameOffset + ", yo: " + yFrameOffset + 
+//						", x: " + x + ", y: " + y);
+//			}
+		}
+		else {
+			xSpeed = 0;
+			ySpeed = 0;
+			xFrameOffset = 0;
+			yFrameOffset = 0;
+		}
+		prevImage = currentAnimation.getImage();
 	}
 	
 	@Override
@@ -60,18 +132,23 @@ public class Character extends Entity {
 				newySpeed = maxySpeed;
 			}
 			
-			setySpeed(newySpeed);
+			ySpeed = newySpeed;
+			
+			System.out.println(ySpeed);
+			
 		}
 		else if (grounded) {
-			
+
 			/* Character is on the ground */
 			ySpeed = 0;
 		}
 		
+//		System.out.println("xs: " + xSpeed + ", ys: " + ySpeed + ", xo: " + xFrameOffset + ", yo:" + yFrameOffset);
+		
 		/* Moves the character and its bounding box */
-		setX(x + xSpeed);
-		setY(y + ySpeed);
-		boundingBox.translate(xSpeed, ySpeed);
+		setX(x + xSpeed + xFrameOffset);
+		setY(y + ySpeed + yFrameOffset);
+		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
 	}
 	
 	public void move(int x, int y) {
@@ -123,18 +200,17 @@ public class Character extends Entity {
 		}
 		
 		/* Sets player's horizontal speed */
-		this.xSpeed = moveSpeed;
+		this.moveSpeed = moveSpeed;
 	}
 	
 	public void setMoveSpeed(int moveSpeed, String blockedSide) {
 		
 		/* Sets player's horizontal speed */
-		this.xSpeed = moveSpeed;
+		this.moveSpeed = moveSpeed;
 
 		/* Blocks player's movement in one direction */
 		this.leftBlocked = blockedSide.equals("left");
 		this.rightBlocked = blockedSide.equals("right");
-		this.xSpeed = moveSpeed;
 	}
 
 	/**
@@ -303,6 +379,20 @@ public class Character extends Entity {
 	 */
 	public void setGrounded(boolean grounded) {
 		this.grounded = grounded;
+	}
+
+	/**
+	 * @return the freeFall
+	 */
+	public boolean isFreeFall() {
+		return freeFall;
+	}
+
+	/**
+	 * @param freeFall the freeFall to set
+	 */
+	public void setFreeFall(boolean freeFall) {
+		this.freeFall = freeFall;
 	}
 
 	@Override

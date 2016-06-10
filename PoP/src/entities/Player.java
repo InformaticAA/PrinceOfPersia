@@ -749,60 +749,72 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(changed_position){
-					changed_position = false;
-				} else if(down_pressed){
-					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+				if(!enemySaw || !wantCombat){
+					if(changed_position){
+						changed_position = false;
+					} else if(down_pressed){
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+					}
+				} else{
+					this.currentState = PlayerState.COMBAT;
 				}
 				break;
 				
 			case JUMP:
-				if(right_pressed || left_pressed){
-					if(right_pressed && this.currentAnimation.equals("right")){
-						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
-					} else if(left_pressed && this.currentAnimation.equals("left")){
-						this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+				if(!enemySaw || !wantCombat){
+					if(right_pressed || left_pressed){
+						if(right_pressed && this.currentAnimation.equals("right")){
+							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+						} else if(left_pressed && this.currentAnimation.equals("left")){
+							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
+						} else{
+							this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+						}
 					} else{
 						this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
 					}
 				} else{
-					this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+					this.currentState = PlayerState.COMBAT;
 				}
 				break;
 				
 			case MOVE:
-				if(changed_position){
-					changed_position = false;
-					this.setOrientation(newOrientation);
-					this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
-				} else if(shift_pressed){
-					if(canMakeStep){
-						if(this.getOrientation().equals("left")){
-
+				if(!enemySaw || !wantCombat){
+					if(changed_position){
+						changed_position = false;
+						this.setOrientation(newOrientation);
+						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
+					} else if(shift_pressed){
+						if(canMakeStep){
+							if(this.getOrientation().equals("left")){
+	
+							} else{
+	
+							}
+							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
+							canMakeStep = false;
 						} else{
-
+						
 						}
-						this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
-						canMakeStep = false;
-					} else{
-					
+					} else if(down_pressed){
+						if(this.getOrientation().equals("left")){
+	
+						} else{
+	
+						}
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 					}
-				} else if(down_pressed){
-					if(this.getOrientation().equals("left")){
-
-					} else{
-
+					else{
+						if(this.getOrientation().equals("left")){
+	
+						} else{
+	
+						}
+	//					System.out.printf("starts running: ");
+						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 					}
-					this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-				}
-				else{
-					if(this.getOrientation().equals("left")){
-
-					} else{
-
-					}
-//					System.out.printf("starts running: ");
-					this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
+				} else{
+					this.currentState = PlayerState.COMBAT;
 				}
 				break;
 				

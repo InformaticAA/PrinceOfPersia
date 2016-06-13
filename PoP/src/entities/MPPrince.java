@@ -83,7 +83,7 @@ public class MPPrince extends MultiPlayer {
 				break;
 				
 			case DIED:
-				this.setMoveSpeed(0);
+				//TODO: ELIMINAR
 				if(this.getCurrentAnimation().getCurrentFrame() == 0){
 					setSplashVisible(true);
 				} else if(this.getCurrentAnimation().getCurrentFrame() == 1){
@@ -149,7 +149,7 @@ public class MPPrince extends MultiPlayer {
 					this.combatCanDefense = false;
 				}
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					if(!beenBlocked){
 						this.goingToCounter = false;
 						this.setCurrentAnimation("sword attack end_" + orientation, FRAME_DURATION);
@@ -182,7 +182,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("end attacking blocked", this.getCurrentAnimation().getCurrentFrame(), false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 					manageSword("idle", 0, false);
 				}
@@ -202,7 +202,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("end attacking", this.getCurrentAnimation().getCurrentFrame(), false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 					manageSword("idle", 0, false);
 				}
@@ -222,7 +222,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("start attacking up",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					if(!beenBlocked){
 						this.setCurrentAnimation("sword attack end_" + orientation, FRAME_DURATION);
 						manageSword("end attacking",0,false);
@@ -252,7 +252,7 @@ public class MPPrince extends MultiPlayer {
 					this.combatCanDefense = false;
 				}
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					if(this.goingToBlock){
 						this.goingToBlock = false;
 						this.setCurrentAnimation("sword blocked and block_" + orientation, FRAME_DURATION);
@@ -278,7 +278,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("defending after block",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					this.setCurrentAnimation("sword defense start_" + orientation, FRAME_DURATION);
 					manageSword("defending start",0,false);
 				}
@@ -298,7 +298,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("defending start",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					this.setCurrentAnimation("sword defense end_" + orientation, FRAME_DURATION);
 					manageSword("defending end",0,false);
 				}
@@ -322,7 +322,7 @@ public class MPPrince extends MultiPlayer {
 					this.combatCanAttack = false;
 				}
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					if(this.goingToAttack){
 						this.goingToAttack = false;
 						this.setCurrentAnimation("sword attack up start_" + orientation, FRAME_DURATION);
@@ -351,7 +351,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("moving backwards",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					////TODO: ELIMINAR
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 					manageSword("idle",0,false);
 				}
@@ -369,13 +369,13 @@ public class MPPrince extends MultiPlayer {
 			switch(currentState){
 			case COMBAT:
 				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(MOVE_SPEED);
+					//TODO: ELIMINAR (MOVE_SPEED);
 				} else{
-					this.setMoveSpeed(-MOVE_SPEED);
+					//TODO: ELIMINAR (-MOVE_SPEED);
 				}
 				manageSword("hit",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 					manageSword("idle",0,false);
 					setCanShowSplash(true);
@@ -396,10 +396,10 @@ public class MPPrince extends MultiPlayer {
 			switch(currentState){
 			case COMBAT:
 				manageSword("idle",0,false);
-				this.setMoveSpeed(0);
+				//TODO: ELIMINAR
 				if(this.combatCanMove && combatStepRight){
 					this.combatCanMove = false;
-					this.setMoveSpeed(MOVE_SPEED);
+					//TODO: ELIMINAR (MOVE_SPEED);
 					if(this.getOrientation().equals("right")){
 						this.setCurrentAnimation("sword walking_" + orientation, FRAME_DURATION);
 						manageSword("moving forward",0,false);
@@ -409,7 +409,7 @@ public class MPPrince extends MultiPlayer {
 					}
 				} else if(this.combatCanMove && combatStepLeft){
 					this.combatCanMove = false;
-					this.setMoveSpeed(-MOVE_SPEED);
+					//TODO: ELIMINAR (-MOVE_SPEED);
 					if(this.getOrientation().equals("left")){
 						this.setCurrentAnimation("sword walking_" + orientation, FRAME_DURATION);
 						manageSword("moving forward",0,false);
@@ -442,7 +442,7 @@ public class MPPrince extends MultiPlayer {
 			case COMBAT:
 				manageSword("moving forward", this.currentAnimation.getCurrentFrame(), false);
 				if(this.currentAnimation.isOver(false)){
-					this.setMoveSpeed(0);
+					//TODO: ELIMINAR
 					this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 					manageSword("idle", 0, false);
 				}

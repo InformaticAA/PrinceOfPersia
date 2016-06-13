@@ -86,7 +86,9 @@ public class MultiPlayer extends Character {
 			sword.update(elapsedTime);
 		}
 		manageAnimations();
+		updateSpeed();
 		this.moveCharacter();
+		this.enableBoundingBox();
 	}
 	
 	public void hasBlocked(){

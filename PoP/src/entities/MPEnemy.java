@@ -142,12 +142,17 @@ public class MPEnemy extends MultiPlayer {
 			
 			case COMBAT:
 				manageSword("attack start", this.getCurrentAnimation().getCurrentFrame(),false);
-				if(this.isHitting() && player.isBlocking()){
+				if(this.isHitting() && player.isBlocking() && this.xDistanceChar(player) <= ATTACK_DISTANCE){
+					System.out.println("Player ha bloquiao");
+					player.hasBlocked();
 					this.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION);
 					manageSword("blocked",0,false);
 				}
 				if(this.getCurrentAnimation().isOver(false)){
-					if(player.isBlocking()){
+					if(player.isBlocking() && this.xDistanceChar(player) <= ATTACK_DISTANCE){
+						//TODO: test
+						System.out.println("Player ha bloquiao");
+						player.hasBlocked();
 						this.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION);
 						manageSword("blocked",0,false);
 					}else{
@@ -448,7 +453,7 @@ public class MPEnemy extends MultiPlayer {
 							manageSword("block and attack",0,false);
 						} else{
 							this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
-							manageSword("bloc only",0,false);
+							manageSword("block only",0,false);
 						}
 					}
 				}

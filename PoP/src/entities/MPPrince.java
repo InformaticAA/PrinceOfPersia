@@ -14,6 +14,7 @@ public class MPPrince extends MultiPlayer {
 	
 	public MPPrince(int x, int y, Loader loader, int hp, String orientation, int playerNumber) {
 		super(x, y, loader, hp, orientation, playerNumber);
+		this.typeOfEntity = "MPPrince";
 		
 		animations = loader.getAnimations("Dastan");
 		currentAnimation = animations.get("sword idle_" + this.orientation);

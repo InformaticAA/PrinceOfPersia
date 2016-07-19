@@ -354,7 +354,7 @@ public class Loader {
 		
 		/* Calculates the coordinates based on the selected square */
 		int px = 64 + y * 64;
-		int py = (int)(6 + x * 126); 
+		int py = (int)(6 + x * 126);
 		
 		while (readSquare.hasNext()) {
 			
@@ -455,7 +455,12 @@ public class Loader {
 				newEntity = new Corner(px,py,0,-6,this,"normal_left");
 				background.add(newEntity);
 			} else if(entity.equals("rc")){
-				newEntity = new Corner(px,py,-12,-2,this,"normal_right");
+				if (y == 0) {
+					newEntity = new Corner(px,py,-12,0,this,"normal_right");
+				}
+				else {
+					newEntity = new Corner(px,py,-12,-2,this,"normal_right");
+				}
 				background.add(newEntity);
 			} else if(entity.equals("lf")){
 				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");

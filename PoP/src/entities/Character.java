@@ -80,17 +80,6 @@ public class Character extends Entity {
 					
 					xFrameOffset = newxFrameOffset;
 					yFrameOffset = newyFrameOffset;
-					
-					// DEBUG
-//					if (currentAnimation.getId().equals("turning_left") || 
-//							currentAnimation.getId().equals("turning_right")) {
-//						
-//						System.out.println(currentAnimation.getId() + " -> " +
-//								"f: " + currentAnimation.getCurrentFrame() + 
-//								", xo: " + newxFrameOffset + ", yo: " + newyFrameOffset);
-//					}
-					// FIN DEBUG
-					
 				}
 				else {
 					xSpeed = 0;
@@ -105,14 +94,6 @@ public class Character extends Entity {
 				xFrameOffset = 0;
 				yFrameOffset = 0;
 			}
-			
-//			if (currentAnimation.getId().startsWith("idle")) {
-//				System.out.printf(currentAnimation.getId() + ": ");
-//				System.out.println("Frame: " + currentFrame +
-//						", xs: " + xSpeed + ", ys: " + ySpeed + 
-//						", xo: " + xFrameOffset + ", yo: " + yFrameOffset + 
-//						", x: " + x + ", y: " + y);
-//			}
 		}
 		else {
 			xSpeed = 0;
@@ -147,17 +128,12 @@ public class Character extends Entity {
 			}
 			
 			ySpeed = newySpeed;
-			
-			System.out.println(ySpeed);
-			
 		}
 		else if (grounded) {
 
 			/* Character is on the ground */
 			ySpeed = 0;
 		}
-		
-//		System.out.println("xs: " + xSpeed + ", ys: " + ySpeed + ", xo: " + xFrameOffset + ", yo:" + yFrameOffset);
 		
 		/* Moves the character and its bounding box */
 		setX(x + xSpeed + xFrameOffset);

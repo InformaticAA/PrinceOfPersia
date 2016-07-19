@@ -191,11 +191,55 @@ public class LevelState extends State{
 		boolean floorPanel = false;
 		boolean looseFloor = false;
 		boolean cornerFloor = false;
-		boolean corner = false;
+		Entity corner = null;
 		Entity wall = null;
+		
+		int[] pc = player.getCenter();
+		int[] ps = player.getSquare(pc[0], pc[1]);
+//		System.out.println("ps: (" + ps[0] + ", " + ps[1] + "), pc: (" + pc[0] + ", " + pc[1] + ")");
 		
 		if ( player.isColliding() ) {
 			
+		}
+		else if ( player.isClimbing() ) {
+			
+//			System.out.println("CLIMBING");
+//			
+			/* Checks if */
+			corner = checkCorner();
+//			System.out.println("Starts climbing: " + player.startsClimbing());
+			
+			if (player.startsClimbing() && (corner != null) ) {
+				
+//				System.out.println("ENTRANDO");
+				
+				/* Initial climb */
+				int climbGap = 20;
+				int[] playerCenter = player.getCenter();
+//				int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+//				int[] playerSquareCenter = getSquareCenter(playerSquare[0], playerSquare[1]);
+				
+				int[] cornerCenter = corner.getCenter();
+				
+				if (cornerCenter[0] < playerCenter[0]) {
+					// left corner
+					player.setX(cornerCenter[0] + (2 * climbGap) );
+				}
+				else {
+					// right corner
+					player.setX(cornerCenter[0] - climbGap);
+				}
+				
+//				System.out.println("pc: (" + pc[0] + ", " + pc[1] + ")");
+//				System.out.println("ps: (" + ps[0] + ", " + ps[1] + ")");
+//				System.out.println("STARTS CLIMBING (" + playerSquare[0] + ", " + playerSquare[1] + ")");
+//				System.out.println("psc: (" + playerSquareCenter[0] + ", " + playerSquareCenter[1] + ")");
+			}
+			else {
+				
+				/* Normal climbing */
+				// No need to check for collisions
+			}
 		}
 		else if ( player.isJumping() ) {
 			
@@ -291,7 +335,7 @@ public class LevelState extends State{
 			corner = checkCorner();
 			
 			/* If there is a corner nearby, the player can climb it */
-			if (corner) {
+			if (corner != null) {
 				player.setClimbing(true);
 				player.setGrounded(true);
 			}
@@ -482,6 +526,8 @@ public class LevelState extends State{
 					
 					int[] ec = bgE.getCenter();
 					int[] es = bgE.getSquare();
+					
+//					System.out.println(name.contains("right") + " - " + ((bgTop - playerCenter[1]) <= playerHeight2));
 	
 					if (name.contains("left") &&
 							((bgTop - playerCenter[1]) <= playerHeight2) ) {
@@ -498,9 +544,12 @@ public class LevelState extends State{
 					else if (name.contains("right") &&
 							((bgTop - playerCenter[1]) <= playerHeight2) ) {
 						
+//						System.out.println("ESQUINA DERECHA");
+						
 						if ( (playerCenter[0] >= bgLeft) &&
 								(playerCenter[0] <= bgRight) ) {
 							
+//							System.out.println("SUUUUUU D");
 	//						rightCorner = true;
 						}
 						else {
@@ -566,78 +615,84 @@ public class LevelState extends State{
 	}
 	
 	/**
-	 * 
-	 * @return true if there is a corner that the player can reach
-	 * doing a vertical jump
-	 */
-	private boolean checkCorner() {
-		boolean corner = false;
-		
-		/* Obtains the square where the center point of the player is placed */
-		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
-		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
-		int[] playerCenter = player.getCenter();
-		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
-		
-		// Checks that the square is within the room
-		if (playerSquare[0] > 0 && playerSquare[1] > 0 &&
-				playerSquare[0] <= 3 && playerSquare[1] < 9) {
+		 * 
+		 * @return true if there is a corner that the player can reach
+		 * doing a vertical jump
+		 */
+		private Entity checkCorner() {
+			Entity corner = null;
 			
-			/* Checks if there is a corner type object in upleft square */
-			ArrayList<Entity> bgEntities = currentRoom.getSquare(
-					playerSquare[0] - 1, playerSquare[1] - 1).getBackground();
+			/* Obtains the square where the center point of the player is placed */
+			int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
+			int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
+			int[] playerCenter = player.getCenter();
+			int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
 			
-			for (Entity bgE : bgEntities) {
-
-				String name = bgE.getTypeOfEntity();
-				if ( name.startsWith("Corner") ) {
-					
-					int[] ec = bgE.getCenter();
-					int[] es = bgE.getSquare();
-					
-//					System.out.println(bgE.getTypeOfEntity() + "(" + es[0] + ", " + es[1] + "):");
-//					System.out.println("	E_Coords: (" + ec[0] + ", " + ec[1] + ")" +
-//										"/(" + playerSquare[0] + ", " + playerSquare[1] + ")");
-					
-					if ( (ec[0] < playerCenter[0]) &&
-							(player.getOrientation().equals("left")) ) {
-					
-						// corner is at player's left side and player is looking left
-						corner = true;
-					}
-				}
-			}
-			
-			/* Checks if there is a corner type object in upright square */
-			bgEntities = currentRoom.getSquare(
-					playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
-			
-			for (Entity bgE : bgEntities) {
-
-				String name = bgE.getTypeOfEntity();
-				if ( name.startsWith("Corner") ) {
-					
-					int[] ec = bgE.getCenter();
-					
-					if ( (ec[0] > playerCenter[0]) &&
-							(player.getOrientation().equals("right")) ) {
-					
-						// corner is at player's right side and player is looking right
-						corner = true;
-					}
-				}
-			}
-			
-			/* Sets the player in the correct position to climb */
-			if (corner) {
+			// Checks that the square is within the room
+			if (playerSquare[0] > 0 && playerSquare[1] >= 0 &&
+					playerSquare[0] <= 3 && playerSquare[1] < 9) {
 				
-				// TODO: move the player to the correct jumping position
-			}
-		}
-		
-		return corner;
-	}
+				/* Checks if there is a corner type object in upleft square */
+				ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+				
+				if (playerSquare[1] > 0) {
+					bgEntities = currentRoom.getSquare(
+							playerSquare[0] - 1, playerSquare[1] - 1).getBackground();
+				}
+				
+				/* Checks if there is a corner type object in top square */
+				ArrayList<Entity> topBgEntities = currentRoom.getSquare(
+						playerSquare[0] - 1, playerSquare[1]).getBackground();
+				bgEntities.addAll(topBgEntities);
+				
+				for (Entity bgE : bgEntities) {
 	
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("Corner") ) {
+						
+						int[] ec = bgE.getCenter();
+						int[] es = bgE.getSquare();
+	
+	//					System.out.println(bgE.getTypeOfEntity() + "(" + es[0] + ", " + es[1] + "):");
+	//					System.out.println("	E_Coords: (" + ec[0] + ", " + ec[1] + ")" +
+	//										"/(" + playerSquare[0] + ", " + playerSquare[1] + ")");
+						
+						if ( (ec[0] < playerCenter[0]) &&
+								(ec[1] < playerCenter[1]) &&
+								(player.getOrientation().equals("left")) ) {
+						
+							// corner is at player's left side and player is looking left
+							corner = bgE;
+	//						System.out.println("LEFT CORNER DETECTED - (" + ec[0] + ", " + ec[1] + ")");
+						}
+					}
+				}
+				
+				/* Checks if there is a corner type object in upright square */
+				bgEntities = currentRoom.getSquare(
+						playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
+				
+				for (Entity bgE : bgEntities) {
+	
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("Corner") ) {
+						
+						int[] ec = bgE.getCenter();
+						
+						if ( (ec[0] > playerCenter[0]) &&
+								(player.getOrientation().equals("right")) ) {
+						
+							// corner is at player's right side and player is looking right
+							corner = bgE;
+	//						System.out.println("RIGHT CORNER DETECTED");
+						}
+					}
+				}
+			}
+			
+			return corner;
+		}
+
 	/**
 	 * 
 	 * @return true if there is a corner that the player can reach
@@ -734,8 +789,6 @@ public class LevelState extends State{
 							
 							if (player.getOrientation().equals("left")) {
 								
-								System.out.println("HOLA");
-								
 								// wall is at player's right side and player is looking right
 								Square targetSquare = currentRoom.getSquare(playerSquare[0], playerSquare[1]);
 								int[] newCoords = targetSquare.getCenter(playerSquare[0], playerSquare[1]-1);
@@ -754,5 +807,14 @@ public class LevelState extends State{
 		}
 		
 		return wall;
+	}
+	
+	public int[] getSquareCenter(int i, int j) {
+		
+		/* Calculates the center of the square */
+		int px = 64 + j * 64;
+		int py = (int)(6 + 63 + (i-1) * 126);
+		
+		return new int[]{px, py};
 	}
 }

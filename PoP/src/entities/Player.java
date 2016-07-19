@@ -32,6 +32,7 @@ public class Player extends Character {
 	private boolean canMakeStep;
 	private boolean canWalkCrouched;
 	private boolean canClimb;
+	private boolean startsClimbing;
 	
 	private int fallDistance;
 	
@@ -73,6 +74,7 @@ public class Player extends Character {
 		this.canMakeStep = true;
 		this.canWalkCrouched = true;
 		this.canClimb = false;
+		this.startsClimbing = false;
 		this.fallDistance = 0;
 		
 		this.enemySaw = false;
@@ -721,12 +723,15 @@ public class Player extends Character {
 		case "hanging idle_left":
 		case "hanging idle_right":
 
+			System.out.println("LLEGO?");
+			
 			switch(currentState){
 			case IDLE:
 				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				break;
 				
 			case JUMP:
+				System.out.println("LLEGO");
 				this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -769,9 +774,11 @@ public class Player extends Character {
 							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
 						} else{
 							this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+							this.startsClimbing = true;
 						}
 					} else{
 						this.setCurrentAnimation("scaling up start_" + orientation, FRAME_DURATION);
+						this.startsClimbing = true;
 					}
 				} else{
 					this.currentState = PlayerState.COMBAT;
@@ -1362,6 +1369,8 @@ public class Player extends Character {
 			
 		case "scaling up start_left":
 		case "scaling up start_right":
+			
+			System.out.println("START");
 
 			switch(currentState){
 			case IDLE:
@@ -1418,6 +1427,10 @@ public class Player extends Character {
 			
 		case "scaling up_left":
 		case "scaling up_right":
+			
+			// ends the initial climb jump
+			this.startsClimbing = false;
+			System.out.println("STEP 2");
 
 			switch(currentState){
 			case IDLE:
@@ -2342,9 +2355,18 @@ public class Player extends Character {
 	 * @return the canClimb
 	 */
 	public boolean isClimbing() {
-		return canClimb;
+		return (currentAnimation.getId().contains("scaling") ||
+				currentAnimation.getId().contains("clipping") );
+//		return canClimb;
 	}
 
+	/**
+	 * @return the canClimb
+	 */
+	public boolean startsClimbing() {
+		return startsClimbing;
+	}
+	
 	/**
 	 * @param canClimb the canClimb to set
 	 */
@@ -2392,7 +2414,7 @@ public class Player extends Character {
 	 * jumping nor falling
 	 */
 	public boolean isGrounded() {
-		return !isJumping() && !isFalling();
+		return !isJumping() && !isFalling() && !isClimbing();
 	}
 	
 	@Override

@@ -98,6 +98,7 @@ public class VersusState extends State{
 				texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , Game.HEIGHT - 16));
 				
 			}
+		} else{
 		}
 		//checkCollisions(elapsedTime);
 	}

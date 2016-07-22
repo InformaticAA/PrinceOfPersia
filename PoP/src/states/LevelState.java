@@ -401,10 +401,8 @@ public class LevelState extends State{
 			bgEntities.addAll(bEntities);
 			bgEntities.addAll(fEntities);
 				
-			System.out.println("=========================");
 			for (Entity bgE : bgEntities) {
 				String name = bgE.getTypeOfEntity();
-				System.out.println("nombre: " + name);
 				if ( name.startsWith("FloorPanel_") ||
 					(name.startsWith("Pillar_") && !name.contains("shadow")) ) {
 					
@@ -472,8 +470,6 @@ public class LevelState extends State{
 					}
 				}
 			}
-			
-			System.out.println("=========================");
 			
 			/* Player's behaviour */
 			if (leftFall && !leftCorner) leftPanel = true;

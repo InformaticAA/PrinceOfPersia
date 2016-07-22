@@ -389,12 +389,9 @@ public class LevelState extends State{
 		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
 				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
 			
-			
 			/* Checks if there is a panel floor type object in current square */
 			ArrayList<Entity> bEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
-			
-			System.out.println("Tamañoooo Antes: " + bEntities.size());
 			
 			ArrayList<Entity> fEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getForeground();
@@ -403,8 +400,6 @@ public class LevelState extends State{
 			
 			bgEntities.addAll(bEntities);
 			bgEntities.addAll(fEntities);
-			
-			System.out.println("Tamañoooo Despues: " + bgEntities.size());
 				
 			System.out.println("=========================");
 			for (Entity bgE : bgEntities) {

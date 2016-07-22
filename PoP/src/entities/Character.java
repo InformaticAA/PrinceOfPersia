@@ -9,6 +9,8 @@ import framework.Loader;
 
 public class Character extends Entity {
 
+	private int framesDebug = 0;
+	
 	/* Attributes */
 	protected int hp;
 	protected int maxHp;
@@ -107,6 +109,22 @@ public class Character extends Entity {
 	@Override
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
+		
+		if (currentAnimation.getId().contains("running started")){
+//				&& currentAnimation.getId().contains("right")) {
+			
+			if (framesDebug == 0) {
+				System.out.println(currentAnimation.getId() + ": "
+									+ currentAnimation.getCurrentFrame()
+									+ " -> (" + getX() + ", " + getY() + ")");
+			}
+			
+			if (framesDebug == 4) {
+				framesDebug = -1;
+			}
+			
+			framesDebug++;
+		}
 		
 		/* Updates the position of the bounding box */
 		enableBoundingBox();

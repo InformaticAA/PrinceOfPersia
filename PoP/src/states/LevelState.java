@@ -388,19 +388,28 @@ public class LevelState extends State{
 		// Checks that the square is within the room
 		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
 				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
-		
+			
+			
 			/* Checks if there is a panel floor type object in current square */
-			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+			ArrayList<Entity> bEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
 			
-			ArrayList<Entity> fgEntities = currentRoom.getSquare(
+			System.out.println("Tamañoooo Antes: " + bEntities.size());
+			
+			ArrayList<Entity> fEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getForeground();
 			
-			bgEntities.addAll(fgEntities);
+			ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+			
+			bgEntities.addAll(bEntities);
+			bgEntities.addAll(fEntities);
+			
+			System.out.println("Tamañoooo Despues: " + bgEntities.size());
 				
+			System.out.println("=========================");
 			for (Entity bgE : bgEntities) {
-	
 				String name = bgE.getTypeOfEntity();
+				System.out.println("nombre: " + name);
 				if ( name.startsWith("FloorPanel_") ||
 					(name.startsWith("Pillar_") && !name.contains("shadow")) ) {
 					
@@ -469,6 +478,8 @@ public class LevelState extends State{
 				}
 			}
 			
+			System.out.println("=========================");
+			
 			/* Player's behaviour */
 			if (leftFall && !leftCorner) leftPanel = true;
 			else if (leftFall && leftCorner) {
@@ -504,15 +515,18 @@ public class LevelState extends State{
 		// Checks that the square is within the room
 		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
 				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
-		
+			
 			/* Checks if there is a panel floor type object in current square */
-			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+			ArrayList<Entity> bEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
 			
-			ArrayList<Entity> fgEntities = currentRoom.getSquare(
+			ArrayList<Entity> fEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getForeground();
 			
-			bgEntities.addAll(fgEntities);
+			ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+			
+			bgEntities.addAll(bEntities);
+			bgEntities.addAll(fEntities);
 				
 			for (Entity bgE : bgEntities) {
 	
@@ -633,16 +647,19 @@ public class LevelState extends State{
 					playerSquare[0] <= 3 && playerSquare[1] < 9) {
 				
 				/* Checks if there is a corner type object in upleft square */
-				ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+				ArrayList<Entity> bEntities = new ArrayList<Entity>();
 				
 				if (playerSquare[1] > 0) {
-					bgEntities = currentRoom.getSquare(
+					bEntities = currentRoom.getSquare(
 							playerSquare[0] - 1, playerSquare[1] - 1).getBackground();
 				}
 				
 				/* Checks if there is a corner type object in top square */
 				ArrayList<Entity> topBgEntities = currentRoom.getSquare(
 						playerSquare[0] - 1, playerSquare[1]).getBackground();
+				
+				ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+				bgEntities.addAll(bEntities);
 				bgEntities.addAll(topBgEntities);
 				
 				for (Entity bgE : bgEntities) {
@@ -713,13 +730,16 @@ public class LevelState extends State{
 				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
 			
 			/* Checks if there is a panel floor type object in current square */
-			ArrayList<Entity> bgEntities = currentRoom.getSquare(
+			ArrayList<Entity> bEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
 			
-			ArrayList<Entity> fgEntities = currentRoom.getSquare(
+			ArrayList<Entity> fEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getForeground();
 			
-			bgEntities.addAll(fgEntities);
+			ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+			
+			bgEntities.addAll(bEntities);
+			bgEntities.addAll(fEntities);
 			
 			for (Entity bgE : bgEntities) {
 				
@@ -760,13 +780,13 @@ public class LevelState extends State{
 			}
 			
 			/* Checks if there is a panel floor type object in current square */
-			bgEntities = currentRoom.getSquare(
+			bEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
 			
-			fgEntities = currentRoom.getSquare(
+			fEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getForeground();
 			
-			bgEntities.addAll(fgEntities);
+			bgEntities.addAll(fEntities);
 			
 			for (Entity bgE : bgEntities) {
 				

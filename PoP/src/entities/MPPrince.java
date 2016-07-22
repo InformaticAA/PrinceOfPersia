@@ -62,7 +62,8 @@ public class MPPrince extends MultiPlayer {
 		if(this.hp == 0){
 			this.currentState = MultiState.DIED;
 			this.sword = null;
-			this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
+			this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+			//this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
 		} else{
 			this.setCurrentAnimation("sword hit_" + orientation, FRAME_DURATION);
 		}
@@ -428,6 +429,10 @@ public class MPPrince extends MultiPlayer {
 					manageSword("start attacking", 0, false);
 				} 
 				
+				break;
+				
+			case DIED:
+				this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:

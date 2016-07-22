@@ -78,7 +78,8 @@ public class MPEnemy extends MultiPlayer {
 		if(this.hp == 0){
 			this.currentState = MultiState.DIED;
 			this.sword = null;
-			this.setCurrentAnimation("dying_" + orientation, FRAME_DURATION);
+			this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+			//this.setCurrentAnimation("dying_" + orientation, FRAME_DURATION);
 		} else{
 			this.setCurrentAnimation("hit_" + orientation, FRAME_DURATION);
 		}
@@ -460,6 +461,7 @@ public class MPEnemy extends MultiPlayer {
 				break;
 				
 			case DIED:
+				this.setCurrentAnimation("dying_" + orientation, FRAME_DURATION);
 				break;
 				
 			default:

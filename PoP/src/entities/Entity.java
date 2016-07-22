@@ -36,8 +36,8 @@ public abstract class Entity {
 	public void update(long elapsedTime) {
 		
 		/* Updates animation */
-		if(this.typeOfEntity.equals("MPPrince") && (this.currentAnimation.getId().startsWith("sword attack") || this.currentAnimation.getId().startsWith("sword idle"))){
-			System.out.println(this.getCurrentAnimation().getId() + "(" + this.getCurrentAnimation().getCurrentFrame() + ")" + " - " + this.x);
+		if(this.typeOfEntity.equals("MPPrince") && (this.currentAnimation.getId().startsWith("sword attack") || this.currentAnimation.getId().startsWith("sword idle")) || this.currentAnimation.getId().startsWith("dieing")){
+			System.out.println(this.getCurrentAnimation().getId() + "(" + this.getCurrentAnimation().getCurrentFrame() + ")" + " - " + this.x + " - " + this.y);
 		}
 		currentAnimation.update(elapsedTime);
 	}

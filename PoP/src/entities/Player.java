@@ -1370,7 +1370,7 @@ public class Player extends Character {
 		case "scaling up start_left":
 		case "scaling up start_right":
 			
-			System.out.println("START");
+//			System.out.println("START");
 
 			switch(currentState){
 			case IDLE:
@@ -1430,7 +1430,7 @@ public class Player extends Character {
 			
 			// ends the initial climb jump
 			this.startsClimbing = false;
-			System.out.println("STEP 2");
+//			System.out.println("STEP 2");
 
 			switch(currentState){
 			case IDLE:

@@ -110,7 +110,7 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("turn running")){
+		if (currentAnimation.getId().contains("running started")){
 //				&& currentAnimation.getId().contains("right")) {
 			
 			if (framesDebug == 0) {

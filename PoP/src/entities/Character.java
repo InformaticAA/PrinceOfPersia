@@ -110,8 +110,8 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("running started")){
-//				&& currentAnimation.getId().contains("right")) {
+		if (currentAnimation.getId().contains("scaling") ||
+				currentAnimation.getId().contains("clipping")){
 			
 			if (framesDebug == 0) {
 				System.out.println(currentAnimation.getId() + ": "

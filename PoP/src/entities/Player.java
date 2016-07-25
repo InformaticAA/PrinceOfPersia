@@ -723,20 +723,21 @@ public class Player extends Character {
 		case "hanging idle_left":
 		case "hanging idle_right":
 
-			System.out.println("LLEGO?");
-			
 			switch(currentState){
 			case IDLE:
-				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				if (!shift_pressed) {
+					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
 				break;
 				
 			case JUMP:
-				System.out.println("LLEGO");
 				this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
 				break;
 				
 			case MOVE:
-				this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				if (!shift_pressed) {
+					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
 				break;
 				
 			case COLLIDED:
@@ -1430,12 +1431,11 @@ public class Player extends Character {
 			
 			// ends the initial climb jump
 			this.startsClimbing = false;
-//			System.out.println("STEP 2");
 
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false) && canClimb){
-					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+					this.setCurrentAnimation("scaling to hanging_" + orientation, FRAME_DURATION);
 				}
 				else if (this.currentAnimation.isOver(false) && !canClimb) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
@@ -1444,16 +1444,50 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false) && canClimb){
-					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+					this.setCurrentAnimation("scaling to hanging_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
 				if(this.currentAnimation.isOver(false) && canClimb){
-					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+					this.setCurrentAnimation("scaling to hanging_" + orientation, FRAME_DURATION);
 				}
 				else if (this.currentAnimation.isOver(false) && !canClimb) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case COLLIDED:
+				System.out.println("COLISIONO EN UNA ANIMACION TO RARA");
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "scaling to hanging_left":
+		case "scaling to hanging_right":
+			
+			System.out.println("Scaling to hanging ;D");
+
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
@@ -2356,6 +2390,7 @@ public class Player extends Character {
 	 */
 	public boolean isClimbing() {
 		return (currentAnimation.getId().contains("scaling") ||
+				currentAnimation.getId().contains("hanging") ||
 				currentAnimation.getId().contains("clipping") );
 //		return canClimb;
 	}

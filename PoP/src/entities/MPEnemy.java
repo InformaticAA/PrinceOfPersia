@@ -44,6 +44,7 @@ public class MPEnemy extends MultiPlayer {
 			}
 		}
 		this.isPrince = false;
+		this.typeOfEntity = "MPEnemy";
 		
 	}
 	
@@ -275,7 +276,8 @@ public class MPEnemy extends MultiPlayer {
 					this.combatCanDefense = false;
 				}
 				if(this.currentAnimation.isOver(false)){
-					if(this.goingToBlock){
+					//TODO
+					if(!this.goingToBlock){
 						this.goingToBlock = false;
 						this.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION);
 						manageSword("blocked and prepare block",0,false);
@@ -284,11 +286,6 @@ public class MPEnemy extends MultiPlayer {
 							player.hasBeenBlocked();
 						}
 					} else{
-						if(this.getOrientation().equals("left")){
-							
-						} else{
-							
-						}
 						this.setCurrentAnimation("attack end blocked_" + orientation, FRAME_DURATION);
 						manageSword("attack end blocked",0,false);
 					}
@@ -421,16 +418,23 @@ public class MPEnemy extends MultiPlayer {
 			case COMBAT:
 				manageSword("sword idle",0,false);
 				if(!goingToBlock){
-					if(this.combatCanMove && combatStepRight){
+					if(this.combatCanMove && combatStepRight && this.orientation.equals("right")){
 						this.combatCanMove = false;
 						this.setCurrentAnimation("walking_" + this.orientation, FRAME_DURATION);
 						manageSword("walking",0,false);
-					} else if(this.combatCanMove && combatStepLeft){
+					} else if(this.combatCanMove && combatStepRight && this.orientation.equals("left")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking backwards_" + this.orientation, FRAME_DURATION);
+						manageSword("walking backwards",0,false);
+					} else if(this.combatCanMove && combatStepLeft && this.orientation.equals("left")){
 						this.combatCanMove = false;
 						this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
 						manageSword("walking",0,false);
+					} else if(this.combatCanMove && combatStepLeft && this.orientation.equals("right")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking backwards_" + this.orientation, FRAME_DURATION);
+						manageSword("walking backwards",0,false);
 					} else if(this.combatCanDefense && this.combatDefense){
-						//TODO: MIRAR SI EL PLAYER ESTA ATACANDO PARA ESPERAR
 						this.combatCanDefense = false;
 						if(player.checkAttack()){
 							this.goingToBlock = true;
@@ -475,8 +479,6 @@ public class MPEnemy extends MultiPlayer {
 			case COMBAT:
 				manageSword("walking end",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.combatCanDefense && this.combatDefense){
-					//TODO: MIRAR SI EL PLAYER ESTA ATACANDO PARA ESPERAR
-					//TODO: HACER QUE PUEDA BLOQUEAR Y ATACAR
 					this.combatCanDefense = false;
 					this.setCurrentAnimation("block only_" + orientation, FRAME_DURATION);
 					manageSword("block only",0,false);
@@ -507,14 +509,22 @@ public class MPEnemy extends MultiPlayer {
 			case COMBAT:
 				manageSword("walking",this.getCurrentAnimation().getCurrentFrame(),false);
 				if(this.getCurrentAnimation().isOver(false)){
-					if(this.combatCanMove && combatStepRight){
+					if(this.combatCanMove && combatStepRight && this.orientation.equals("right")){
 						this.combatCanMove = false;
 						this.setCurrentAnimation("walking_" + this.orientation, FRAME_DURATION);
 						manageSword("walking",0,false);
-					} else if(this.combatCanMove && combatStepLeft){
+					} else if(this.combatCanMove && combatStepRight && this.orientation.equals("left")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking backwards_" + this.orientation, FRAME_DURATION);
+						manageSword("walking backwards",0,false);
+					} else if(this.combatCanMove && combatStepLeft && this.orientation.equals("left")){
 						this.combatCanMove = false;
 						this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
 						manageSword("walking",0,false);
+					} else if(this.combatCanMove && combatStepRight && this.orientation.equals("right")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking backwards_" + this.orientation, FRAME_DURATION);
+						manageSword("walking backwards",0,false);
 					} else{
 						this.setCurrentAnimation("walking end_" + orientation, FRAME_DURATION);
 						this.manageSword("walking end", 0, false);
@@ -531,6 +541,44 @@ public class MPEnemy extends MultiPlayer {
 			}
 			break;
 		
+		case "walking backwards_left":
+		case "walking backwards_right":
+			switch(currentState){
+			
+			case COMBAT:
+				manageSword("walking backwards",this.getCurrentAnimation().getCurrentFrame(),false);
+				if(this.getCurrentAnimation().isOver(false)){
+					if(this.combatCanMove && combatStepRight && this.orientation.equals("right")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking_" + this.orientation, FRAME_DURATION);
+						manageSword("walking",0,false);
+					} else if(this.combatCanMove && combatStepRight && this.orientation.equals("left")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking backwards_" + this.orientation, FRAME_DURATION);
+						manageSword("walking backwards",0,false);
+					} else if(this.combatCanMove && combatStepLeft && this.orientation.equals("left")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
+						manageSword("walking",0,false);
+					} else if(this.combatCanMove && combatStepRight && this.orientation.equals("right")){
+						this.combatCanMove = false;
+						this.setCurrentAnimation("walking backwards_" + this.orientation, FRAME_DURATION);
+						manageSword("walking backwards",0,false);
+					} else{
+						this.setCurrentAnimation("walking end_" + orientation, FRAME_DURATION);
+						this.manageSword("walking end", 0, false);
+					}
+					
+				}
+				break;
+				
+			case DIED:
+				break;
+				
+			default:
+				break;
+			}
+			break;
 		
 		default:
 			System.out.println("ANIMATION NOT RECOGNIZED - " + this.getCurrentAnimation() );
@@ -569,6 +617,20 @@ public class MPEnemy extends MultiPlayer {
 		case "walking":
 			x_offsets = new int[]{32,-46,12,-42,12,-54,18,-60};
 			y_offsets = new int[]{-38,-54,-46,-42};
+			
+			if(this.getOrientation().equals("right")){
+				x_offset = x_offsets[2 * currentFrame];
+			} else{
+				x_offset = x_offsets[2 * currentFrame + 1];
+			}
+			y_offset = y_offsets[currentFrame];
+			
+			this.sword.setCurrentAnimation("walking_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+			break;
+			
+		case "walking backwards":
+			x_offsets = new int[]{18,-60,12,-54,12,-42,32,-46};
+			y_offsets = new int[]{-42,-46,-54,-38};
 			
 			if(this.getOrientation().equals("right")){
 				x_offset = x_offsets[2 * currentFrame];

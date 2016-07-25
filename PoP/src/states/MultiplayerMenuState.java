@@ -315,7 +315,6 @@ public class MultiplayerMenuState extends State{
 					if(e.isPressed()){
 						/* key pressed */
 						int key_pressed = e.getKeycode();
-						System.out.println(key_pressed);
 						if(key_pressed == keys_mapped.get(Key.A) || 
 								key_pressed == keys_mapped.get(Key.D)){
 							if(prince != 1 && guard != 1){
@@ -394,7 +393,6 @@ public class MultiplayerMenuState extends State{
 							if(currentChoiceP1 == 2 && (prince == -1 || guard == -1)){
 								currentChoiceP1 = 3;
 							}
-							System.out.println(currentChoiceP1);
 						} else if(key_pressed == keys_mapped.get(Key.LEFT) ||
 								key_pressed == keys_mapped.get(Key.RIGHT)){
 							if(prince != 1 && guard != 1){
@@ -406,7 +404,6 @@ public class MultiplayerMenuState extends State{
 									currentChoiceP2 = 0;
 								}
 							}
-							System.out.println(currentChoiceP2);
 						} else if(key_pressed == keys_mapped.get(Key.C) ||
 								key_pressed == keys_mapped.get(Key.ENTER)){
 							selectP1();

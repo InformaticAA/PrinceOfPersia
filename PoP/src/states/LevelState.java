@@ -204,14 +204,13 @@ public class LevelState extends State{
 		else if ( player.isClimbing() ) {
 			
 //			System.out.println("CLIMBING");
-//			
+			
 			/* Checks if */
 			corner = checkCorner();
-//			System.out.println("Starts climbing: " + player.startsClimbing());
 			
-			if (player.startsClimbing() && (corner != null) ) {
-				
-//				System.out.println("ENTRANDO");
+			if (player.startsClimbing() &&
+					(corner != null) &&
+					!player.isCornerPositionFixed() ) {
 				
 				/* Initial climb */
 				int climbGap = 20;
@@ -224,10 +223,16 @@ public class LevelState extends State{
 				if (cornerCenter[0] < playerCenter[0]) {
 					// left corner
 					player.setX(cornerCenter[0] + (2 * climbGap) );
+					System.out.println("LEFT CORNER FIX");
+					
+					player.setCornerPositionFixed(true);
 				}
 				else {
 					// right corner
 					player.setX(cornerCenter[0] - climbGap);
+					System.out.println("RIGHT CORNER FIX");
+					
+					player.setCornerPositionFixed(true);
 				}
 				
 //				System.out.println("pc: (" + pc[0] + ", " + pc[1] + ")");
@@ -235,10 +240,11 @@ public class LevelState extends State{
 //				System.out.println("STARTS CLIMBING (" + playerSquare[0] + ", " + playerSquare[1] + ")");
 //				System.out.println("psc: (" + playerSquareCenter[0] + ", " + playerSquareCenter[1] + ")");
 			}
-			else {
+			else if ( !player.startsClimbing() ){
 				
 				/* Normal climbing */
 				// No need to check for collisions
+				player.setCornerPositionFixed(false);
 			}
 		}
 		else if ( player.isJumping() ) {

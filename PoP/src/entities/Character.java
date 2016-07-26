@@ -111,7 +111,9 @@ public class Character extends Entity {
 		super.update(elapsedTime);
 		
 		if (currentAnimation.getId().contains("scaling") ||
-				currentAnimation.getId().contains("clipping")){
+				currentAnimation.getId().contains("clipping") ||
+				currentAnimation.getId().contains("hanging") ||
+				currentAnimation.getId().contains("walking a step")){
 			
 			if (framesDebug == 0) {
 				System.out.println(currentAnimation.getId() + ": "

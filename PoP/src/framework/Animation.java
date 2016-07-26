@@ -73,9 +73,28 @@ public class Animation {
 				}
 			}
 		} else{
+			
+			// Animation has only one sprite
+			
 			if(animTime >= totalDuration){
+				
+				// animation only has one sprite and the currentFrame it's the last one
 				isOver = true;
+				lastFrame = true;
 				animTime = 0;
+				currentUpdates = 0;
+			}
+			else {
+				currentUpdates ++;
+				lastFrame = false;
+			}
+			
+			if (currentUpdates == frameDuration) {
+				
+				// animation only has one sprite, but the currentFrame it's not the last one
+				currentUpdates = 0;
+				isOver = false;
+				lastFrame = true;
 			}
 		}
 	}

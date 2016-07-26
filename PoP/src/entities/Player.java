@@ -33,6 +33,7 @@ public class Player extends Character {
 	private boolean canWalkCrouched;
 	private boolean canClimb;
 	private boolean startsClimbing;
+	private boolean cornerPositionFixed;
 	
 	private int fallDistance;
 	
@@ -75,6 +76,7 @@ public class Player extends Character {
 		this.canWalkCrouched = true;
 		this.canClimb = false;
 		this.startsClimbing = false;
+		this.cornerPositionFixed = false;
 		this.fallDistance = 0;
 		
 		this.enemySaw = false;
@@ -293,7 +295,7 @@ public class Player extends Character {
 			down_pressed = false;
 			
 		} else if(key_released == keys_mapped.get(Key.SHIFT)){
-			shift_pressed = false;
+//			shift_pressed = false;
 			combatAttack = false;
 		}
 	}
@@ -725,17 +727,19 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if (!shift_pressed) {
+				if (currentAnimation.isOver(false) && !shift_pressed) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
-				this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
+				if (currentAnimation.isOver(false)) {
+					this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
+				}
 				break;
 				
 			case MOVE:
-				if (!shift_pressed) {
+				if (currentAnimation.isOver(false) && !shift_pressed) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -1446,6 +1450,9 @@ public class Player extends Character {
 				if(this.currentAnimation.isOver(false) && canClimb){
 					this.setCurrentAnimation("scaling to hanging_" + orientation, FRAME_DURATION);
 				}
+				else if (this.currentAnimation.isOver(false) && !canClimb) {
+					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
 				break;
 				
 			case MOVE:
@@ -1470,8 +1477,6 @@ public class Player extends Character {
 		case "scaling to hanging_left":
 		case "scaling to hanging_right":
 			
-			System.out.println("Scaling to hanging ;D");
-
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
@@ -2410,6 +2415,20 @@ public class Player extends Character {
 	}
 	
 	/**
+	 * @param 
+	 */
+	public void setCornerPositionFixed(boolean cpf) {
+		this.cornerPositionFixed = cpf;
+	}
+	
+	/**
+	 * @param 
+	 */
+	public boolean isCornerPositionFixed() {
+		return cornerPositionFixed;
+	}
+	
+	/**
 	 * 
 	 * @return true if the player is executing one of its
 	 * jump animations
@@ -2479,6 +2498,7 @@ public class Player extends Character {
 		}
 		
 		/* Moves the character and its bounding box */
+//		System.out.println("xSpeed: " + xSpeed + ", yFrameOffset: " + yFrameOffset);
 		setX(x + xSpeed + xFrameOffset);
 		setY(y + ySpeed + yFrameOffset);
 		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);

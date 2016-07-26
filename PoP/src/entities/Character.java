@@ -161,6 +161,18 @@ public class Character extends Entity {
 		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
 	}
 	
+	public void moveSword(){
+		if(sword != null){
+			sword.x = sword.x + xSpeed + xFrameOffset;
+			sword.y = sword.y + ySpeed + yFrameOffset;
+		}
+	}
+	
+	public void cleanYSpeed(){
+		ySpeed = 0;
+		yFrameOffset = 0;
+	}
+	
 	public void move(int x, int y) {
 		
 		// moves the character

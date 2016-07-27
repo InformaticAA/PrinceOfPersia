@@ -11,6 +11,7 @@ public class Frame {
 	private int ySpeed;
 	private int xOffset;
 	private int yOffset;
+	private String sound;
 	private boolean infinite;
 	
 	public Frame(BufferedImage image, long endtime) {
@@ -22,6 +23,7 @@ public class Frame {
 		this.ySpeed = 0;
 		this.xOffset = 0;
 		this.xOffset = 0;
+		this.sound = "";
 	}
 
 	public BufferedImage getImage() {
@@ -94,6 +96,14 @@ public class Frame {
 	 */
 	public void setyOffset(int yOffset) {
 		this.yOffset = yOffset;
+	}
+	
+	public String getSound() {
+		return sound;
+	}
+
+	public void setSound(String sound) {
+		this.sound = sound;
 	}
 
 	/**

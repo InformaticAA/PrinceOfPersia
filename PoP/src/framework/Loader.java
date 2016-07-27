@@ -163,6 +163,7 @@ public class Loader {
 		ArrayList<Integer> ySpeeds = new ArrayList<Integer>();
 		ArrayList<Integer> xOffsets = new ArrayList<Integer>();
 		ArrayList<Integer> yOffsets = new ArrayList<Integer>();
+		ArrayList<String> sounds = new ArrayList<String>();
 		boolean infinite = false;
 		
 		String infoPath = f.getPath() + "\\" + frameInfoFile;
@@ -183,8 +184,17 @@ public class Loader {
 					ySpeeds.add(readInfo.nextInt());
 					xOffsets.add(readInfo.nextInt());
 					yOffsets.add(readInfo.nextInt());
+					if(readInfo.hasNext()){
+						String newSound = readInfo.nextLine();
+						if(!newSound.equals("")){
+							newSound = newSound.substring(1);
+						}
+						sounds.add(newSound);
+					} else{
+						sounds.add("");
+						readInfo.nextLine();
+					}
 					
-					readInfo.nextLine();
 				}
 				
 				info = true;
@@ -210,6 +220,7 @@ public class Loader {
 					frame.setySpeed(ySpeeds.get(img));
 					frame.setxOffset(xOffsets.get(img));
 					frame.setyOffset(yOffsets.get(img));
+					frame.setSound(sounds.get(img));
 				}
 				
 				animation.addFrame(frame);

@@ -2,6 +2,7 @@ package states;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,6 +18,8 @@ import framework.Loader;
 import framework.Writter;
 import game.Game;
 import input.Key;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.TinySound;
 
 public class VersusState extends State{
 	
@@ -40,6 +43,9 @@ public class VersusState extends State{
 	private boolean paused;
 	
 	private ArrayList<Text> texts;
+	
+	private Music prince_wins;
+	private Music guard_wins;
 	
 	public VersusState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter) {
 		super(gsm, keys, keys_mapped, loader, writter);
@@ -74,6 +80,9 @@ public class VersusState extends State{
 		currentRoom.addCharacter(enemy);
 		over = false;
 		paused = false;
+		
+		prince_wins = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+		guard_wins = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
 //		enemy.setPlayer(true,prince);
 		
 		texts = new ArrayList<Text>();
@@ -92,8 +101,11 @@ public class VersusState extends State{
 				String message;
 				if(prince.getHp() == 0 && player1 == 0){
 					message = "P2 WINS (ESPACIO PARA SALIR)"; 
+					guard_wins.play(false);
 				} else{
 					message = "P1 WINS (ESPACIO PARA SALIR)";
+					prince_wins.play(false);
+					
 				}
 				texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , Game.HEIGHT - 16));
 				
@@ -128,6 +140,8 @@ public class VersusState extends State{
 						
 					} else if(key_pressed == keys_mapped.get(Key.SPACE)){
 						if(over){
+							guard_wins.stop();
+							prince_wins.stop();
 							gsm.setState(GameStateManager.MENUSTATE);
 						} else{
 							paused = !paused;

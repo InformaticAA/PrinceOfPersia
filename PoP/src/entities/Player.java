@@ -2501,6 +2501,12 @@ public class Player extends Character {
 //		System.out.println("xSpeed: " + xSpeed + ", yFrameOffset: " + yFrameOffset);
 		setX(x + xSpeed + xFrameOffset);
 		setY(y + ySpeed + yFrameOffset);
+		
+		/* Play music */
+		if(!sound.equals("")){
+			loader.getSound(sound).play();;
+		}
+		
 		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
 	}
 	

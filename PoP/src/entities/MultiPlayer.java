@@ -87,7 +87,11 @@ public class MultiPlayer extends Character {
 		}
 		manageAnimations();
 		updateSpeed();
+		if(this.currentState.equals(MultiState.COMBAT)){
+			cleanYSpeed();
+		}
 		this.moveCharacter();
+		this.moveSword();
 		this.enableBoundingBox();
 	}
 	

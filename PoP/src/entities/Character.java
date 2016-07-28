@@ -39,6 +39,7 @@ public class Character extends Entity {
 	protected int moveSpeed;
 	protected int xSpeed;
 	protected int ySpeed;
+	protected String sound;
 	protected boolean leftBlocked;
 	protected boolean rightBlocked;
 	protected boolean falling;
@@ -63,11 +64,12 @@ public class Character extends Entity {
 	}
 	
 	protected void updateSpeed() {
+		int currentFrame = currentAnimation.getCurrentFrame();
+		String newSound = currentAnimation.getFrame(currentFrame).getSound();
 		
 		if (prevImage != null) {
 			
 			/* Sets charactes speed as current animation describes */
-			int currentFrame = currentAnimation.getCurrentFrame();
 			int newxSpeed = currentAnimation.getFrameXSpeed(currentFrame, prevImage);
 			int newySpeed = currentAnimation.getFrameYSpeed(currentFrame, prevImage);
 			int newxFrameOffset = currentAnimation.getFrameXOffset(currentFrame, prevImage);
@@ -82,12 +84,16 @@ public class Character extends Entity {
 					
 					xFrameOffset = newxFrameOffset;
 					yFrameOffset = newyFrameOffset;
+					
+					sound = newSound;
 				}
 				else {
 					xSpeed = 0;
 					ySpeed = 0;
 					xFrameOffset = 0;
 					yFrameOffset = 0;
+					
+					sound = "";
 				}
 			}
 			else {
@@ -95,6 +101,8 @@ public class Character extends Entity {
 				ySpeed = 0;
 				xFrameOffset = 0;
 				yFrameOffset = 0;
+				
+				sound = "";
 			}
 		}
 		else {
@@ -102,6 +110,8 @@ public class Character extends Entity {
 			ySpeed = 0;
 			xFrameOffset = 0;
 			yFrameOffset = 0;
+			
+			sound = "";
 		}
 		prevImage = currentAnimation.getImage();
 	}
@@ -159,6 +169,23 @@ public class Character extends Entity {
 		setX(x + xSpeed + xFrameOffset);
 		setY(y + ySpeed + yFrameOffset);
 		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
+		
+		/* Play music */
+		if(!sound.equals("")){
+			loader.getSound(sound).play();;
+		}
+	}
+	
+	public void moveSword(){
+		if(sword != null){
+			sword.x = sword.x + xSpeed + xFrameOffset;
+			sword.y = sword.y + ySpeed + yFrameOffset;
+		}
+	}
+	
+	public void cleanYSpeed(){
+		ySpeed = 0;
+		yFrameOffset = 0;
 	}
 	
 	public void move(int x, int y) {

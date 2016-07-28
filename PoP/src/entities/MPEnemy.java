@@ -301,7 +301,7 @@ public class MPEnemy extends MultiPlayer {
 						this.goingToBlock = false;
 						this.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION);
 						manageSword("blocked and prepare block",0,false);
-						if(player.isAttacking()){
+						if(player.isAttacking() && this.xDistanceChar(player) <= ATTACK_DISTANCE){
 							System.out.println("Hemos bloquiado al player");
 							player.hasBeenBlocked();
 						}
@@ -456,7 +456,7 @@ public class MPEnemy extends MultiPlayer {
 						manageSword("walking backwards",0,false);
 					} else if(this.combatCanDefense && this.combatDefense){
 						this.combatCanDefense = false;
-						if(player.checkAttack()){
+						if(player.checkAttack() && this.xDistanceChar(player) <= ATTACK_DISTANCE){
 							this.goingToBlock = true;
 							player.hasBeenBlocked();
 						}else{

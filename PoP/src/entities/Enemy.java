@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Random;
 
+import entities.MultiPlayer.MultiState;
 import framework.Loader;
 import game.Game;
 
@@ -104,7 +105,6 @@ public class Enemy extends Character {
 			}
 		} else if(playerSaw){
 			manageIA(elapsedTime);
-			this.moveCharacter();
 			if(this.xDistanceChar(player) <= ATTACK_DISTANCE && player.isHitting() && canBeHit){
 				setCanShowSplash(true);
 				beenHit();
@@ -116,7 +116,11 @@ public class Enemy extends Character {
 		} else{
 			normalIdle();
 		}
-		
+		this.updateSpeed();
+		if(this.currentState.equals(EnemyState.COMBAT)){
+			cleanYSpeed();
+		}
+		this.moveCharacter();
 		for(int i = 0; i < this.maxHp; i++){
 			if(i < this.hp){
 				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
@@ -395,37 +399,27 @@ public class Enemy extends Character {
 	}
 	
 	public void startMove(boolean goingToAttack){
-		if(this.getOrientation().equals("left")){
-			this.setMoveSpeed(-MOVE_SPEED/2);
-		} else{
-			this.setMoveSpeed(MOVE_SPEED/2);
-		}
-		
 		this.goingToAttack = goingToAttack;
 		this.setCurrentAnimation("walking_" + orientation, FRAME_DURATION);
 		manageSword("walking", 0, false);
 	}
 	
 	public void endMove(){
-		this.setMoveSpeed(0);
 		this.setCurrentAnimation("walking end_" + orientation, FRAME_DURATION);
 		manageSword("walking end",0,false);
 	}
 	
 	public void normalIdle(){
-		this.setMoveSpeed(0);
 		this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 		manageSword("idle",0,false);
 	}
 	
 	public void idle(){
-		this.setMoveSpeed(0);
 		this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
 		manageSword("sword idle", 0, false);
 	}
 	
 	public void startAttack(){
-		this.setMoveSpeed(0);
 		this.setCurrentAnimation("attack start_" + orientation, FRAME_DURATION);
 		manageSword("attack start", 0, false);
 		this.decidedToBlock = false;
@@ -437,20 +431,12 @@ public class Enemy extends Character {
 			this.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION);
 			manageSword("blocked and prepare block", 0, false);
 		} else{
-			if(!player.isAttacking()){
-				if(this.getOrientation().equals("left")){
-					this.setMoveSpeed(MOVE_SPEED/2);
-				} else{
-					this.setMoveSpeed(-MOVE_SPEED/2);
-				}
-			}
 			this.setCurrentAnimation("attack end blocked_" + orientation, FRAME_DURATION);
 			manageSword("attack end blocked", 0, false);
 		}
 	}
 	
 	public void endAttack(boolean success){
-		this.setMoveSpeed(0);
 		if(success){
 			success = false;
 			this.setCurrentAnimation("attack end success_" + orientation, FRAME_DURATION);
@@ -466,7 +452,6 @@ public class Enemy extends Character {
 	}
 	
 	public void block(){
-		this.setMoveSpeed(0);
 		decidedToBlock = false;
 		if(random(this.BASE_COUNTER_PERCENTAJE + (this.difficulty - 1) * 0.15)){
 			/* Block and counter */
@@ -483,7 +468,6 @@ public class Enemy extends Character {
 	
 	public void hasBlocked(){
 		if(this.getCurrentAnimation().isOver(false)){
-			this.setMoveSpeed(0);
 			block();
 		}
 	}
@@ -494,25 +478,18 @@ public class Enemy extends Character {
 		if(this.hp == 0){
 			dying();
 		} else{
-			if(this.getOrientation().equals("left")){
-				this.setMoveSpeed(MOVE_SPEED);
-			} else{
-				this.setMoveSpeed(-MOVE_SPEED);
-			}
 			this.setCurrentAnimation("hit_" + this.orientation, FRAME_DURATION);
 			manageSword("hit", 0, false);
 		}
 	}
 	
 	public void dying(){
-		this.setMoveSpeed(0);
 		this.currentState = EnemyState.DIED;
 		this.setCurrentAnimation("dying_" + orientation, FRAME_DURATION);
 		this.sword = null;
 	}
 	
 	public void dead(){
-		this.setMoveSpeed(0);
 		player.putSwordDown();
 		player.isEnemySaw(false);
 		this.setCurrentAnimation("died_" + orientation, FRAME_DURATION);

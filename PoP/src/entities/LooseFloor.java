@@ -68,12 +68,12 @@ public class LooseFloor extends Entity {
 	public void drawSelf(Graphics g){
 		super.drawSelf(g);
 		
-		g.setColor(Color.RED);
-		g.drawRect((int) baseBoundingBox.getX() - currentAnimation.getImage().getWidth(),
-				(int) baseBoundingBox.getY() - currentAnimation.getImage().getHeight(),
-				(int) baseBoundingBox.getWidth(),
-				(int) baseBoundingBox.getHeight());
-		g.setColor(Color.BLACK);
+//		g.setColor(Color.RED);
+//		g.drawRect((int) baseBoundingBox.getX() - currentAnimation.getImage().getWidth(),
+//				(int) baseBoundingBox.getY() - currentAnimation.getImage().getHeight(),
+//				(int) baseBoundingBox.getWidth(),
+//				(int) baseBoundingBox.getHeight());
+//		g.setColor(Color.BLACK);
 		
 	}
 

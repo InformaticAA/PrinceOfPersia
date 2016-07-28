@@ -245,6 +245,13 @@ public class LevelState extends State{
 				/* Normal climbing */
 				// No need to check for collisions
 				player.setCornerPositionFixed(false);
+				
+				// DEBUG
+				if (corner != null) {
+					int[] cc = corner.getCenter();
+					System.out.println("Corner center: (" + cc[0] + ", " + cc[1] + ")");
+				}
+				// FIN DEBUG
 			}
 		}
 		else if ( player.isJumping() ) {

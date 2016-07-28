@@ -274,7 +274,7 @@ public class Player extends Character {
 			if(currentState != PlayerState.COMBAT && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
-//			up_pressed = false;
+			up_pressed = false;
 			combatDefense = false;
 			
 		} else if(key_released == keys_mapped.get(Key.RIGHT)){

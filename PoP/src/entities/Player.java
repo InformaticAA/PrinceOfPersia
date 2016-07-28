@@ -34,6 +34,7 @@ public class Player extends Character {
 	private boolean canClimb;
 	private boolean startsClimbing;
 	private boolean cornerPositionFixed;
+	private boolean hanged;
 	
 	private int fallDistance;
 	
@@ -77,6 +78,7 @@ public class Player extends Character {
 		this.canClimb = false;
 		this.startsClimbing = false;
 		this.cornerPositionFixed = false;
+		this.hanged = false;
 		this.fallDistance = 0;
 		
 		this.enemySaw = false;
@@ -272,7 +274,7 @@ public class Player extends Character {
 			if(currentState != PlayerState.COMBAT && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
-			up_pressed = false;
+//			up_pressed = false;
 			combatDefense = false;
 			
 		} else if(key_released == keys_mapped.get(Key.RIGHT)){
@@ -295,7 +297,7 @@ public class Player extends Character {
 			down_pressed = false;
 			
 		} else if(key_released == keys_mapped.get(Key.SHIFT)){
-//			shift_pressed = false;
+			shift_pressed = false;
 			combatAttack = false;
 		}
 	}
@@ -670,6 +672,40 @@ public class Player extends Character {
 			}
 			break;
 			
+		case "hanging backwards mini_left":
+		case "hanging backwards mini_right":
+
+			switch(currentState){
+			case IDLE:
+				if (currentAnimation.isOver(false)) {
+					setHanged(true);
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if (currentAnimation.isOver(false)) {
+					this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if (currentAnimation.isOver(false)) {
+					setHanged(true);
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case COLLIDED:
+				
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
 		case "hanging backwards_left":
 		case "hanging backwards_right":
 
@@ -730,17 +766,24 @@ public class Player extends Character {
 				if (currentAnimation.isOver(false) && !shift_pressed) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
+				else if (currentAnimation.isOver(false) && shift_pressed && !isHanged()) {
+					this.setCurrentAnimation("hanging backwards mini_" + orientation, FRAME_DURATION);
+				}
 				break;
 				
 			case JUMP:
 				if (currentAnimation.isOver(false)) {
 					this.setCurrentAnimation("clipping_" + orientation, FRAME_DURATION);
+					setHanged(false);
 				}
 				break;
 				
 			case MOVE:
 				if (currentAnimation.isOver(false) && !shift_pressed) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+				}
+				else if (currentAnimation.isOver(false) && shift_pressed && !isHanged()) {
+					this.setCurrentAnimation("hanging backwards mini_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
@@ -2390,6 +2433,14 @@ public class Player extends Character {
 		return currentAnimation.getId().contains("collided");
 	}
 	
+	public boolean isHanged() {
+		return hanged;
+	}
+	
+	public void setHanged(boolean hanged) {
+		this.hanged = hanged;
+	}
+	
 	/**
 	 * @return the canClimb
 	 */
@@ -2397,7 +2448,6 @@ public class Player extends Character {
 		return (currentAnimation.getId().contains("scaling") ||
 				currentAnimation.getId().contains("hanging") ||
 				currentAnimation.getId().contains("clipping") );
-//		return canClimb;
 	}
 
 	/**

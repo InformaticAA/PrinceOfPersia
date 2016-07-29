@@ -67,7 +67,7 @@ public class LevelState extends State{
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
 			
-			player = new Player(500,60,loader, 3, "left");
+			player = new Player(500,362,loader, 3, "left");
 			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			
@@ -379,24 +379,39 @@ public class LevelState extends State{
 				// Checks if player can climb down the corner
 				if (!player.isCornerPositionFixed() ) {
 					
-					int climbDownGap = 25;
+					int climbDownGap = 35;
 					
 					player.setCornerToClimb(cornerFloor);
 					int[] cornerCenter = cornerFloor.getCenter();
 					
-					System.out.println(cornerCenter[0] + " - " + playerCenter[0]);
+//					System.out.println(cornerCenter[0] + " - " + playerCenter[0] +
+//							" idle_left: " + player.getCurrentAnimation().getId().equals("idle_left") +
+//							" cornerRight: " + cornerFloor.getTypeOfEntity().contains("right") +
+//							" idle_right: " + player.getCurrentAnimation().getId().equals("idle_right") +
+//							" cornerLeft: " + cornerFloor.getTypeOfEntity().contains("left"));
+					
 					
 					if (Math.abs(cornerCenter[0] - playerCenter[0]) < climbDownGap &&
-							player.getCurrentAnimation().getId().equals("idle_left")) {
+							player.getCurrentAnimation().getId().equals("idle_left") &&
+							cornerFloor.getTypeOfEntity().contains("right")) {
 						
 						// left corner
-//						player.setX(cornerCenter[0] + (2 * climbDownGap) );
-						System.out.println("RIGHT CORNER DOWN FIX");
+//						System.out.println("RIGHT CORNER DOWN FIX");
+
+						Entity cornerToClimbDown = player.getCornerToClimb();
+						int[] cc = cornerToClimbDown.getCenter();
+						
+//						System.out.println("Corner center: (" + cc[0] + ", " + cc[1] + ")");
+//						System.out.println("Player center before: (" + playerCenter[0] + ", " + playerCenter[1] + ")");
+//						
+//						player.setX(cc[0] - 24);
+//						player.setY(cc[1] - 44);
 						
 						player.setCanClimbDown(true);
 					}
 					else if (Math.abs(cornerCenter[0] - playerCenter[0]) < climbDownGap &&
-							player.getCurrentAnimation().getId().equals("idle_right")) {
+							player.getCurrentAnimation().getId().equals("idle_right") &&
+							cornerFloor.getTypeOfEntity().contains("left")) {
 						
 						// right corner
 //						player.setX(cornerCenter[0] - climbDownGap);

@@ -843,7 +843,12 @@ public class Player extends Character {
 					if(changed_position){
 						changed_position = false;
 					} else if(down_pressed){
-						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+						if (isCanClimbDown()) {
+							this.setCurrentAnimation("climbing down_" + orientation, FRAME_DURATION);
+						}
+						else {
+							this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+						}
 					}
 				} else{
 					this.currentState = PlayerState.COMBAT;
@@ -2483,7 +2488,8 @@ public class Player extends Character {
 	public boolean isClimbing() {
 		return (currentAnimation.getId().contains("scaling") ||
 				currentAnimation.getId().contains("hanging") ||
-				currentAnimation.getId().contains("clipping") );
+				currentAnimation.getId().contains("clipping") ||
+				currentAnimation.getId().contains("climbing") );
 	}
 	
 	public boolean isIdle() {

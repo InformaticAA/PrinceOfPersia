@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import data.Level;
 import data.Room;
 import data.Square;
+import entities.Corner;
 import entities.Entity;
 import entities.Player;
 import framework.Loader;
@@ -190,12 +191,12 @@ public class LevelState extends State{
 	private void checkPlayerCollisions(long elapsedTime) {
 		boolean floorPanel = false;
 		boolean looseFloor = false;
-		boolean cornerFloor = false;
+		Entity cornerFloor = null;
 		Entity corner = null;
 		Entity wall = null;
 		
-		int[] pc = player.getCenter();
-		int[] ps = player.getSquare(pc[0], pc[1]);
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
 //		System.out.println("ps: (" + ps[0] + ", " + ps[1] + "), pc: (" + pc[0] + ", " + pc[1] + ")");
 		
 		if ( player.isColliding() ) {
@@ -214,10 +215,8 @@ public class LevelState extends State{
 				
 				/* Initial climb */
 				int climbGap = 20;
-				int[] playerCenter = player.getCenter();
-//				int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
-//				int[] playerSquareCenter = getSquareCenter(playerSquare[0], playerSquare[1]);
 				
+				player.setCornerToClimb(corner);
 				int[] cornerCenter = corner.getCenter();
 				
 				if (cornerCenter[0] < playerCenter[0]) {
@@ -234,11 +233,6 @@ public class LevelState extends State{
 					
 					player.setCornerPositionFixed(true);
 				}
-				
-//				System.out.println("pc: (" + pc[0] + ", " + pc[1] + ")");
-//				System.out.println("ps: (" + ps[0] + ", " + ps[1] + ")");
-//				System.out.println("STARTS CLIMBING (" + playerSquare[0] + ", " + playerSquare[1] + ")");
-//				System.out.println("psc: (" + playerSquareCenter[0] + ", " + playerSquareCenter[1] + ")");
 			}
 			else if ( !player.startsClimbing() ){
 				
@@ -246,12 +240,24 @@ public class LevelState extends State{
 				// No need to check for collisions
 				player.setCornerPositionFixed(false);
 				
-				// DEBUG
-				if (corner != null) {
-					int[] cc = corner.getCenter();
+				if (player.getCurrentAnimation().getId().startsWith("hanging idle_") &&
+						!player.isCornerReached()) {
+					Entity cornerToClimb = player.getCornerToClimb();
+					int[] cc = cornerToClimb.getCenter();
+					
 					System.out.println("Corner center: (" + cc[0] + ", " + cc[1] + ")");
+					System.out.println("Player center before: (" + playerCenter[0] + ", " + playerCenter[1] + ")");
+					
+					player.setX(cc[0] + 8);
+					player.setY(cc[1] + 103);
+					
+//					System.out.println("Player center after: (" + pc[0] + ", " + pc[1] + ")");
+					
+					player.setCornerReached(true);
 				}
-				// FIN DEBUG
+				else if (!player.getCurrentAnimation().getId().startsWith("hanging idle_")) {
+					player.setCornerReached(false);
+				}
 			}
 		}
 		else if ( player.isJumping() ) {
@@ -349,14 +355,45 @@ public class LevelState extends State{
 			
 			/* If there is a corner nearby, the player can climb it */
 			if (corner != null) {
-				player.setClimbing(true);
+				player.setCanClimb(true);
 				player.setGrounded(true);
 			}
 			
-			if (cornerFloor) {
+			if (cornerFloor != null && 
+					cornerFloor.getAnimations() != null) {
 				player.setGrounded(true);
+				
+				// Checks if player can climb down the corner
+				if (!player.isCornerPositionFixed() ) {
+					
+					int climbDownGap = 25;
+					
+					player.setCornerToClimb(cornerFloor);
+					int[] cornerCenter = cornerFloor.getCenter();
+					
+					System.out.println(cornerCenter[0] + " - " + playerCenter[0]);
+					
+					if (Math.abs(cornerCenter[0] - playerCenter[0]) < climbDownGap &&
+							player.getCurrentAnimation().getId().equals("idle_left")) {
+						
+						// left corner
+//						player.setX(cornerCenter[0] + (2 * climbDownGap) );
+						System.out.println("RIGHT CORNER DOWN FIX");
+						
+						player.setCanClimbDown(true);
+					}
+					else if (Math.abs(cornerCenter[0] - playerCenter[0]) < climbDownGap &&
+							player.getCurrentAnimation().getId().equals("idle_right")) {
+						
+						// right corner
+//						player.setX(cornerCenter[0] - climbDownGap);
+						System.out.println("LEFT CORNER DOWN FIX");
+						
+						player.setCanClimbDown(true);
+					}
+				}
 			}
-			else {
+			else if (cornerFloor == null) {
 				
 				// There is nothing beneath the player, it falls
 				if (!player.isFalling()) {
@@ -507,8 +544,8 @@ public class LevelState extends State{
 	 * true if there is corner in the same square as the player, but
 	 * the player cant be on it, the player will fall
 	 */
-	private boolean checkCornerFloor() {
-		boolean corner = true;
+	private Entity checkCornerFloor() {
+		Entity corner = new Corner();
 		
 		/* Obtains the square where the center point of the player is placed */
 		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
@@ -550,35 +587,36 @@ public class LevelState extends State{
 					if (name.contains("left") &&
 							((bgTop - playerCenter[1]) <= playerHeight2) ) {
 						
+						// LEFT CORNER
 						if ( (playerCenter[0] >= bgLeft) &&
 								(playerCenter[0] <= bgRight) ) {
 							
-	//						leftCorner = true;
+							corner = bgE;
 						}
 						else {
-							corner = false;
+							
+							// player falls
+							corner = null;
 						}
 					}
 					else if (name.contains("right") &&
 							((bgTop - playerCenter[1]) <= playerHeight2) ) {
 						
-//						System.out.println("ESQUINA DERECHA");
-						
+						// RIGHT CORNER
 						if ( (playerCenter[0] >= bgLeft) &&
 								(playerCenter[0] <= bgRight) ) {
 							
-//							System.out.println("SUUUUUU D");
-	//						rightCorner = true;
+							corner = bgE;
 						}
 						else {
-							corner = false;
+							
+							// player falls
+							corner = null;
 						}
 					}
 				}
 			}
 		}
-		
-		/* Player's behaviour */
 		return corner;
 	}
 	

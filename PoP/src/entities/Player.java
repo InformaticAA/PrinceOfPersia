@@ -25,6 +25,8 @@ public class Player extends Character {
 	private boolean shift_pressed;
 	
 	private PlayerState currentState;
+	private Entity cornerToClimb;
+	private boolean cornerReached;
 	
 	private boolean changed_position;
 	private String newOrientation;
@@ -32,6 +34,7 @@ public class Player extends Character {
 	private boolean canMakeStep;
 	private boolean canWalkCrouched;
 	private boolean canClimb;
+	private boolean canClimbDown;
 	private boolean startsClimbing;
 	private boolean cornerPositionFixed;
 	private boolean hanged;
@@ -328,6 +331,38 @@ public class Player extends Character {
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 					canClimb = false;
+				}
+				break;
+				
+			case COLLIDED:
+				System.out.println("COLLIDED EN POS TO RARA");
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "climbing down_left":
+		case "climbing down_right":
+			
+			switch(currentState){
+			case IDLE:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
@@ -852,12 +887,12 @@ public class Player extends Character {
 						
 						}
 					} else if(down_pressed){
-						if(this.getOrientation().equals("left")){
-	
-						} else{
-	
+						if (isCanClimbDown()) {
+							this.setCurrentAnimation("climbing down_" + orientation, FRAME_DURATION);
 						}
-						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+						else {
+							this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+						}
 					}
 					else{
 						if(this.getOrientation().equals("left")){
@@ -865,7 +900,6 @@ public class Player extends Character {
 						} else{
 	
 						}
-	//					System.out.printf("starts running: ");
 						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
 					}
 				} else{
@@ -2449,6 +2483,10 @@ public class Player extends Character {
 				currentAnimation.getId().contains("hanging") ||
 				currentAnimation.getId().contains("clipping") );
 	}
+	
+	public boolean isIdle() {
+		return currentAnimation.getId().startsWith("idle");
+	}
 
 	/**
 	 * @return the canClimb
@@ -2460,10 +2498,24 @@ public class Player extends Character {
 	/**
 	 * @param canClimb the canClimb to set
 	 */
-	public void setClimbing(boolean canClimb) {
+	public void setCanClimb(boolean canClimb) {
 		this.canClimb = canClimb;
 	}
 	
+	/**
+	 * @return the canClimbDown
+	 */
+	public boolean isCanClimbDown() {
+		return canClimbDown;
+	}
+
+	/**
+	 * @param canClimbDown the canClimbDown to set
+	 */
+	public void setCanClimbDown(boolean canClimbDown) {
+		this.canClimbDown = canClimbDown;
+	}
+
 	/**
 	 * @param 
 	 */
@@ -2478,6 +2530,34 @@ public class Player extends Character {
 		return cornerPositionFixed;
 	}
 	
+	/**
+	 * @return the cornerToClimb
+	 */
+	public Entity getCornerToClimb() {
+		return cornerToClimb;
+	}
+
+	/**
+	 * @param cornerToClimb the cornerToClimb to set
+	 */
+	public void setCornerToClimb(Entity cornerToClimb) {
+		this.cornerToClimb = cornerToClimb;
+	}
+
+	/**
+	 * @return the cornerReached
+	 */
+	public boolean isCornerReached() {
+		return cornerReached;
+	}
+
+	/**
+	 * @param cornerReached the cornerReached to set
+	 */
+	public void setCornerReached(boolean cornerReached) {
+		this.cornerReached = cornerReached;
+	}
+
 	/**
 	 * 
 	 * @return true if the player is executing one of its

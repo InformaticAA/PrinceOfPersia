@@ -25,6 +25,10 @@ public class Corner extends Entity{
 		}
 	}
 
+	public Corner() {
+		super();
+	}
+	
 	@Override
 	public Entity copy() {
 		return null;

@@ -23,6 +23,10 @@ public abstract class Entity {
 	protected Color boundingBoxColor;
 	protected Loader loader;
 	
+	public Entity(){
+		
+	}
+	
 	public Entity(String typeOfEntity, int x, int y, Loader loader) {
 		this.typeOfEntity = typeOfEntity;
 		this.x = x;

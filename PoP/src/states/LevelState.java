@@ -245,7 +245,13 @@ public class LevelState extends State{
 				// No need to check for collisions
 				player.setCornerPositionFixed(false);
 				
-				if (player.getCurrentAnimation().getId().startsWith("hanging idle_") &&
+				if (player.getCurrentAnimation().getId().startsWith("scaling down_")) {
+					Entity cornerToClimb = player.getCornerToClimb();
+					int[] cc = cornerToClimb.getCenter();
+					player.setX(cc[0] + 40);
+					player.setY(cc[1] + 123);
+				}
+				else if (player.getCurrentAnimation().getId().startsWith("hanging idle_") &&
 						!player.isCornerReached()) {
 					Entity cornerToClimb = player.getCornerToClimb();
 					int[] cc = cornerToClimb.getCenter();

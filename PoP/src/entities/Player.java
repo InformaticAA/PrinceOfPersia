@@ -800,6 +800,7 @@ public class Player extends Character {
 			case IDLE:
 				if (currentAnimation.isOver(false) && !shift_pressed) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+					setHanged(false);
 				}
 				else if (currentAnimation.isOver(false) && shift_pressed && !isHanged()) {
 					this.setCurrentAnimation("hanging backwards mini_" + orientation, FRAME_DURATION);
@@ -816,6 +817,7 @@ public class Player extends Character {
 			case MOVE:
 				if (currentAnimation.isOver(false) && !shift_pressed) {
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+					setHanged(false);
 				}
 				else if (currentAnimation.isOver(false) && shift_pressed && !isHanged()) {
 					this.setCurrentAnimation("hanging backwards mini_" + orientation, FRAME_DURATION);
@@ -1525,11 +1527,9 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false) && canClimb){
-					System.out.println("ESCALADA EXITOSA");
 					this.setCurrentAnimation("scaling to hanging_" + orientation, FRAME_DURATION);
 				}
 				else if (this.currentAnimation.isOver(false) && !canClimb) {
-					System.out.println("ESCALADA FALLIDA");
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
 				break;

@@ -215,23 +215,28 @@ public class LevelState extends State{
 				
 				/* Initial climb */
 				int climbGap = 20;
-				
-				player.setCornerToClimb(corner);
 				int[] cornerCenter = corner.getCenter();
+				player.setCornerToClimb(corner);
 				
-				if (cornerCenter[0] < playerCenter[0]) {
+				if ( (cornerCenter[0] < playerCenter[0]) &&
+						corner.getTypeOfEntity().contains("right") &&
+						player.getOrientation().equals("left") ) {
 					// left corner
 					player.setX(cornerCenter[0] + (2 * climbGap) );
 					System.out.println("LEFT CORNER FIX");
 					
 					player.setCornerPositionFixed(true);
+					player.setCanClimb(true);
 				}
-				else {
+				else if ( (cornerCenter[0] > playerCenter[0]) &&
+						corner.getTypeOfEntity().contains("left") &&
+						player.getOrientation().equals("right") ) {
 					// right corner
 					player.setX(cornerCenter[0] - climbGap);
 					System.out.println("RIGHT CORNER FIX");
 					
 					player.setCornerPositionFixed(true);
+					player.setCanClimb(true);
 				}
 			}
 			else if ( !player.startsClimbing() ){
@@ -358,7 +363,6 @@ public class LevelState extends State{
 			
 			/* If there is a corner nearby, the player can climb it */
 			if (corner != null) {
-				player.setCanClimb(true);
 				player.setGrounded(true);
 			}
 			

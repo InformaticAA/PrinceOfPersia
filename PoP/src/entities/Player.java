@@ -1525,9 +1525,11 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false) && canClimb){
+					System.out.println("ESCALADA EXITOSA");
 					this.setCurrentAnimation("scaling to hanging_" + orientation, FRAME_DURATION);
 				}
 				else if (this.currentAnimation.isOver(false) && !canClimb) {
+					System.out.println("ESCALADA FALLIDA");
 					this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
 				}
 				break;

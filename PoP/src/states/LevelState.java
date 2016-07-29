@@ -299,6 +299,7 @@ public class LevelState extends State{
 				if ( player.getFallDistance() <= 150 ) {
 					
 					// short fall, player lands nicely
+					loader.getSound("landing soft").play();
 					System.out.println("SAFE LAND");
 					player.safeLand();
 				}
@@ -306,11 +307,13 @@ public class LevelState extends State{
 					
 					// long fall, but not dying
 					player.riskyLand();
+					loader.getSound("landing medium").play();
 				}
 				else {
 					
 					// free fall, player dies
 					player.die();
+					loader.getSound("landing hard").play();
 				}
 				
 				player.setFreeFall(false);

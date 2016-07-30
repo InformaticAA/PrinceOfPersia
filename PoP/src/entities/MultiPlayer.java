@@ -96,10 +96,12 @@ public class MultiPlayer extends Character {
 	}
 	
 	public void hasBlocked(){
+		loader.getSound("sword vs sword").play();
 		this.hasBlocked = true;
 	}
 	
 	public void hasBeenBlocked(){
+		loader.getSound("sword vs sword").play();
 		this.beenBlocked = true;
 	}
 	

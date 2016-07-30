@@ -114,6 +114,8 @@ public class Player extends Character {
 				this.life[i].setVisible(true);
 			}
 		}
+		
+		this.typeOfEntity = "Player";
 	}
 	
 	@Override
@@ -152,6 +154,7 @@ public class Player extends Character {
 		manageAnimations();
 		updateSpeed();
 		this.moveCharacter();
+		this.moveSword();
 		this.enableBoundingBox();
 		
 		// player's life
@@ -1948,6 +1951,7 @@ public class Player extends Character {
 				if(this.currentAnimation.isOver(false)){
 					this.setMoveSpeed(0);
 					if(this.goingToAttack){
+						hasBlocked = false;
 						this.goingToAttack = false;
 						this.setCurrentAnimation("sword attack up start_" + orientation, FRAME_DURATION);
 						manageSword("start attacking up",0,false);
@@ -2653,6 +2657,7 @@ public class Player extends Character {
 	}
 	
 	public void hasBlocked(){
+		loader.getSound("sword vs sword").play();
 		this.hasBlocked = true;
 	}
 	
@@ -2661,7 +2666,7 @@ public class Player extends Character {
 	}
 	
 	public boolean isAttacking(){
-		return (this.getCurrentAnimation().getId().startsWith("sword attack"));
+		return (this.getCurrentAnimation().getId().startsWith("sword attack") || (this.goingToAttack));
 	}
 	
 	public boolean isBeingBlocked(){
@@ -2705,6 +2710,7 @@ public class Player extends Character {
 	}
 	
 	public void beenHit(){
+		loader.getSound("kid hurt").play();
 		this.hp = this.hp - 1;
 		if(this.currentState != PlayerState.COMBAT || this.hp == 0){
 			this.currentState = PlayerState.DIED;

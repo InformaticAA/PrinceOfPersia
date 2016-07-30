@@ -60,6 +60,7 @@ public class MultiplayerMenuState extends State{
 			bg.addImage("resources/Sprites_400/Menu/Scenaries/test1.png");
 			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
 			menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+//			menu = TinySound.loadMusic(new File("resources/Music/Batman.ogg"));
 			
 			
 		} catch(Exception e){
@@ -128,6 +129,7 @@ public class MultiplayerMenuState extends State{
 					sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
 					menu.stop();
 					menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+					//menu = TinySound.loadMusic(new File("resources/Music/Batman.ogg"));
 					menu.play(true);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

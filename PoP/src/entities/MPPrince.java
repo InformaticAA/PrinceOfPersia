@@ -58,6 +58,7 @@ public class MPPrince extends MultiPlayer {
 	}
 	
 	public void beenHit(){
+		loader.getSound("kid hurt").play();
 		this.hp = this.hp - 1;
 		if(this.hp == 0){
 			this.currentState = MultiState.DIED;

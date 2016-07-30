@@ -46,12 +46,13 @@ public class LevelState extends State{
 	public void init() {
 		
 		// TESTING ENEMY
+//		currentLevel = loader.loadLevel(INITIAL_LEVEL);
 //		currentRoom = currentLevel.getRoom(1, 9);
 //		
 ////		for(String key : loader.getAnimations("wall").keySet()){
 ////			System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 ////		}
-//		player = new Player(100,130,loader, 3, "right");
+//		player = new Player(100,250,loader, 1000, "right");
 //		player.setySpeed(4);
 //		
 //		Enemy e = (Enemy)currentRoom.getCharacters().get(0);

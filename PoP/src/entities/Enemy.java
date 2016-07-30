@@ -12,7 +12,7 @@ public class Enemy extends Character {
 	
 	private enum EnemyState {IDLE, COMBAT, DIED};
 	
-	private final int SAFE_DISTANCE = 150;
+	private final int SAFE_DISTANCE = 160;
 	private final int NO_COMBAT_ATTACK_DISTANCE = 190;
 	private final int ATTACK_DISTANCE = 110;
 	private final int AGRESIVE_DISTANCE = 80;
@@ -61,7 +61,7 @@ public class Enemy extends Character {
 		this.playerSaw = false;
 		
 		this.success = true;
-		this.goingToAttack = true;
+		this.goingToAttack = false;
 		
 		this.counterMove = restartCounterMove();
 		this.counterAttack = restartCounterAttack();
@@ -83,6 +83,7 @@ public class Enemy extends Character {
 				this.life[i].setVisible(true);
 			}
 		}
+		this.typeOfEntity = "Enemy";
 	}
 	
 	@Override
@@ -105,7 +106,7 @@ public class Enemy extends Character {
 			}
 		} else if(playerSaw){
 			manageIA(elapsedTime);
-			if(this.xDistanceChar(player) <= ATTACK_DISTANCE && player.isHitting() && canBeHit){
+			if(this.xDistanceEntity(player) <= ATTACK_DISTANCE && player.isHitting() && canBeHit){
 				setCanShowSplash(true);
 				beenHit();
 			}
@@ -116,11 +117,13 @@ public class Enemy extends Character {
 		} else{
 			normalIdle();
 		}
+		
 		this.updateSpeed();
 		if(this.currentState.equals(EnemyState.COMBAT)){
 			cleanYSpeed();
 		}
 		this.moveCharacter();
+		this.moveSword();
 		for(int i = 0; i < this.maxHp; i++){
 			if(i < this.hp){
 				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
@@ -130,6 +133,7 @@ public class Enemy extends Character {
 				this.life[i].setVisible(true);
 			}
 		}
+//		System.out.println(this.currentAnimation.getId() + " (" + this.currentAnimation.getCurrentFrame() + ")  Vel: " + this.getxSpeed());
 	}
 	
 	@Override
@@ -167,7 +171,11 @@ public class Enemy extends Character {
 		case "sword idle_right":
 			
 			idle();
-			if(this.xDistanceChar(player)>=SAFE_DISTANCE){
+			if(goingToAttack){
+				goingToAttack = false;
+				startAttack();
+			}
+			else if(this.xDistanceEntity(player)>=SAFE_DISTANCE){
 				if(player.isRunning(this.getOrientation())){
 					
 				} else{
@@ -179,7 +187,7 @@ public class Enemy extends Character {
 				if(!player.isInCombat() || (player.isWalking() && random(0.05))){
 					startAttack();
 				} else{
-					if(this.xDistanceChar(player) >= ATTACK_DISTANCE){
+					if(this.xDistanceEntity(player) >= ATTACK_DISTANCE){
 						if(!player.isAttacking()){
 							
 							/* Player not attacking -> we go towards him to attack */
@@ -197,19 +205,19 @@ public class Enemy extends Character {
 							counterMove = 0;
 						}
 					} else{
-						if(this.xDistanceChar(player) < AGRESIVE_DISTANCE){
+						if(this.xDistanceEntity(player) < AGRESIVE_DISTANCE){
 							
-							if(this.xDistanceChar(player) < TURN_DISTANCE){
+							if(this.xDistanceEntity(player) < TURN_DISTANCE){
 								if(this.getOrientation().equals("right")){
 									this.setOrientation("left");
-									this.setX(this.getX() + 40);
+									this.setX(this.getX() + 100);
 									player.setOrientation("right");
-									player.setX(player.getX() - 40);
+									player.setX(player.getX() - 100);
 								} else{
 									this.setOrientation("right");
-									this.setX(this.getX() - 40);
+									this.setX(this.getX() - 100);
 									player.setOrientation("left");
-									player.setX(player.getX() + 40);
+									player.setX(player.getX() + 100);
 								}
 							} else{
 								
@@ -265,11 +273,17 @@ public class Enemy extends Character {
 			manageSword("walking",this.getCurrentAnimation().getCurrentFrame(),false);
 			if(this.getCurrentAnimation().isOver(false)){
 				if(goingToAttack){
-					goingToAttack = false;
-					startAttack();
+					idle();
+					//goingToAttack = false;
+					//startAttack();
 				} else{
-					if(this.xDistanceChar(player)>SAFE_DISTANCE){
-						idle();
+					if(this.xDistanceEntity(player)>SAFE_DISTANCE){
+						if(player.isRunning(this.getOrientation())){
+							idle();
+						} else{
+							/* Move towards the player */
+							startMove(false);
+						}
 					} else{
 						endMove();
 					}
@@ -426,6 +440,8 @@ public class Enemy extends Character {
 	}
 	
 	public void blockedAndBlock(){
+	//	System.out.println("PLAYER ATTACKING     " + player.isAttacking());
+	//	System.out.println("PLAYER MOVE     " + player.getCurrentAnimation().getId()+ "(" + player.getCurrentAnimation().getCurrentFrame() + ")");
 		if(player.isAttacking() && random(BASE_BLOCK_PERCENTAJE + ((double)difficulty)/10)){
 			player.hasBeenBlocked();
 			this.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION);
@@ -441,10 +457,11 @@ public class Enemy extends Character {
 			success = false;
 			this.setCurrentAnimation("attack end success_" + orientation, FRAME_DURATION);
 			manageSword("attack end success", 0, false);
-			if(this.xDistanceChar(player) <= ATTACK_DISTANCE){
+			if(this.xDistanceEntity(player) <= ATTACK_DISTANCE){
 				player.beenHit();
 			}
 		} else{
+			player.hasBlocked();
 			this.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION);
 			manageSword("blocked", 0, false);
 			
@@ -452,6 +469,7 @@ public class Enemy extends Character {
 	}
 	
 	public void block(){
+		loader.getSound("sword vs sword").play();
 		decidedToBlock = false;
 		if(random(this.BASE_COUNTER_PERCENTAJE + (this.difficulty - 1) * 0.15)){
 			/* Block and counter */
@@ -473,6 +491,7 @@ public class Enemy extends Character {
 	}
 	
 	public void beenHit(){
+		loader.getSound("guard hurt").play();
 		canBeHit = false;
 		this.hp = hp - 1;
 		if(this.hp == 0){

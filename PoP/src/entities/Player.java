@@ -350,6 +350,13 @@ public class Player extends Character {
 		case "climbing down_left":
 		case "climbing down_right":
 			
+			// resets climb down condition once the animation is over
+			// so the player cannot climb down anywhere
+			if (currentAnimation.isOver(false)) {
+				System.out.println("CLIMBED DOWN");
+				this.setCanClimbDown(false);
+			}
+			
 			switch(currentState){
 			case IDLE:
 				if(currentAnimation.isOver(false)){

@@ -139,6 +139,10 @@ public class Enemy extends Character {
 	@Override
 	public void drawSelf(Graphics g){
 		super.drawSelf(g);
+	
+	}
+	
+	public void drawLife(Graphics g){
 		for (int i = 0; i < life.length; i++) {
 			life[i].drawSelf(g);
 		}	

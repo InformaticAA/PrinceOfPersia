@@ -182,4 +182,17 @@ public class Room {
 		this.characters = characters;
 	}
 	
+	public void deleteEntityBackground(Entity entity){
+		System.out.println(background.remove(entity));
+	}
+	
+	public void insertAfterEntity(Entity toBeInserted, Entity after){
+		int index = background.indexOf(after);
+		System.out.println("Amoh a imprimir");
+	}
+	
+	public void addToBackground(Entity toBeAdded){
+		background.add(toBeAdded);
+	}
+	
 }

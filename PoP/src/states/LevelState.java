@@ -13,7 +13,11 @@ import data.Level;
 import data.Room;
 import data.Square;
 import entities.Corner;
+import entities.Enemy;
 import entities.Entity;
+import entities.FloorPanel;
+import entities.Interface;
+import entities.LooseFloor;
 import entities.Player;
 import framework.Loader;
 import framework.Writter;
@@ -32,8 +36,12 @@ public class LevelState extends State{
 	private Level currentLevel;
 	private Room currentRoom;
 	
-	private Player player;
+	private Interface interfaz;
 	
+	private Player player;
+	private Enemy enemy;
+	
+	private ArrayList<LooseFloor> falling_floor;
 	
 	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, 
 			Hashtable<String,Integer> keys_mapped, Loader loader, boolean start, Writter writter) {
@@ -45,7 +53,10 @@ public class LevelState extends State{
 	@Override
 	public void init() {
 		
-		// TESTING ENEMY
+		falling_floor = new ArrayList<LooseFloor>();
+		interfaz = new Interface(640, 400, 0, 0, loader);
+		
+//		// TESTING ENEMY
 //		currentLevel = loader.loadLevel(INITIAL_LEVEL);
 //		currentRoom = currentLevel.getRoom(1, 9);
 //		
@@ -53,7 +64,6 @@ public class LevelState extends State{
 ////			System.out.println("key "+ key + " - Animation " + loader.getAnimations("wall").get(key).getId() );
 ////		}
 //		player = new Player(100,250,loader, 1000, "right");
-//		player.setySpeed(4);
 //		
 //		Enemy e = (Enemy)currentRoom.getCharacters().get(0);
 //		
@@ -68,7 +78,7 @@ public class LevelState extends State{
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
 			
-			player = new Player(500,362,loader, 3, "left");
+			player = new Player(500,100,loader, 3, "left");
 			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			
@@ -130,11 +140,17 @@ public class LevelState extends State{
 		manageKeys();
 		currentLevel.update(elapsedTime);
 		checkPlayerCollisions(elapsedTime);
+		updateFallingFloor(elapsedTime);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
 		currentRoom.draw(g);
+		interfaz.drawSelf(g);
+		player.drawLife(g);
+		if(enemy!=null){
+			enemy.drawLife(g);
+		}
 	}
 
 	@Override
@@ -153,7 +169,7 @@ public class LevelState extends State{
 					if(key_pressed == keys_mapped.get(Key.ESCAPE)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.CONTROL)){
-						
+						currentRoom = currentLevel.getRoom(3, 7);
 					} else{
 						player.manageKeyPressed(key_pressed, keys_mapped);
 					}
@@ -279,6 +295,9 @@ public class LevelState extends State{
 			/* Checks if the player can land on the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
+			if(looseFloor){
+				System.out.println("LOOOOOOOSE");
+			}
 			wall = checkWall();
 			
 			if (floorPanel || looseFloor) {
@@ -304,6 +323,9 @@ public class LevelState extends State{
 			/* Checks if the player can walk over the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
+			if(looseFloor){
+				System.out.println("LOOOOOOOSE");
+			}
 			wall = checkWall();
 			
 			if ( (floorPanel || looseFloor) ) {
@@ -343,6 +365,9 @@ public class LevelState extends State{
 			/* Checks if the player can stand on the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
+			if(looseFloor){
+				System.out.println("LOOOOOOOSE");
+			}
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
 			
@@ -362,6 +387,9 @@ public class LevelState extends State{
 			/* Checks if the player can stand on the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
+			if(looseFloor){
+				System.out.println("LOOOOOOOSE");
+			}
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
 			
@@ -670,30 +698,45 @@ public class LevelState extends State{
 			ArrayList<Entity> bgEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
 			
+			LooseFloor toBeDeleted = null;
 			for (Entity bgE : bgEntities) {
 	
 				String name = bgE.getTypeOfEntity();
 				if ( name.startsWith("LooseFloor") ) {
-					
-					int bgLeft = (int) bgE.getBoundingBox().getMinX();
-					int bgRight = (int) bgE.getBoundingBox().getMaxX();
-					int bgTop = (int) bgE.getBoundingBox().getMinY();
-					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
-					
-					int[] ec = bgE.getCenter();
-					int[] es = bgE.getSquare();
-					
-					if ( (ec[1] - playerCenter[1]) <= playerHeight2 ) {
-						
-						int res = ec[1] - playerCenter[1];
-						
-						if ( (playerCenter[0] >= bgLeft) &&
-								(playerCenter[0] <= bgRight) ) {
-							
-							looseFloor = true;
-						}
+					LooseFloor loose = (LooseFloor)bgE;
+					if(!loose.isFalling() && !loose.isActivated()){
+						loose.setActivated(true);
+						loose.setRoom1(currentRoom.getRow() + 1);
+						loose.setRoom2(currentRoom.getCol() + 1);
+						toBeDeleted = loose;
+						falling_floor.add(loose);
 					}
+					
+//					int bgLeft = (int) bgE.getBoundingBox().getMinX();
+//					int bgRight = (int) bgE.getBoundingBox().getMaxX();
+//					int bgTop = (int) bgE.getBoundingBox().getMinY();
+//					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
+//					
+//					int[] ec = bgE.getCenter();
+//					int[] es = bgE.getSquare();
+//					
+//					if ( (ec[1] - playerCenter[1]) <= playerHeight2 ) {
+//						System.out.println("Aqui");
+//						
+//						int res = ec[1] - playerCenter[1];
+//						
+//						if ( (playerCenter[0] >= bgLeft) &&
+//								(playerCenter[0] <= bgRight) ) {
+//							
+//							looseFloor = true;
+//						}
+//					}
 				}
+			}
+			
+			if(toBeDeleted != null){
+				//currentRoom.deleteEntityBackground(toBeDeleted);
+				toBeDeleted = null;
 			}
 		}
 		return looseFloor;
@@ -907,5 +950,87 @@ public class LevelState extends State{
 		int py = (int)(6 + 63 + (i-1) * 126);
 		
 		return new int[]{px, py};
+	}
+	
+	public void updateFallingFloor(long elapsedTime){
+		
+		ArrayList<LooseFloor> toBeDeleted = new ArrayList<LooseFloor>();
+		
+		for(LooseFloor loose: falling_floor){
+			
+			if(!loose.isBroken()){
+				loose.updateReal(elapsedTime);
+				
+				if(checkLooseCollision(loose)){
+					/* Check collision */
+
+					loose.setBroken();
+					toBeDeleted.add(loose);
+					Room looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
+					looseRoom.deleteEntityBackground(loose);
+					ArrayList<Entity> newEntities = new ArrayList<Entity>();
+					
+					/* Put broken */
+					int[] looseCenter = loose.getCenter();
+					int[] looseSquare = loose.getSquare(looseCenter[0], looseCenter[1]);
+					int px = 64 + looseSquare[1] * 64;
+					int py = (int)(6 + looseSquare[0] * 126);
+					newEntities.add(new FloorPanel(px,py,0,-6,loader,"broken_left"));
+					px = 64 + (looseSquare[1]+1) * 64;
+					py = (int)(6 + looseSquare[0] * 126);
+					newEntities.add(new FloorPanel(px,py,-12,-2,loader,"broken_right"));
+					currentLevel.getRoom(loose.getRoom1(), loose.getRoom2()).addBackground(newEntities);
+					
+				} else{
+					/* Didnt collided */
+					
+					if(loose.getY() > (400 + loose.getCurrentAnimation().getImage().getHeight())){
+						/* Changed room */
+						Room looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
+						looseRoom.deleteEntityBackground(loose);
+						
+						loose.setY(0);
+						loose.increaseRoom1();
+						
+						looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
+						looseRoom.addToBackground(loose);
+					}
+				}
+			} 
+		}
+		
+		for(LooseFloor b : toBeDeleted){
+			falling_floor.remove(b);
+		}
+		toBeDeleted = new ArrayList<LooseFloor>();
+	}
+	
+	private boolean checkLooseCollision(LooseFloor loose){
+		/* Obtains the square where the center point of the loose is placed */
+		int looseWidth2 = loose.getCurrentAnimation().getImage().getWidth()/2;
+		int looseHeight2 = loose.getCurrentAnimation().getImage().getHeight()/2;
+		int[] looseCenter = loose.getCenter();
+		int[] looseSquare = loose.getSquare(looseCenter[0], looseCenter[1]);
+		
+		Room looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
+		
+		boolean collision = false;
+
+		if(looseSquare[0] != 4){
+			ArrayList<Entity> bEntities = looseRoom.getSquare(
+					looseSquare[0], looseSquare[1]).getBackground();
+			
+			for (Entity bgE : bEntities) {
+				String name = bgE.getTypeOfEntity();
+				if(name.startsWith("FloorPanel_normal_right") || name.startsWith("FloorPanel_broken_right")){
+					int[] ec = bgE.getCenter();
+					if(loose.getCenter()[1] - ec[1] > -10 && loose.getCenter()[1] - ec[1] <= 10){
+						collision = true;	
+					}
+				}
+			}
+		}
+		
+		return collision;
 	}
 }

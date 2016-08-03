@@ -9,14 +9,22 @@ import framework.Loader;
 public class LooseFloor extends Entity {
 	
 	private boolean activated;
+	private boolean falling;
 	private Rectangle baseBoundingBox;
+	private int row;
+	private int col;
+	private int room1;
+	private int room2;
+	private boolean broken;
 
 	public LooseFloor(int x, int y, int x_offset, int y_offset, Loader loader, String loose_type) {
 		super("LooseFloor" + loose_type, x+x_offset, y+y_offset, loader);
 		activated = false;
+		falling = false;
 		animations = loader.getAnimations("loose_floor");
 		currentAnimation = animations.get(loose_type);
 		currentAnimation.setFrameDuration(4);
+		broken = false;
 		
 		/* Sets the bounding box */
 		enableBoundingBox(this.x + 25, 
@@ -43,25 +51,30 @@ public class LooseFloor extends Entity {
 	 */
 	public void setActivated(boolean activated) {
 		this.activated = activated;
+		this.setCurrentAnimation("shaking", FRAME_DURATION*3);
 	}
 	
+	public boolean isFalling() {
+		return falling;
+	}
+
+	public void setFalling(boolean falling) {
+		this.falling = falling;
+	}
+
 	@Override
 	public void update(long elapsedTime){
-		super.update(elapsedTime);
-		if(currentAnimation.getId().equals("shaking") && currentAnimation.isOver(false)){
-			System.out.println("Finalizamos");
-			currentAnimation = animations.get("idle");
-		}
+		
 	}
 	
 	@Override
 	public void setCurrentAnimation(String newAnimation, int frameDuration){
 		super.setCurrentAnimation(newAnimation, frameDuration);
-		System.out.println("hola");
-		if(currentAnimation.getId().equals("shaking")){
-			int sound = (int)(Math.random()*3 + 1);
-			loader.getSound("tile moving " + sound).play();
-		}
+	}
+	
+	public void makeSound(){
+		int sound = (int)(Math.random()*3 + 1);
+		loader.getSound("tile moving " + sound).play();
 	}
 	
 	@Override
@@ -80,5 +93,78 @@ public class LooseFloor extends Entity {
 	@Override
 	public Entity copy() {
 		return null;
+	}
+	
+	public int getRow(){
+		return this.row;
+	}
+	
+	public void decreaseRow(){
+		this.row--;
+	}
+	
+	public void setRow(int row){
+		this.row = row;
+	}
+	
+	public int getCol(){
+		return this.col;
+	}
+	
+	public void setCol(int col){
+		this.col = col;
+	}
+
+	public boolean isBroken() {
+		return broken;
+	}
+
+	public void setBroken() {
+		this.broken = true;
+		loader.getSound("tile crashing").play();;
+	}
+
+	public int getRoom1() {
+		return room1;
+	}
+
+	public void setRoom1(int room1) {
+		this.room1 = room1;
+	}
+
+	public int getRoom2() {
+		return room2;
+	}
+
+	public void setRoom2(int room2) {
+		this.room2 = room2;
+	}
+	
+	public void increaseRoom1(){
+		this.room1++;
+	}
+	
+	public void updateReal(long elapsedTime){
+		/* Entity */
+		currentAnimation.update(elapsedTime);
+		if(this.currentAnimation.isLastFrame()){
+			int currentFrame = currentAnimation.getCurrentFrame();
+			String newSound = currentAnimation.getFrame(currentFrame).getSound();
+			if(!newSound.equals("")){
+				makeSound();
+			}
+		}
+		
+		/* LooseFloor */
+		if(this.getCurrentAnimation().getId().equals("shaking")){
+			if(this.getCurrentAnimation().isOver(false)){
+				this.setCurrentAnimation("falling", FRAME_DURATION);
+			}
+		}
+		if(this.getCurrentAnimation().getId().equals("falling")){
+			if(this.currentAnimation.isLastFrame()){
+				this.setY(this.getY() + 20);
+			}
+		}
 	}
 }

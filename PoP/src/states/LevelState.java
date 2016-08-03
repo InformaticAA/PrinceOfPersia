@@ -405,6 +405,11 @@ public class LevelState extends State{
 					cornerFloor.getAnimations() != null) {
 				player.setGrounded(true);
 				
+				// DEBUG
+				int[] testCornerCenter = cornerFloor.getCenter();
+				System.out.println("TestCornerCenter: " + testCornerCenter[0] + ", " + testCornerCenter[1]);
+				// FIN DEBUG
+				
 				// Checks if player can climb down the corner
 				if (!player.isCornerPositionFixed() ) {
 					
@@ -425,7 +430,7 @@ public class LevelState extends State{
 							cornerFloor.getTypeOfEntity().contains("right")) {
 						
 						// left corner
-//						System.out.println("RIGHT CORNER DOWN FIX");
+						System.out.println("RIGHT CORNER DOWN FIX");
 
 						Entity cornerToClimbDown = player.getCornerToClimb();
 						int[] cc = cornerToClimbDown.getCenter();
@@ -448,6 +453,11 @@ public class LevelState extends State{
 						
 						player.setCanClimbDown(true);
 					}
+					else {
+						
+						// player cannot climb down
+						player.setCanClimbDown(false);
+					}
 				}
 			}
 			else if (cornerFloor == null) {
@@ -456,6 +466,10 @@ public class LevelState extends State{
 				if (!player.isFalling()) {
 					player.fall();
 				}
+			}
+			else {
+				
+				player.setCanClimbDown(false);
 			}
 			
 			if (wall != null) {

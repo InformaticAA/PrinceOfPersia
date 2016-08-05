@@ -3,8 +3,9 @@ package data;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import entities.Entity;
 import entities.Character;
+import entities.Door;
+import entities.Entity;
 
 public class Room {
 
@@ -193,6 +194,19 @@ public class Room {
 	
 	public void addToBackground(Entity toBeAdded){
 		background.add(toBeAdded);
+	}
+	
+	public ArrayList<Door> getDoors(){
+		ArrayList<Door> doors = new ArrayList<Door>();
+		ArrayList<Entity> bEntities = this.getBackground();
+		
+		for(Entity bgE : bEntities){
+			if(bgE.getTypeOfEntity().equals("Door")){
+				doors.add((Door) bgE);
+			}
+		}
+		
+		return doors;
 	}
 	
 }

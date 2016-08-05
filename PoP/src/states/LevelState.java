@@ -12,12 +12,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import data.Level;
 import data.Room;
 import data.Square;
+import entities.Closer;
 import entities.Corner;
+import entities.Door;
 import entities.Enemy;
 import entities.Entity;
 import entities.FloorPanel;
 import entities.Interface;
 import entities.LooseFloor;
+import entities.Opener;
 import entities.Player;
 import framework.Loader;
 import framework.Writter;
@@ -42,6 +45,7 @@ public class LevelState extends State{
 	private Enemy enemy;
 	
 	private ArrayList<LooseFloor> falling_floor;
+	private ArrayList<Door> doors;
 	
 	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, 
 			Hashtable<String,Integer> keys_mapped, Loader loader, boolean start, Writter writter) {
@@ -77,6 +81,7 @@ public class LevelState extends State{
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
+			doors = currentLevel.getDoors();
 			
 			player = new Player(500,100,loader, 3, "left");
 			player.setCurrentAnimation("falling_left", 5);
@@ -141,6 +146,7 @@ public class LevelState extends State{
 		currentLevel.update(elapsedTime);
 		checkPlayerCollisions(elapsedTime);
 		updateFallingFloor(elapsedTime);
+		updateDoors(elapsedTime);
 	}
 
 	@Override
@@ -525,7 +531,8 @@ public class LevelState extends State{
 			for (Entity bgE : bgEntities) {
 				String name = bgE.getTypeOfEntity();
 				if ( name.startsWith("FloorPanel_") ||
-					(name.startsWith("Pillar_") && !name.contains("shadow")) ) {
+					(name.startsWith("Pillar_") && !name.contains("shadow")) || 
+					name.startsWith("Opener") || name.startsWith("Closer")) {
 					
 					int bgLeft = (int) bgE.getBoundingBox().getMinX();
 					int bgRight = (int) bgE.getBoundingBox().getMaxX();
@@ -580,6 +587,13 @@ public class LevelState extends State{
 							rightFall = true;
 							newPlayerX = ec[0] + bgWidth;
 						}
+					}
+					
+					
+					if(name.startsWith("Opener")){
+						((Opener) bgE).openDoor(player);
+					} else if(name.startsWith("Closer")){
+						((Closer) bgE).closeDoor(player);
 					}
 				}
 				else if (name.startsWith("Corner_")) {
@@ -1046,5 +1060,11 @@ public class LevelState extends State{
 		}
 		
 		return collision;
+	}
+	
+	private void updateDoors(long elapsedTime){
+		for(Door d : doors){
+			d.updateReal(elapsedTime);
+		}
 	}
 }

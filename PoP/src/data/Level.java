@@ -1,5 +1,9 @@
 package data;
 
+import java.util.ArrayList;
+
+import entities.Door;
+
 public class Level {
 
 	private int numLevel;
@@ -90,6 +94,18 @@ public class Level {
 	 */
 	public void setRooms(Room[][] rooms) {
 		this.rooms = rooms;
+	}
+	
+	public ArrayList<Door> getDoors(){
+		ArrayList<Door> doors = new ArrayList<Door>();
+		for (int i = 0; i < rooms.length; i++) {
+			for (int j = 0; j < rooms[0].length; j++) {
+				if (rooms[i][j] != null) {
+					doors.addAll(rooms[i][j].getDoors());
+				}
+			}
+		}
+		return doors;
 	}
 	
 }

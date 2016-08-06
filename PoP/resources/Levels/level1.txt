@@ -20,7 +20,7 @@ room 2 7
 room 3 7
 -;-;-;-;-;-;-;-;-;-
 -;-;-;-;-;-;-;-;-;-
-rf lf b door(5,door_closing,0);rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b; rf lf b;rf lf b
+rf lf b door(9,door_closed,0);rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b; rf lf b;rf lf b
 -;-;-;-;-;-;-;-;-;-
 
 room 1 8

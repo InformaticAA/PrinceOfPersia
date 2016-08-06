@@ -45,6 +45,8 @@ public class Opener extends Entity {
 					(p.getBoundingBox().getMaxX() < this.getBoundingBox().getMinX())){
 				this.unpress();
 				p = null;
+			} else{
+				door.openDoor();
 			}
 		}
 	}
@@ -68,7 +70,7 @@ public class Opener extends Entity {
 	}
 	
 	public void openDoor(Player p){
-//		door.openDoor();
+		door.openDoor();
 		if(!isPressed){
 			this.p = p;
 			this.setCurrentAnimation("pressed", FRAME_DURATION);
@@ -94,5 +96,9 @@ public class Opener extends Entity {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public Door getDoor(){
+		return this.door;
 	}
 }

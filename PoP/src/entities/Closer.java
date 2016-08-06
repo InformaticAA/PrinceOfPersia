@@ -68,7 +68,7 @@ public class Closer extends Entity {
 	}
 	
 	public void closeDoor(Player p){
-//		door.closeDoor();
+		door.closeDoor();
 		if(!isPressed){
 			this.p = p;
 			this.setCurrentAnimation("pressed", FRAME_DURATION);
@@ -94,5 +94,9 @@ public class Closer extends Entity {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public Door getDoor(){
+		return this.door;
 	}
 }

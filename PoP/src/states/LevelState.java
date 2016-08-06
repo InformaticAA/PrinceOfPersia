@@ -591,8 +591,22 @@ public class LevelState extends State{
 					
 					
 					if(name.startsWith("Opener")){
+						if(((Opener) bgE).getDoor() == null){
+							for(Door d : doors){
+								if(d.getId() == ((Opener) bgE).getId()){
+									((Opener) bgE).setDoor(d);
+								}
+							}
+						}
 						((Opener) bgE).openDoor(player);
 					} else if(name.startsWith("Closer")){
+						if(((Closer) bgE).getDoor() == null){
+							for(Door d : doors){
+								if(d.getId() == ((Closer) bgE).getId()){
+									((Closer) bgE).setDoor(d);
+								}
+							}
+						}
 						((Closer) bgE).closeDoor(player);
 					}
 				}

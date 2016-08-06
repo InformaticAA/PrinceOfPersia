@@ -167,4 +167,10 @@ public class LooseFloor extends Entity {
 			}
 		}
 	}
+	
+	public boolean isLastFrameMoving(){
+		return (this.getCurrentAnimation().getId().equals("shaking") && 
+				this.getCurrentAnimation().getCurrentFrame() == 3 &&
+				this.getCurrentAnimation().isLastFrame());
+	}
 }

@@ -904,12 +904,7 @@ public class Player extends Character {
 						
 						}
 					} else if(down_pressed){
-						if (isCanClimbDown()) {
-							this.setCurrentAnimation("climbing down_" + orientation, FRAME_DURATION);
-						}
-						else {
-							this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
-						}
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 					}
 					else{
 						if(this.getOrientation().equals("left")){
@@ -1409,8 +1404,11 @@ public class Player extends Character {
 		case "scaling down_left":
 		case "scaling down_right":
 			
-			canClimb = false;
-
+			if (currentAnimation.isOver(false)) {
+				this.setCanClimb(false);
+				this.setCanClimbDown(false);
+			}
+			
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
@@ -2395,6 +2393,8 @@ public class Player extends Character {
 	}
 	
 	public void fall() {
+		System.out.println("FALL BITCH");
+		this.notJumping();
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
 		
 		if (orientation.equals("left")) {
@@ -2437,48 +2437,11 @@ public class Player extends Character {
 	public void collide(Entity wall) {
 		this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 		this.enableBoundingBox();
-		
-		// player corrects its distance from wall
-//		int bgLeft = (int) wall.getBoundingBox().getMinX();
-//		int bgRight = (int) wall.getBoundingBox().getMaxX();
-//		int pC = this.getCenter()[0];
-//		int pW2 = this.getCurrentAnimation().getImage().getWidth()/2;
-//		int gap = 10;
-//		
-//		if (this.getOrientation().equals("left")) {
-//			
-//			while ( ( pC - pW2 ) < ( bgRight + gap ) ) {
-//				this.move(1, 0);
-//				
-//				pC = this.getCenter()[0];
-//				pW2 = this.getCurrentAnimation().getImage().getWidth()/2;
-//			}
-//		}
-//		else if (this.getOrientation().equals("right")) {
-//			
-//			while ( ( pC + pW2 ) > (bgLeft - gap ) ) {
-//				this.move(-1, 0);
-//				
-//				pC = this.getCenter()[0];
-//				pW2 = this.getCurrentAnimation().getImage().getWidth()/2;
-//			}
-//		}
 	}
 	
 	public void collide_jump() {
 		this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
 		this.enableBoundingBox();
-		
-		int gap = 20;
-		
-		if (this.getOrientation().equals("left")) {
-			int newX = this.getX() + gap;
-			this.setX(newX);
-		}
-		else if (this.getOrientation().equals("right")) {
-			int newX = this.getX() - gap;
-			this.setX(newX);
-		}
 	}
 	
 	public boolean isColliding() {
@@ -2512,6 +2475,10 @@ public class Player extends Character {
 	 */
 	public boolean startsClimbing() {
 		return startsClimbing;
+	}
+	
+	public boolean isCanClimb() {
+		return canClimb;
 	}
 	
 	/**
@@ -2577,6 +2544,10 @@ public class Player extends Character {
 		this.cornerReached = cornerReached;
 	}
 
+	public boolean isGettingUp() {
+		return currentAnimation.getId().contains("crouching up");
+	}
+	
 	/**
 	 * 
 	 * @return true if the player is executing one of its

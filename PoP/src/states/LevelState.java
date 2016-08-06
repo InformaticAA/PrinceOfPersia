@@ -240,7 +240,11 @@ public class LevelState extends State{
 					player.setCanClimb(true);
 				}
 			}
-			else if ( !player.startsClimbing() ){
+			else if ( !player.startsClimbing() &&
+						(player.isClimbing()) &&
+						(player.getCornerToClimb() != null) ){
+				
+//				System.out.println("WE R IN");
 				
 				/* Normal climbing */
 				// No need to check for collisions
@@ -274,7 +278,7 @@ public class LevelState extends State{
 		}
 		else if ( player.isJumping() ) {
 			
-			System.out.println("JUMPING");
+//			System.out.println("JUMPING");
 			
 			/* Checks if the player can land on the floor */
 			floorPanel = checkFloorPanel();
@@ -289,13 +293,37 @@ public class LevelState extends State{
 			else if (wall != null) {
 				
 				// player has collided with a wall
-				player.collide_jump();
+//				player.collide_jump();
+				player.fall();
+				
+				// corrects the player position after wall collision
+				int wallxGap = 58;
+				int wallyGap = 36;
+				int[] wallCenter = wall.getCenter();
+				
+				//DEBUG
+				System.out.println("TIPO DE MURO: " + wall.getTypeOfEntity());
+				
+				if (wall.getTypeOfEntity().contains("face")){ //wallCenter[0] < playerCenter[0]) {
+
+					// left wall
+					System.out.println("RIGHT WALL FIX");
+					player.setX(wallCenter[0] + wallxGap);
+					player.setY(wallCenter[1] + wallyGap);
+				}
+				else if (wall.getTypeOfEntity().contains("left")){ //wallCenter[0] > playerCenter[0]) {
+					
+					//right wall
+					System.out.println("LEFT WALL FIX");
+					player.setX(wallCenter[0] - wallxGap);
+					player.setY(wallCenter[1] + wallyGap);
+				}
 			}
 			
 		}
 		else if ( player.isFalling() ) {
 			
-//			System.out.println("FALLING");
+			System.out.println("FALLING");
 			
 			/* Increases player's fall distance */
 			int prevFallDistance = player.getFallDistance();
@@ -351,7 +379,6 @@ public class LevelState extends State{
 			
 			if (!floorPanel && !looseFloor) {
 				player.fall();
-				player.notJumping();
 			}
 			
 		}
@@ -376,11 +403,6 @@ public class LevelState extends State{
 			if (cornerFloor != null && 
 					cornerFloor.getAnimations() != null) {
 				player.setGrounded(true);
-				
-				// DEBUG
-				int[] testCornerCenter = cornerFloor.getCenter();
-				System.out.println("TestCornerCenter: " + testCornerCenter[0] + ", " + testCornerCenter[1]);
-				// FIN DEBUG
 				
 				// Checks if player can climb down the corner
 				if (!player.isCornerPositionFixed() ) {
@@ -448,6 +470,23 @@ public class LevelState extends State{
 				
 				// player has collided with a wall
 				player.collide(wall);
+				
+				// corrects the player position after wall collision
+				int wallxGap = 40;
+				int[] wallCenter = wall.getCenter();
+				
+				if (wall.getTypeOfEntity().contains("face")) {
+
+					// left wall
+					System.out.println("WALKING RIGHT WALL FIX");
+					player.setX(wallCenter[0] + wallxGap);
+				}
+				else if (wall.getTypeOfEntity().contains("left")) {
+					
+					//right wall
+					System.out.println("WALKING LEFT WALL FIX");
+					player.setX(wallCenter[0] - (wallxGap/4) );
+				}
 			}
 		}
 	}
@@ -797,16 +836,14 @@ public class LevelState extends State{
 
 	/**
 	 * 
-	 * @return true if there is a corner that the player can reach
-	 * doing a vertical jump
+	 * @return true if there is a wall in front of the player
+	 * where he will collide
 	 */
 	private Entity checkWall() {
 		Entity wall = null;
-		int gap = 15;
+		int wallGap = 20;
 		
 		/* Obtains the square where the center point of the player is placed */
-		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
-		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
 		int[] playerCenter = player.getCenter();
 		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
 		
@@ -814,103 +851,78 @@ public class LevelState extends State{
 		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
 				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
 			
-			/* Checks if there is a panel floor type object in current square */
+			/* Checks if there is a wall type object in current square */
+			ArrayList<Entity> bgEntities = new ArrayList<Entity>();
+			
 			ArrayList<Entity> bEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getBackground();
 			
 			ArrayList<Entity> fEntities = currentRoom.getSquare(
 					playerSquare[0], playerSquare[1]).getForeground();
 			
-			ArrayList<Entity> bgEntities = new ArrayList<Entity>();
-			
 			bgEntities.addAll(bEntities);
 			bgEntities.addAll(fEntities);
+
+			if (playerSquare[1] > 0) {
+				
+				// Left square
+				ArrayList<Entity> bEntitiesLeft = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] - 1).getBackground();
+				
+				ArrayList<Entity> fEntitiesLeft = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] - 1).getForeground();
+				
+				bgEntities.addAll(bEntitiesLeft);
+				bgEntities.addAll(fEntitiesLeft);
+			}
+
+			if (playerSquare[1] < 9) {
 			
+				// Right square
+				ArrayList<Entity> bEntitiesRight = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] + 1).getBackground();
+				
+				ArrayList<Entity> fEntitiesRight = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] + 1).getForeground();
+	
+				bgEntities.addAll(bEntitiesRight);
+				bgEntities.addAll(fEntitiesRight);
+			}
+			
+			// Searches for wall type objects
 			for (Entity bgE : bgEntities) {
 				
 				if (bgE.getBoundingBox() != null) {
 					
-					int bgLeft = (int) bgE.getBoundingBox().getMinX();
-					int bgRight = (int) bgE.getBoundingBox().getMaxX();
-					int bgTop = (int) bgE.getBoundingBox().getMinY();
-					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
-					int bgWidth = bgE.getCurrentAnimation().getImage().getWidth();
-					
 					String name = bgE.getTypeOfEntity();
 					if ( name.startsWith("Wall_") ) {
 						
+						// wall detected nearby
 						int[] ec = bgE.getCenter();
-						int[] es = bgE.getSquare();
 						
-						if ( ((playerCenter[0] - bgRight) <= playerWidth2) ) {
-							
-							int newPlayerX = 0;
-							
-							if (player.getOrientation().equals("right")) {
-								
-								// wall is at player's right side and player is looking right
-								Square targetSquare = currentRoom.getSquare(playerSquare[0], playerSquare[1]);
-								int[] newCoords = targetSquare.getCenter(playerSquare[0], playerSquare[1] + 1);
-								newPlayerX = newCoords[0];
-							}
-							else {
-								/* Corrects the player's distance from the wall*/
-								newPlayerX = ec[0] + bgWidth/2 + gap;
-							}
-							player.setX(newPlayerX);
+						if ( Math.abs(ec[0] - playerCenter[0]) < wallGap) {
+
+							// player is close to the wall
 							wall = bgE;
 						}
+//						else if (ec[0] > playerCenter[0] &&
+//								(Math.abs(ec[0] - playerCenter[0]) < 2*wallGap) &&
+//								name.contains("face") ) {
+//
+//							// player has passed through the wall, must be fixed
+//							wall = bgE;
+//						}
+//						else if (ec[0] < playerCenter[0] &&
+//								(Math.abs(ec[0] - playerCenter[0]) < 2*wallGap) &&
+//								name.contains("left")) {
+//							
+//							// player has passed through the wall, must be fixed
+//							wall = bgE;
+//						}
 					}
 				}
 			}
-			
-			/* Checks if there is a panel floor type object in current square */
-			bEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getBackground();
-			
-			fEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getForeground();
-			
-			bgEntities.addAll(fEntities);
-			
-			for (Entity bgE : bgEntities) {
-				
-				if (bgE.getBoundingBox() != null) {
-					
-					int bgLeft = (int) bgE.getBoundingBox().getMinX();
-					int bgRight = (int) bgE.getBoundingBox().getMaxX();
-					int bgTop = (int) bgE.getBoundingBox().getMinY();
-					int bgBottom = (int) bgE.getBoundingBox().getMaxY();
-					int bgWidth = bgE.getCurrentAnimation().getImage().getWidth();
-					
-					String name = bgE.getTypeOfEntity();
-					if ( name.startsWith("Wall_") ) {
-						
-						int[] ec = bgE.getCenter();
-						
-						if ( ((playerCenter[0] - bgLeft) <= playerWidth2) ) {
-							
-							int newPlayerX = 0;
-							
-							if (player.getOrientation().equals("left")) {
-								
-								// wall is at player's right side and player is looking right
-								Square targetSquare = currentRoom.getSquare(playerSquare[0], playerSquare[1]);
-								int[] newCoords = targetSquare.getCenter(playerSquare[0], playerSquare[1]-1);
-								newPlayerX = newCoords[0] + 32;
-							}
-							else {
-								/* Corrects the player's distance from the wall*/
-								newPlayerX = ec[0] - gap/2;
-							}
-							player.setX(newPlayerX);
-							wall = bgE;
-						}
-					}
-				}
-			}
-		}
-		
+		}		
 		return wall;
 	}
 	

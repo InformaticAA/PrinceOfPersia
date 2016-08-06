@@ -10,6 +10,7 @@ import framework.Loader;
 public class Character extends Entity {
 
 	private int framesDebug = 0;
+	private boolean firstTime = true;
 	
 	/* Attributes */
 	protected int hp;
@@ -123,13 +124,13 @@ public class Character extends Entity {
 		if (currentAnimation.getId().contains("scaling") ||
 				currentAnimation.getId().contains("clipping") ||
 				currentAnimation.getId().contains("hanging") ||
-				currentAnimation.getId().contains("climbing") ||
-				currentAnimation.getId().contains("walking")) {
+				currentAnimation.getId().contains("jump") ||
+				!firstTime) {
 			
 			if (framesDebug == 0) {
-//				System.out.println(currentAnimation.getId() + ": "
-//									+ currentAnimation.getCurrentFrame()
-//									+ " -> (" + getX() + ", " + getY() + ")");
+				System.out.println(currentAnimation.getId() + ": "
+									+ currentAnimation.getCurrentFrame()
+									+ " -> (" + getX() + ", " + getY() + ")");
 			}
 			
 			if (framesDebug == 4) {
@@ -137,6 +138,7 @@ public class Character extends Entity {
 			}
 			
 			framesDebug++;
+			firstTime = false;
 		}
 		
 		/* Updates the position of the bounding box */

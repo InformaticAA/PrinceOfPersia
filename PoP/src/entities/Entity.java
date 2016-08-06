@@ -8,6 +8,7 @@ import java.util.Hashtable;
 
 import framework.Animation;
 import framework.Loader;
+import kuusisto.tinysound.Sound;
 
 public abstract class Entity {
 	
@@ -22,6 +23,7 @@ public abstract class Entity {
 	protected Rectangle boundingBox;
 	protected Color boundingBoxColor;
 	protected Loader loader;
+	protected String frameSound;
 	
 	public Entity(){
 		
@@ -35,6 +37,7 @@ public abstract class Entity {
 		currentAnimation = null;
 		boundingBox = null;
 		boundingBoxColor = Color.RED;
+		frameSound = "";
 	}
 	
 	public void update(long elapsedTime) {
@@ -44,6 +47,13 @@ public abstract class Entity {
 			System.out.println(this.getCurrentAnimation().getId() + "(" + this.getCurrentAnimation().getCurrentFrame() + ")" + " - " + this.x + " - " + this.y);
 		}
 		currentAnimation.update(elapsedTime);
+		if(this.currentAnimation.isLastFrame()){
+			int currentFrame = currentAnimation.getCurrentFrame();
+			String newSound = currentAnimation.getFrame(currentFrame).getSound();
+			if(!newSound.equals("")){
+				loader.getSound(newSound).play();
+			}
+		}
 	}
 	
 	/**

@@ -16,6 +16,7 @@ import data.Room;
 import data.Square;
 import entities.Base;
 import entities.Character;
+import entities.Closer;
 import entities.Corner;
 import entities.Door;
 import entities.DoorFrame;
@@ -23,6 +24,7 @@ import entities.Enemy;
 import entities.Entity;
 import entities.FloorPanel;
 import entities.LooseFloor;
+import entities.Opener;
 import entities.Pillar;
 import entities.Torch;
 import entities.Wall;
@@ -487,6 +489,20 @@ public class Loader {
 				background.add(newEntity);
 			} else if(entity.equals("loose")){
 				newEntity = new LooseFloor(px,py,52,0,this,"idle");
+				background.add(newEntity);
+			} else if(entity.startsWith("opener")){
+				Scanner openertype = new Scanner(entity.substring(7,entity.length()-1));
+				openertype.useDelimiter(",");
+				int id = openertype.nextInt();
+				openertype.close();
+				newEntity = new Opener(px,py,52,0,this,id);
+				background.add(newEntity);
+			} else if(entity.startsWith("closer")){
+				Scanner openertype = new Scanner(entity.substring(7,entity.length()-1));
+				openertype.useDelimiter(",");
+				int id = openertype.nextInt();
+				openertype.close();
+				newEntity = new Closer(px,py,52,0,this,id);
 				background.add(newEntity);
 			} else if(entity.equals("doorfr")){
 				newEntity = new DoorFrame(px,py,-12,-2,this,"door_frame_right");

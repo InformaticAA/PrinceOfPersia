@@ -116,6 +116,7 @@ public class VersusState extends State{
 				
 			}
 		} else{
+			
 		}
 		//checkCollisions(elapsedTime);
 	}

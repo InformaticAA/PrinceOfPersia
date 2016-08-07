@@ -1051,19 +1051,19 @@ public class LevelState extends State{
 						Corner newCorner = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol()));
 						Corner newCornerRight = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol() + 1));
 						if(newCorner == null && newCornerRight == null){
-							//Si no hay ninguna esquina -> se añade una derecha en la casilla de la izquierda y una izquierda en la casilla de la derecha
+							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
 							newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
 							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
-							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
-						} else if(newCorner.getTypeOfEntity().contains("left")){
+							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+						} else if(newCorner != null && newCorner.getTypeOfEntity().contains("left")){
 							//Si hay esquina con nombre left -> se quita de la casilla actual y se mete una left en la casilla derecha
 							currentRoom.deleteEntityBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
 							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
-							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
+							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
 						} else if(newCornerRight.getTypeOfEntity().contains("right")){
 							//Si hay una esquina con nombre right -> se quita de la casilla actual, y se mete una right en la casilla de la izq
-							currentRoom.deleteEntityBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+							currentRoom.deleteEntityBackground(newCornerRight, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
 							newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
 						}
@@ -1108,7 +1108,7 @@ public class LevelState extends State{
 			
 			for (Entity bgE : bEntities) {
 				String name = bgE.getTypeOfEntity();
-				if(name.startsWith("FloorPanel_normal_right") || name.startsWith("FloorPanel_broken_right")){
+				if(name.startsWith("FloorPanel_normal_left") || name.startsWith("FloorPanel_broken_right")){
 					int[] ec = bgE.getCenter();
 					if(loose.getCenter()[1] - ec[1] > -10 && loose.getCenter()[1] - ec[1] <= 10){
 						collision = true;	

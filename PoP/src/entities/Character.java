@@ -125,8 +125,8 @@ public class Character extends Entity {
 				currentAnimation.getId().contains("clipping") ||
 				currentAnimation.getId().contains("hanging") ||
 				currentAnimation.getId().contains("jump") ||
-				currentAnimation.getId().contains("walking a step") ||
-				!firstTime) {
+				currentAnimation.getId().contains("walking a step")){ //||
+//				!firstTime) {
 			
 			if (framesDebug == 0) {
 				System.out.println(currentAnimation.getId() + ": "

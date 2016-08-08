@@ -348,7 +348,7 @@ public class LevelState extends State{
 		}
 		else if ( player.isFalling() ) {
 			
-			System.out.println("FALLING");
+//			System.out.println("FALLING");
 			
 			/* Increases player's fall distance */
 			int prevFallDistance = player.getFallDistance();
@@ -477,51 +477,66 @@ public class LevelState extends State{
 						
 						player.setCanClimbDown(true);
 					}
-					else if (player.isWalking() &&
-							player.getOrientation().equals("right") &&
-							cornerFloor.getTypeOfEntity().contains("right") &&
-							Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) {
-					
-						// player is walking right, into a right corner
-						if (player.isForcedToStop()) {
-							
-							if (playerCenter[0] > cornerCenter[0]) {
-								player.setX(cornerCenter[0]);
-							}
-						}
-						else {
-							// player hasn't arrived yet to the corner edge
-							player.setForcedToStop(true);
-						}
-					}
-					else if (player.isWalking() && 
-							player.getOrientation().equals("left") &&
-							cornerFloor.getTypeOfEntity().contains("left ") &&
-							Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) {
-					
-						// player is walking left, into a left corner
-						if (player.isForcedToStop()) {
-							
-							if (playerCenter[0] < cornerCenter[0]) {
-								player.setX(cornerCenter[0]);
-							}
-						}
-						else {
-							// player hasn't arrived yet to the corner edge
-							player.setForcedToStop(true);
-						}
-					}
 					else {
 						
 						// player cannot climb down
 						player.setCanClimbDown(false);
+					}
+					
+//					System.out.println("walking: " + player.isWalkingAStep() +
+//							", orientation: " + player.getOrientation().equals("left") +
+//							", corner: " + cornerFloor.getTypeOfEntity().contains("left") +
+//							", distance: " + (Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) );
+					
+					// controls walking on the edge behaviour
+					if (player.isWalkingAStep() &&
+							player.getOrientation().equals("right") &&
+							cornerFloor.getTypeOfEntity().contains("right") &&
+							Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) {
+						
+						// player is walking right, into a right corner
+						if (player.isForcedToStop()) {
+							
+							System.out.println("VAMOH A CALMARNOH: " + cornerCenter[0] + " - " + playerCenter[0]);
+							
+							if ( (playerCenter[0] > cornerCenter[0] - 10) || player.isOnTheEdge()) {
+								System.out.println("ole: " + safeWalkingGap/8);
+								player.setX(cornerCenter[0] - safeWalkingGap/8 + player.getCurrentAnimation().getImage().getWidth()/2);
+								player.setOnTheEdge(true);
+							}
+						}
+						else {
+							// player hasn't arrived yet to the corner edge
+							player.setForcedToStop(true);
+						}
+					}
+					else if (player.isWalkingAStep() && 
+							player.getOrientation().equals("left") &&
+							cornerFloor.getTypeOfEntity().contains("left") &&
+							Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) {
+						
+						// player is walking left, into a left corner
+						if (player.isForcedToStop()) {
+
+							if ( (playerCenter[0] < cornerCenter[0] + 10) || player.isOnTheEdge()) {
+								
+//								System.out.println("STOPING PLAYER FROM FALLING OF THE EDGE: " + cornerCenter[0] + " - " + playerCenter[0]);
+								player.setX(cornerCenter[0] + safeWalkingGap/8);
+								player.setOnTheEdge(true);
+							}
+						}
+						else {
+							// player hasn't arrived yet to the corner edge
+							player.setForcedToStop(true);
+						}
 					}
 				}
 			}
 			else if (cornerFloor == null) {
 				
 				// There is nothing beneath the player, it falls
-				if (!player.isFalling()) {
+				if (!player.isFalling() && !player.isOnTheEdge()) {
+					System.out.println("NOT AGAIN!!!");
 					player.fall();
 				}
 			}
@@ -771,7 +786,7 @@ public class LevelState extends State{
 					else if (name.contains("right") &&
 							((bgTop - playerCenter[1]) <= playerHeight2) ) {
 						
-						System.out.println("ALTURA CORRECTA     " + " " + bgLeft + " - " +  playerCenter[0] + " - " + bgRight);
+//						System.out.println("ALTURA CORRECTA     " + " " + bgLeft + " - " +  playerCenter[0] + " - " + bgRight);
 						
 						// RIGHT CORNER
 						if ( (playerCenter[0] >= bgLeft) &&

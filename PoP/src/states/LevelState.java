@@ -434,24 +434,20 @@ public class LevelState extends State{
 				player.setGrounded(true);
 			}
 			
+			// Corner climbing behaviour
 			if (cornerFloor != null && 
 					cornerFloor.getAnimations() != null) {
+				
 				player.setGrounded(true);
 				
 				// Checks if player can climb down the corner
 				if (!player.isCornerPositionFixed() ) {
 					
 					int climbDownGap = 35;
+					int safeWalkingGap = 80;
 					
 					player.setCornerToClimb(cornerFloor);
 					int[] cornerCenter = cornerFloor.getCenter();
-					
-//					System.out.println(cornerCenter[0] + " - " + playerCenter[0] +
-//							" idle_left: " + player.getCurrentAnimation().getId().equals("idle_left") +
-//							" cornerRight: " + cornerFloor.getTypeOfEntity().contains("right") +
-//							" idle_right: " + player.getCurrentAnimation().getId().equals("idle_right") +
-//							" cornerLeft: " + cornerFloor.getTypeOfEntity().contains("left"));
-					
 					
 					if (Math.abs(cornerCenter[0] - playerCenter[0]) < climbDownGap &&
 							player.getCurrentAnimation().getId().equals("idle_left") &&
@@ -481,6 +477,40 @@ public class LevelState extends State{
 						
 						player.setCanClimbDown(true);
 					}
+					else if (player.isWalking() &&
+							player.getOrientation().equals("right") &&
+							cornerFloor.getTypeOfEntity().contains("right") &&
+							Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) {
+					
+						// player is walking right, into a right corner
+						if (player.isForcedToStop()) {
+							
+							if (playerCenter[0] > cornerCenter[0]) {
+								player.setX(cornerCenter[0]);
+							}
+						}
+						else {
+							// player hasn't arrived yet to the corner edge
+							player.setForcedToStop(true);
+						}
+					}
+					else if (player.isWalking() && 
+							player.getOrientation().equals("left") &&
+							cornerFloor.getTypeOfEntity().contains("left ") &&
+							Math.abs(cornerCenter[0] - playerCenter[0]) < safeWalkingGap) {
+					
+						// player is walking left, into a left corner
+						if (player.isForcedToStop()) {
+							
+							if (playerCenter[0] < cornerCenter[0]) {
+								player.setX(cornerCenter[0]);
+							}
+						}
+						else {
+							// player hasn't arrived yet to the corner edge
+							player.setForcedToStop(true);
+						}
+					}
 					else {
 						
 						// player cannot climb down
@@ -500,6 +530,7 @@ public class LevelState extends State{
 				player.setCanClimbDown(false);
 			}
 			
+			// Wall collision behaviour
 			if (wall != null) {
 				
 				// player has collided with a wall
@@ -522,7 +553,7 @@ public class LevelState extends State{
 					player.setX(wallCenter[0] - (wallxGap/4) );
 				}
 			}
-		}
+		}	// END GROUNDED
 	}
 	
 	/**

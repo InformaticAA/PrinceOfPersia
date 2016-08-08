@@ -771,6 +771,8 @@ public class LevelState extends State{
 					else if (name.contains("right") &&
 							((bgTop - playerCenter[1]) <= playerHeight2) ) {
 						
+						System.out.println("ALTURA CORRECTA     " + " " + bgLeft + " - " +  playerCenter[0] + " - " + bgRight);
+						
 						// RIGHT CORNER
 						if ( (playerCenter[0] >= bgLeft) &&
 								(playerCenter[0] <= bgRight) ) {
@@ -820,6 +822,9 @@ public class LevelState extends State{
 						loose.setActivated(true);
 						loose.setRoom1(currentRoom.getRow() + 1);
 						loose.setRoom2(currentRoom.getCol() + 1);
+						loose.setRow(playerSquare[0]);
+						loose.setCol(playerSquare[1]);
+						System.out.println("SQUARE[0] " + playerSquare[0] + " SQUARE[1] " + playerSquare[1]);;
 						toBeDeleted = loose;
 						falling_floor.add(loose);
 					}
@@ -1069,6 +1074,33 @@ public class LevelState extends State{
 				} else{
 					/* Didnt collided */
 					
+					if(loose.isLastFrameMoving()){
+						
+						System.out.println("AHORA CREARIAMOS ESQUINA");
+						
+						/* Create corners */
+						Corner newCorner = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol()));
+						Corner newCornerRight = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol() + 1));
+						if(newCorner == null && newCornerRight == null){
+							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
+							newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
+							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
+							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
+							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+						} else if(newCorner != null && newCorner.getTypeOfEntity().contains("left")){
+							//Si hay esquina con nombre left -> se quita de la casilla actual y se mete una left en la casilla derecha
+							currentRoom.deleteEntityBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
+							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
+							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+						} else if(newCornerRight.getTypeOfEntity().contains("right")){
+							//Si hay una esquina con nombre right -> se quita de la casilla actual, y se mete una right en la casilla de la izq
+							currentRoom.deleteEntityBackground(newCornerRight, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+							newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
+							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
+						}
+						
+					}
+					
 					if(loose.getY() > (400 + loose.getCurrentAnimation().getImage().getHeight())){
 						/* Changed room */
 						Room looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
@@ -1107,7 +1139,7 @@ public class LevelState extends State{
 			
 			for (Entity bgE : bEntities) {
 				String name = bgE.getTypeOfEntity();
-				if(name.startsWith("FloorPanel_normal_right") || name.startsWith("FloorPanel_broken_right")){
+				if(name.startsWith("FloorPanel_normal_left") || name.startsWith("FloorPanel_broken_right")){
 					int[] ec = bgE.getCenter();
 					if(loose.getCenter()[1] - ec[1] > -10 && loose.getCenter()[1] - ec[1] <= 10){
 						collision = true;	
@@ -1123,5 +1155,26 @@ public class LevelState extends State{
 		for(Door d : doors){
 			d.updateReal(elapsedTime);
 		}
+	}
+	
+	private Corner returnCorner(Square looseSquare){
+		Corner toBeReturned = null;
+		
+		ArrayList<Entity> bg = looseSquare.getBackground();
+		for (Entity bgE : bg) {
+			if(bgE.getTypeOfEntity().startsWith("Corner")){
+				toBeReturned = (Corner)bgE;
+			}
+		}
+		
+		return toBeReturned;
+	}
+	
+	private int getPX(int col){
+		return 64 + col * 64;
+	}
+	
+	private int getPY(int row){
+		return (int)(6 + row * 126);
 	}
 }

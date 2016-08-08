@@ -183,8 +183,13 @@ public class Room {
 		this.characters = characters;
 	}
 	
+	public void deleteEntityBackground(Entity entity, Square square){
+		background.remove(entity);
+		square.getBackground().remove(entity);
+	}
+	
 	public void deleteEntityBackground(Entity entity){
-		System.out.println(background.remove(entity));
+		background.remove(entity);
 	}
 	
 	public void insertAfterEntity(Entity toBeInserted, Entity after){
@@ -194,6 +199,11 @@ public class Room {
 	
 	public void addToBackground(Entity toBeAdded){
 		background.add(toBeAdded);
+	}
+	
+	public void addToBackground(Entity toBeAdded, Square square){
+		background.add(0,toBeAdded);
+		square.getBackground().add(0,toBeAdded);
 	}
 	
 	public ArrayList<Door> getDoors(){

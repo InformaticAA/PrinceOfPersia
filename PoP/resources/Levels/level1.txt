@@ -14,7 +14,7 @@ cs d2(2,0.5) d2(3,0.2) csb;cs d2(2,0.5) d2(3,0.4) csb;cs d2(2,0.4,mark(3)) d1(3,
 room 2 7
 -;-;-;-;-;-;-;-;-;-
 -;-;-;-;-;-;-;-;-;-
--;-;-;-;-;-;-;-;-;-
+rf lf b door(9,door_closed,0);rf lf b;rf loose;loose;loose;loose;lf b;rf lf b; rf lf b;rf lf b
 -;-;-;-;-;-;-;-;-;-
 
 room 3 7

@@ -89,14 +89,40 @@ public class Game extends JPanel implements Runnable{
 		long elapsed;
 		long wait;
 		
+		// debug
+		long debugElapsed;
+		long max = 0;
+		long min = Long.MAX_VALUE;
+		long acumulado = 0;
+		long media = 0;
+		long numSteps = 0;
+		long numSlowSteps = 0;
+		
+		long updateTime = 0;
+		long startDraw = 0;
+		long drawTime = 0;
+		long startDrawToScreen = 0;
+		long drawToScreenTime = 0;
+		// fin debug
+		
 		//Game Loop Starting
 		while(running){
 			
 			start =  System.nanoTime();
 			
 			update(targetTime);
+			
+			updateTime = (System.nanoTime() - start) / 1000000;
+			startDraw = System.nanoTime();
+			
 			draw();
+			
+			drawTime = (System.nanoTime() - startDraw) / 1000000;
+			startDrawToScreen = System.nanoTime();
+			
 			drawToScreen();
+			
+			drawToScreenTime = (System.nanoTime() - startDrawToScreen) / 1000000;
 			
 			elapsed = System.nanoTime() - start;
 			
@@ -109,7 +135,37 @@ public class Game extends JPanel implements Runnable{
 					e.printStackTrace();
 				}
 			} else{
+				numSlowSteps++;
 //				System.out.println("Too slow");
+			}
+			
+			debugElapsed = elapsed / 1000000;
+			
+			if (debugElapsed > max) {
+				max = debugElapsed;
+			}
+			else if (debugElapsed < min) {
+				min = debugElapsed;
+			}
+			acumulado = acumulado + debugElapsed;
+			numSteps++;
+			media = acumulado/numSteps;
+			
+			
+			if (numSteps % 50 == 0) {
+				System.out.println("loop: " + debugElapsed + 
+						" (" +
+						"update: " + updateTime + 
+						", draw: " + drawTime +
+						", drawToScreen: " + drawToScreenTime +
+						")" + 
+						" / " + targetTime + "ms");
+
+//				System.out.println("loop: " + debugElapsed + "/" + targetTime + "ms" +
+//									", -> max/min: " + max + "/" + min +
+//									", -> media: " + media +
+//									", -> tooSlow: " + numSlowSteps + "/" + numSteps + "(" + ((numSlowSteps/numSteps)*100) + "%)");
+
 			}
 		}
 	}

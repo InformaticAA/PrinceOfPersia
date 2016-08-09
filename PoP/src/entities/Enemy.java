@@ -124,7 +124,8 @@ public class Enemy extends Character {
 		}
 		this.moveCharacter();
 		this.moveSword();
-		for(int i = 0; i < this.maxHp; i++){
+		int i = 0;
+		for(i = 0; i < this.maxHp; i++){
 			if(i < this.hp){
 				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_full");
 				this.life[i].setVisible(true);
@@ -132,6 +133,7 @@ public class Enemy extends Character {
 				this.life[i] = new Life(Game.WIDTH - (10 + i*16), Game.HEIGHT - 5, 0, 0, loader, "guard_" + colour + "_empty");
 				this.life[i].setVisible(true);
 			}
+			
 		}
 //		System.out.println(this.currentAnimation.getId() + " (" + this.currentAnimation.getCurrentFrame() + ")  Vel: " + this.getxSpeed());
 	}

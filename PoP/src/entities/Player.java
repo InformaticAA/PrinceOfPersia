@@ -38,11 +38,11 @@ public class Player extends Character {
 	private boolean startsClimbing;
 	private boolean cornerPositionFixed;
 	private boolean hanged;
-	
+	private boolean forcedToStop;
+	private boolean onTheEdge;
 	private int fallDistance;
 	
-	private boolean enemySaw;
-	
+	private boolean enemySaw;	
 	private boolean combatStepRight;
 	private boolean combatStepLeft;
 	private boolean combatAttack;
@@ -82,6 +82,8 @@ public class Player extends Character {
 		this.startsClimbing = false;
 		this.cornerPositionFixed = false;
 		this.hanged = false;
+		this.forcedToStop = false;
+		this.onTheEdge = false;
 		this.fallDistance = 0;
 		
 		this.enemySaw = false;
@@ -890,6 +892,11 @@ public class Player extends Character {
 					if(changed_position){
 						changed_position = false;
 					} else if(down_pressed){
+						
+						// cancels edge settings
+						this.setForcedToStop(false);
+						this.setOnTheEdge(false);
+						
 						if (isCanClimbDown()) {
 							this.setCurrentAnimation("climbing down_" + orientation, FRAME_DURATION);
 						}
@@ -903,6 +910,11 @@ public class Player extends Character {
 				break;
 				
 			case JUMP:
+				
+				// cancels edge settings
+				this.setForcedToStop(false);
+				this.setOnTheEdge(false);
+				
 				if(!enemySaw || !wantCombat){
 					if(right_pressed || left_pressed){
 						if(right_pressed && this.currentAnimation.equals("right")){
@@ -926,6 +938,11 @@ public class Player extends Character {
 				if(!enemySaw || !wantCombat){
 					if(changed_position){
 						changed_position = false;
+						
+						// cancels edge settings
+						this.setForcedToStop(false);
+						this.setOnTheEdge(false);
+						
 						this.setOrientation(newOrientation);
 						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
 					} else if(shift_pressed){
@@ -935,8 +952,19 @@ public class Player extends Character {
 							} else{
 	
 							}
-							this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
-							canMakeStep = false;
+							
+							if (this.isOnTheEdge()) {
+
+								// player has arrive at the edge
+								System.out.println("IS THIS RIGHT?????");
+								this.fall();
+							}
+							else {
+								
+								// player walks normally
+								this.setCurrentAnimation("walking a step_" + orientation, FRAME_DURATION);
+								canMakeStep = false;
+							}
 						} else{
 						
 						}
@@ -2395,7 +2423,7 @@ public class Player extends Character {
 				break;
 			}
 			break;
-		
+					
 		default:
 			System.out.println("ANIMATION NOT RECOGNIZED");
 			break;
@@ -2424,8 +2452,12 @@ public class Player extends Character {
 	}
 	
 	public void fall() {
-		System.out.println("FALL BITCH");
+		
+		// corrects multiple condition values
 		this.notJumping();
+		this.setForcedToStop(false);
+		this.setOnTheEdge(false);
+		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
 		
 		if (orientation.equals("left")) {
@@ -2649,16 +2681,20 @@ public class Player extends Character {
 		}
 		
 		/* Moves the character and its bounding box */
-//		System.out.println("xSpeed: " + xSpeed + ", yFrameOffset: " + yFrameOffset);
-		setX(x + xSpeed + xFrameOffset);
-		setY(y + ySpeed + yFrameOffset);
+		if (!this.isBlocked()) {
+			setX(x + xSpeed + xFrameOffset);
+			setY(y + ySpeed + yFrameOffset);
+			boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
+		}
+		else {
+			System.out.println("WE'RE ON THE EDGE, WE CAAANT MOOOVE");
+			System.out.println("xSpeed: " + xSpeed + ", yFrameOffset: " + yFrameOffset);
+		}
 		
 		/* Play music */
 		if(!sound.equals("")){
 			loader.getSound(sound).play();;
 		}
-		
-		boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
 	}
 	
 	public void isEnemySaw(boolean isSaw){
@@ -2687,6 +2723,42 @@ public class Player extends Character {
 	public boolean isBlocking(){
 		
 		return this.getCurrentAnimation().getId().startsWith("sword defense");
+	}
+	
+	/**
+	 * @return the forcedToStop
+	 */
+	public boolean isForcedToStop() {
+		return forcedToStop;
+	}
+
+	/**
+	 * @param forcedToStop the forcedToStop to set
+	 */
+	public void setForcedToStop(boolean forcedToStop) {
+		this.forcedToStop = forcedToStop;
+	}
+	
+	/**
+	 * @return the onTheEdge
+	 */
+	public boolean isOnTheEdge() {
+		return onTheEdge;
+	}
+
+	/**
+	 * @param onTheEdge the onTheEdge to set
+	 */
+	public void setOnTheEdge(boolean onTheEdge) {
+		this.onTheEdge = onTheEdge;
+	}
+	
+	public boolean isBlocked() {
+		return this.isWalkingAStep() && this.isOnTheEdge();
+	}
+	
+	public boolean isWalkingAStep() {
+		return this.getCurrentAnimation().getId().startsWith("walking a step");
 	}
 	
 	public boolean isWalking(){

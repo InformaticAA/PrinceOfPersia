@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import data.Level;
@@ -226,9 +227,9 @@ public class VersusState extends State{
 	private void checkCollisions(long elapsedTime) {
 		
 		/* Checks for collisions in the currentRoom */
-		ArrayList<Entity> bgEntities = currentRoom.getBackground();
-		ArrayList<Character> characters = currentRoom.getCharacters();
-		ArrayList<Entity> fgEntities = currentRoom.getForeground();
+		List<Entity> bgEntities = currentRoom.getBackground();
+		List<Character> characters = currentRoom.getCharacters();
+		List<Entity> fgEntities = currentRoom.getForeground();
 		
 		for (Character c : characters) {
 			

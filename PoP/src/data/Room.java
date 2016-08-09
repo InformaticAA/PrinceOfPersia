@@ -1,7 +1,8 @@
 package data;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import entities.Character;
 import entities.Door;
@@ -14,17 +15,17 @@ public class Room {
 	private int row;
 	private int col;
 	private Square[][] grid;
-	private ArrayList<Entity> background;
-	private ArrayList<Entity> foreground;
-	private ArrayList<Character> characters;
+	private List<Entity> background;
+	private List<Entity> foreground;
+	private List<Character> characters;
 	
 	public Room(int row, int col) {
 		this.row = row;
 		this.col = col;
 		this.grid = new Square[rows][cols];
-		this.background = new ArrayList<Entity>();
-		this.foreground = new ArrayList<Entity>();
-		this.characters = new ArrayList<Character>();
+		this.background = new LinkedList<Entity>();
+		this.foreground = new LinkedList<Entity>();
+		this.characters = new LinkedList<Character>();
 	}
 	
 	/**
@@ -125,15 +126,15 @@ public class Room {
 		this.grid = grid;
 	}
 	
-	public void addBackground(ArrayList<Entity> newEntities){
+	public void addBackground(List<Entity> newEntities){
 		this.background.addAll(newEntities);
 	}
 	
-	public void addForeground(ArrayList<Entity> newEntities){
+	public void addForeground(List<Entity> newEntities){
 		this.foreground.addAll(newEntities);
 	}
 	
-	public void addCharacters(ArrayList<Character> newCharacters){
+	public void addCharacters(List<Character> newCharacters){
 		this.characters.addAll(newCharacters);
 	}
 	
@@ -144,42 +145,42 @@ public class Room {
 	/**
 	 * @return the background
 	 */
-	public ArrayList<Entity> getBackground() {
+	public List<Entity> getBackground() {
 		return background;
 	}
 
 	/**
 	 * @param background the background to set
 	 */
-	public void setBackground(ArrayList<Entity> background) {
+	public void setBackground(LinkedList<Entity> background) {
 		this.background = background;
 	}
 
 	/**
 	 * @return the foreground
 	 */
-	public ArrayList<Entity> getForeground() {
+	public List<Entity> getForeground() {
 		return foreground;
 	}
 
 	/**
 	 * @param foreground the foreground to set
 	 */
-	public void setForeground(ArrayList<Entity> foreground) {
+	public void setForeground(LinkedList<Entity> foreground) {
 		this.foreground = foreground;
 	}
 
 	/**
 	 * @return the characters
 	 */
-	public ArrayList<Character> getCharacters() {
+	public List<Character> getCharacters() {
 		return characters;
 	}
 
 	/**
 	 * @param characters
 	 */
-	public void setCharacters(ArrayList<Character> characters) {
+	public void setCharacters(List<Character> characters) {
 		this.characters = characters;
 	}
 	
@@ -206,9 +207,9 @@ public class Room {
 		square.getBackground().add(0,toBeAdded);
 	}
 	
-	public ArrayList<Door> getDoors(){
-		ArrayList<Door> doors = new ArrayList<Door>();
-		ArrayList<Entity> bEntities = this.getBackground();
+	public List<Door> getDoors(){
+		List<Door> doors = new LinkedList<Door>();
+		List<Entity> bEntities = this.getBackground();
 		
 		for(Entity bgE : bEntities){
 			if(bgE.getTypeOfEntity().equals("Door")){

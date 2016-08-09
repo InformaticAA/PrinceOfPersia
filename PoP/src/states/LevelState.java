@@ -311,11 +311,12 @@ public class LevelState extends State{
 			wall = checkWall();
 			
 			if (floorPanel || looseFloor) {
-
+				
 				// player lands the jump
 				player.setGrounded(true);
 			}
-			else if (wall != null) {
+			
+			if (wall != null) {
 				
 				// player has collided with a wall
 //				player.collide_jump();

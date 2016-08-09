@@ -26,6 +26,8 @@ import entities.FloorPanel;
 import entities.LooseFloor;
 import entities.Opener;
 import entities.Pillar;
+import entities.Spike;
+import entities.SpikeFloor;
 import entities.Torch;
 import entities.Wall;
 import kuusisto.tinysound.Sound;
@@ -490,6 +492,13 @@ public class Loader {
 			} else if(entity.equals("loose")){
 				newEntity = new LooseFloor(px,py,52,0,this,"idle");
 				background.add(newEntity);
+			} else if(entity.equals("spike")){
+				Spike spikeBackground = new Spike(px,py,52,0,this,"spikes_background");
+				Spike spikeForeground = new Spike(px,py,52,0,this,"spikes_front");
+				newEntity = new SpikeFloor(px,py,52,0,this,spikeBackground,spikeForeground);
+				background.add(newEntity);
+				background.add(((SpikeFloor)newEntity).getSpike_background());
+				foreground.add(((SpikeFloor)newEntity).getSpike_foreground());
 			} else if(entity.startsWith("opener")){
 				Scanner openertype = new Scanner(entity.substring(7,entity.length()-1));
 				openertype.useDelimiter(",");

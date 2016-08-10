@@ -220,4 +220,8 @@ public class Room {
 		return doors;
 	}
 	
+	public void deleteCharacter(Entity character){
+		this.characters.remove(character);
+	}
+	
 }

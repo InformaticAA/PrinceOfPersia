@@ -129,9 +129,9 @@ public class Character extends Entity {
 //				!firstTime) {
 			
 			if (framesDebug == 0) {
-				System.out.println(currentAnimation.getId() + ": "
-									+ currentAnimation.getCurrentFrame()
-									+ " -> (" + getX() + ", " + getY() + ")");
+//				System.out.println(currentAnimation.getId() + ": "
+//									+ currentAnimation.getCurrentFrame()
+//									+ " -> (" + getX() + ", " + getY() + ")");
 			}
 			
 			if (framesDebug == 4) {

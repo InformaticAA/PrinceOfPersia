@@ -149,6 +149,7 @@ public class LevelState extends State{
 		checkPlayerCollisions(elapsedTime);
 		updateFallingFloor(elapsedTime);
 		updateDoors(elapsedTime);
+		checkPlayerSquare();
 	}
 
 	@Override
@@ -1215,5 +1216,52 @@ public class LevelState extends State{
 	
 	private int getPY(int row){
 		return (int)(6 + row * 126);
+	}
+	
+	public void checkPlayerSquare(){
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		//System.out.println("Casilla " + playerSquare[0] + " - " +  playerSquare[1]);
+		
+		if (!(playerSquare[0] > 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9)) {
+			
+			if(playerSquare[0] <= 0){
+				//System.out.println("Arriba");
+				/* Arriba */
+				
+				//TODO: SOLVE
+				currentRoom.deleteCharacter(player);
+				Room newRoom = currentLevel.getRoom(currentRoom.getRow(), currentRoom.getCol() + 1);
+				newRoom.addCharacter(player);
+				player.setY(400);
+				currentRoom = newRoom;
+			} else if(playerSquare[0] > 3){
+				//System.out.println("Abajo");
+				/* Abajo */
+				currentRoom.deleteCharacter(player);
+				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
+				newRoom.addCharacter(player);
+				player.setY(40);
+				currentRoom = newRoom;
+			} else if(playerSquare[1] < 0){
+				//System.out.println("Izquierda");
+				/* Izquierda */
+				currentRoom.deleteCharacter(player);
+				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol());
+				newRoom.addCharacter(player);
+				player.setX(620);
+				currentRoom = newRoom;
+			} else if(playerSquare[1] > 9){
+				//System.out.println("Derecha");
+				/* Derecha */
+				currentRoom.deleteCharacter(player);
+				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol() + 2);
+				newRoom.addCharacter(player);
+				player.setX(20);
+				currentRoom = newRoom;
+			}
+		}
 	}
 }

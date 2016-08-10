@@ -78,8 +78,8 @@ public class Character extends Entity {
 			
 			if (currentAnimation.getId().contains("turning") || 
 					currentAnimation.getId().contains("running")) {
-				System.out.println(newxSpeed + " - " + newySpeed + " - " +
-									newxFrameOffset + " - " + newyFrameOffset);
+//				System.out.println(newxSpeed + " - " + newySpeed + " - " +
+//									newxFrameOffset + " - " + newyFrameOffset);
 			}
 			
 			if (newxSpeed != 0 || newySpeed != 0 ||
@@ -127,17 +127,17 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("scaling") ||
-				currentAnimation.getId().contains("clipping") ||
-				currentAnimation.getId().contains("hanging") ||
-				currentAnimation.getId().contains("jump") ||
-				currentAnimation.getId().contains("testAnimHere") ){//||
-//				!firstTime) {
+		if (currentAnimation.getId().contains("scaling down") ||
+//				currentAnimation.getId().contains("clipping") ||
+//				currentAnimation.getId().contains("hanging") ||
+//				currentAnimation.getId().contains("jump") ||
+//				currentAnimation.getId().contains("testAnimHere") ){//||
+				!firstTime) {
 			
 			if (framesDebug == 0) {
-//				System.out.println(currentAnimation.getId() + ": "
-//									+ currentAnimation.getCurrentFrame()
-//									+ " -> (" + getX() + ", " + getY() + ")");
+				System.out.println(currentAnimation.getId() + ": "
+									+ currentAnimation.getCurrentFrame()
+									+ " -> (" + getX() + ", " + getY() + ")");
 			}
 			
 			if (framesDebug == 4) {

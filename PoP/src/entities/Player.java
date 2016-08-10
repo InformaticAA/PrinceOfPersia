@@ -26,6 +26,7 @@ public class Player extends Character {
 	
 	private PlayerState currentState;
 	private Entity cornerToClimb;
+	private Entity cornerToClimbDown;
 	private boolean cornerReached;
 	
 	private boolean changed_position;
@@ -354,13 +355,6 @@ public class Player extends Character {
 			
 		case "climbing down_left":
 		case "climbing down_right":
-			
-			// resets climb down condition once the animation is over
-			// so the player cannot climb down anywhere
-			if (currentAnimation.isOver(false)) {
-				System.out.println("CLIMBED DOWN");
-				this.setCanClimbDown(false);
-			}
 			
 			switch(currentState){
 			case IDLE:
@@ -947,16 +941,9 @@ public class Player extends Character {
 						this.setCurrentAnimation("turning_" + orientation, FRAME_DURATION);
 					} else if(shift_pressed){
 						if(canMakeStep){
-							if(this.getOrientation().equals("left")){
-	
-							} else{
-	
-							}
-							
 							if (this.isOnTheEdge()) {
 
 								// player has arrive at the edge
-								System.out.println("IS THIS RIGHT?????");
 								this.fall();
 							}
 							else {
@@ -972,12 +959,14 @@ public class Player extends Character {
 						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 					}
 					else{
-						if(this.getOrientation().equals("left")){
-	
-						} else{
-	
+						if (this.isOnTheEdge()) {
+
+							// player has arrive at the edge
+							this.fall();
 						}
-						this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
+						else {
+							this.setCurrentAnimation("running start_" + orientation, FRAME_DURATION);
+						}
 					}
 				} else{
 					this.currentState = PlayerState.COMBAT;
@@ -989,7 +978,6 @@ public class Player extends Character {
 				break;
 				
 			case COMBAT:
-				//this.setmovespeed(0);
 				this.setCurrentAnimation("taking sword out_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -1482,6 +1470,7 @@ public class Player extends Character {
 			if (currentAnimation.isOver(false)) {
 				this.setCanClimb(false);
 				this.setCanClimbDown(false);
+				this.setCornerToClimb(null);
 			}
 			
 			switch(currentState){
@@ -2475,6 +2464,8 @@ public class Player extends Character {
 		this.notJumping();
 		this.setForcedToStop(false);
 		this.setOnTheEdge(false);
+		this.setCornerToClimb(null);
+		this.setCornerToClimbDown(null);
 		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
 		
@@ -2609,6 +2600,20 @@ public class Player extends Character {
 	 */
 	public void setCornerToClimb(Entity cornerToClimb) {
 		this.cornerToClimb = cornerToClimb;
+	}
+
+	/**
+	 * @return the cornerToClimbDown
+	 */
+	public Entity getCornerToClimbDown() {
+		return cornerToClimbDown;
+	}
+
+	/**
+	 * @param cornerToClimbDown the cornerToClimbDown to set
+	 */
+	public void setCornerToClimbDown(Entity cornerToClimbDown) {
+		this.cornerToClimbDown = cornerToClimbDown;
 	}
 
 	/**

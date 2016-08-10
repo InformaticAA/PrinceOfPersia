@@ -85,7 +85,7 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 			
-			player = new Player(280,100,loader, 3, "left");
+			player = new Player(500,100,loader, 3, "left");
 			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			

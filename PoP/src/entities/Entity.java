@@ -43,9 +43,9 @@ public abstract class Entity {
 	public void update(long elapsedTime) {
 		
 		/* Updates animation */
-//		if(this.typeOfEntity.contains("Player") && (this.currentAnimation.getId().startsWith("running") || this.currentAnimation.getId().startsWith("died") || this.currentAnimation.getId().startsWith("attack"))){
+		if(this.typeOfEntity.contains("Player") && (this.currentAnimation.getId().startsWith("running") || this.currentAnimation.getId().startsWith("died") || this.currentAnimation.getId().startsWith("attack"))){
 //			System.out.println(this.getCurrentAnimation().getId() + "(" + this.getCurrentAnimation().getCurrentFrame() + ")" + " - " + this.x + " - " + this.y);
-//		}
+		}
 		currentAnimation.update(elapsedTime);
 		if(this.currentAnimation.isLastFrame()){
 			int currentFrame = currentAnimation.getCurrentFrame();

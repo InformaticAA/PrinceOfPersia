@@ -80,6 +80,7 @@ public class Character extends Entity {
 					xFrameOffset != 0 || yFrameOffset != 0) {
 				
 				if (currentAnimation.isLastFrame()) {
+					System.out.println("	- MOVING: "+ currentAnimation.getId() + " - " + currentAnimation.getCurrentFrame());
 					xSpeed = newxSpeed;
 					ySpeed = newySpeed;
 					
@@ -125,8 +126,8 @@ public class Character extends Entity {
 				currentAnimation.getId().contains("clipping") ||
 				currentAnimation.getId().contains("hanging") ||
 				currentAnimation.getId().contains("jump") ||
-				currentAnimation.getId().contains("running")){ //||
-//				!firstTime) {
+				currentAnimation.getId().contains("turn running") ||
+				!firstTime) {
 			
 			if (framesDebug == 0) {
 //				System.out.println(currentAnimation.getId() + ": "

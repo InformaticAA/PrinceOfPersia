@@ -549,9 +549,8 @@ public class LevelState extends State{
 			
 			// Wall collision behaviour
 			if (wall != null) {
-				
+
 				// player has collided with a wall
-				player.collide(wall);
 				
 				// corrects the player position after wall collision
 				int wallxGap = 40;
@@ -561,12 +560,16 @@ public class LevelState extends State{
 
 					// left wall
 					//system.out.println("WALKING RIGHT WALL FIX");
+					player.setOrientation("left");
+					player.collide(wall);
 					player.setX(wallCenter[0] + wallxGap);
 				}
 				else if (wall.getTypeOfEntity().contains("left")) {
 					
 					//right wall
 					//system.out.println("WALKING LEFT WALL FIX");
+					player.setOrientation("right");
+					player.collide(wall);
 					player.setX(wallCenter[0] - (wallxGap/4) );
 				}
 			}

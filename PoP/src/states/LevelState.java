@@ -23,6 +23,7 @@ import entities.Interface;
 import entities.LooseFloor;
 import entities.Opener;
 import entities.Player;
+import entities.SpikeFloor;
 import framework.Loader;
 import framework.Writter;
 import input.Key;
@@ -622,7 +623,8 @@ public class LevelState extends State{
 				String name = bgE.getTypeOfEntity();
 				if ( name.startsWith("FloorPanel_") ||
 					(name.startsWith("Pillar_") && !name.contains("shadow")) || 
-					name.startsWith("Opener") || name.startsWith("Closer")) {
+					name.startsWith("Opener") || name.startsWith("Closer") || 
+					name.startsWith("SpikeFloor")){
 					
 					int bgLeft = (int) bgE.getBoundingBox().getMinX();
 					int bgRight = (int) bgE.getBoundingBox().getMaxX();
@@ -698,6 +700,23 @@ public class LevelState extends State{
 							}
 						}
 						((Closer) bgE).closeDoor(player);
+					}
+					
+					if(name.startsWith("SpikeFloor")){
+						if(!((SpikeFloor) bgE).isActivated()){
+							((SpikeFloor) bgE).activate(player);
+							if(player.getCurrentAnimation().getId().startsWith("running") && !player.isJumping()){
+								bgRight = (int) bgE.getBoundingBox().getMaxX();
+								bgTop = (int) bgE.getBoundingBox().getMaxY();
+								if(player.getCurrentAnimation().equals("right")){
+									player.setX(bgRight - 16);
+								} else{
+									player.setX(bgRight - 32);
+								}
+								player.setY(bgTop - 16);
+								player.setSpiked();
+							}
+						}
 					}
 				}
 				else if (name.startsWith("Corner_")) {

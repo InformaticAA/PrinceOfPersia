@@ -135,8 +135,8 @@ public class Game extends JPanel implements Runnable{
 					e.printStackTrace();
 				}
 			} else{
-				numSlowSteps++;
-//				System.out.println("Too slow");
+//				numSlowSteps++;
+				System.out.println("Too slow");
 			}
 			
 //			debugElapsed = elapsed / 1000000;

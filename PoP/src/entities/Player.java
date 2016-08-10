@@ -293,8 +293,8 @@ public class Player extends Character {
 					&& this.getOrientation().equals("right") && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
-			right_pressed = false;
-			combatStepRight = false;
+//			right_pressed = false;
+//			combatStepRight = false;
 			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
 			if(currentState != PlayerState.JUMP && currentState != PlayerState.COMBAT 
@@ -2255,59 +2255,24 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				if(currentAnimation.isOver(false)){
-					if(this.getOrientation().equals("left")){
-
-					} else{
-
-					}
 					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				if(currentAnimation.isOver(false)){
-					if(this.getOrientation().equals("left")){
-						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-					} else{
-						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
-					}
+					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
-				if(this.getOrientation().equals("left")){
-					
-				} else{
-					
-				}
 				if(currentAnimation.isOver(false)){
-					if(this.getOrientation().equals("left")){
-						
-					} else{
-					
-					}
-					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
-					
+					this.setCurrentAnimation("turning to running_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -2316,6 +2281,36 @@ public class Player extends Character {
 				break;
 			}
 			break;
+			
+		case "turning to running_left":
+		case "turning to running_right":
+			
+			switch(currentState) {
+			case IDLE:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+				}
+				break;
+			
+			case JUMP:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+				}
+				break;
+			
+			case MOVE:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+				}
+				break;
+			
+			case COLLIDED:
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+			
+			default:
+				break;
+			}
 			
 		case "turning_left":
 		case "turning_right":

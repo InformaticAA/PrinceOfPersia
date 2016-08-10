@@ -293,8 +293,8 @@ public class Player extends Character {
 					&& this.getOrientation().equals("right") && this.currentState != PlayerState.DIED){
 				this.currentState = PlayerState.IDLE;
 			}
-//			right_pressed = false;
-//			combatStepRight = false;
+			right_pressed = false;
+			combatStepRight = false;
 			
 		} else if(key_released == keys_mapped.get(Key.LEFT)){
 			if(currentState != PlayerState.JUMP && currentState != PlayerState.COMBAT 
@@ -1413,7 +1413,16 @@ public class Player extends Character {
 			
 		case "running_left":
 		case "running_right":
-
+			
+			
+//			if (currentAnimation.getId().equals("running_left")) {
+//				this.setCurrentAnimation("turn running_right", FRAME_DURATION);
+//			}
+//			else if (currentAnimation.getId().equals("running_right")) {
+//				this.setCurrentAnimation("turn running_left", FRAME_DURATION);
+//			}
+//			else {
+				
 			switch(currentState){
 			case IDLE:
 				this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
@@ -1465,6 +1474,7 @@ public class Player extends Character {
 				break;
 			}
 			break;
+//			}
 			
 		case "scaling down_left":
 		case "scaling down_right":
@@ -2253,6 +2263,11 @@ public class Player extends Character {
 		case "turn running started_left":
 		case "turn running started_right":
 
+//			if (currentAnimation.isOver(false)) {
+//				this.setCurrentAnimation("turning to running_" + orientation, FRAME_DURATION);
+//			}
+//			else {
+				
 			switch(currentState){
 			case IDLE:
 				if(currentAnimation.isOver(false)){
@@ -2281,10 +2296,16 @@ public class Player extends Character {
 				break;
 			}
 			break;
+//			}
 			
 		case "turning to running_left":
 		case "turning to running_right":
 			
+//			if (currentAnimation.isOver(false)) {
+//				this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+//			}
+//			else {
+				
 			switch(currentState) {
 			case IDLE:
 				if(currentAnimation.isOver(false)){
@@ -2311,6 +2332,8 @@ public class Player extends Character {
 			default:
 				break;
 			}
+			break;
+//			}
 			
 		case "turning_left":
 		case "turning_right":

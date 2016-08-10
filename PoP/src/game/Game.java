@@ -136,7 +136,7 @@ public class Game extends JPanel implements Runnable{
 				}
 			} else{
 //				numSlowSteps++;
-				System.out.println("Too slow");
+//				System.out.println("Too slow");
 			}
 			
 //			debugElapsed = elapsed / 1000000;

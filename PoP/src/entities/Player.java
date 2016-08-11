@@ -2538,6 +2538,10 @@ public class Player extends Character {
 				currentAnimation.getId().contains("climbing") );
 	}
 	
+	public boolean isHanging(){
+		return (currentAnimation.getId().contains("hanging"));
+	}
+	
 	public boolean isIdle() {
 		return currentAnimation.getId().startsWith("idle");
 	}

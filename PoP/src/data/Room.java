@@ -189,9 +189,24 @@ public class Room {
 		square.getBackground().remove(entity);
 	}
 	
+	public void deleteEntityForeground(Entity entity, Square square){
+		foreground.remove(entity);
+		square.getForeground().remove(entity);
+	}
+	
 	public Entity returnNamedEntityBackground(String name, Square square){
 		Entity toBeDeleted = null;
 		for (Entity e : square.getBackground()) {
+			if(e.getTypeOfEntity().startsWith(name)){
+				toBeDeleted = e;
+			}
+		}
+		return toBeDeleted;
+	}
+	
+	public Entity returnNamedEntityForeground(String name, Square square){
+		Entity toBeDeleted = null;
+		for (Entity e : square.getForeground()) {
 			if(e.getTypeOfEntity().startsWith(name)){
 				toBeDeleted = e;
 			}

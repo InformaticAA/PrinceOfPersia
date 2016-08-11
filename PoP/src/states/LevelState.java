@@ -1202,16 +1202,51 @@ public class LevelState extends State{
 							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
 							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
 							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+							
+							/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */
+							if(loose.getRow() == 3){
+								Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
+								Square underSquare = newRoom.getSquare(0, loose.getCol());
+								Entity base = newRoom.returnNamedEntityForeground("Base", underSquare);
+								newRoom.deleteEntityForeground(base, underSquare);
+								newCorner = new Corner(getPX(loose.getCol()),getPY(0),-12,-2,loader,"normal_right");
+								currentRoom.addToBackground(newCorner, underSquare);
+								newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
+								currentRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
+							}
 						} else if(newCorner != null && newCorner.getTypeOfEntity().contains("left")){
 							//Si hay esquina con nombre left -> se quita de la casilla actual y se mete una left en la casilla derecha
 							currentRoom.deleteEntityBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
 							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
 							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+							
+							
+							/* Comprobar si es en la ultima fila => eliminar base y esquina izquierda, y colocar esquina izquierda en la siguiente */
+							if(loose.getRow() == 3){
+								Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
+								Square underSquare = newRoom.getSquare(0, loose.getCol());
+								Entity base = newRoom.returnNamedEntityForeground("Base", underSquare);
+								newRoom.deleteEntityForeground(base, underSquare);
+								base = newRoom.returnNamedEntityBackground("Corner", underSquare);
+								newRoom.deleteEntityBackground(base, underSquare);
+								newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
+								currentRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
+							}
 						} else if(newCornerRight.getTypeOfEntity().contains("right")){
 							//Si hay una esquina con nombre right -> se quita de la casilla actual, y se mete una right en la casilla de la izq
 							currentRoom.deleteEntityBackground(newCornerRight, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
 							newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
+						
+							/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */
+							if(loose.getRow() == 3){
+								Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
+								Square underSquare = newRoom.getSquare(0, loose.getCol());
+								Entity base = newRoom.returnNamedEntityForeground("Base", underSquare);
+								newRoom.deleteEntityForeground(base, underSquare);
+								newCorner = new Corner(getPX(loose.getCol()),getPY(0),-12,-2,loader,"normal_right");
+								currentRoom.addToBackground(newCorner, underSquare);
+							}
 						}
 						
 					}
@@ -1307,19 +1342,61 @@ public class LevelState extends State{
 				/* Arriba */
 				
 				//TODO: SOLVE
-				currentRoom.deleteCharacter(player);
-				Room newRoom = currentLevel.getRoom(currentRoom.getRow(), currentRoom.getCol() + 1);
-				newRoom.addCharacter(player);
-				player.setY(400);
-				currentRoom = newRoom;
+				if(player.isClimbing()){
+					System.out.println("arriba");
+					Room newRoom = currentLevel.getRoom(currentRoom.getRow(), currentRoom.getCol() + 1);
+					Entity actualCorner = player.getCornerToClimb();
+					if(actualCorner == null){
+						actualCorner = player.getCornerToClimbDown();
+					}
+					int yDistanceCorner = actualCorner.getCenter()[1] - player.getY();
+					List<Entity> entities = newRoom.getSquare(3, playerSquare[1]).getBackground();
+					for(Entity e : entities){
+						if(e.getTypeOfEntity().startsWith("Corner")){
+							System.out.println("found corner arriba");
+							player.setY(e.getCenter()[1] - yDistanceCorner);
+							player.setCornerToClimbDown(null);
+							player.setCornerToClimb(e);
+						}
+					}
+					currentRoom.deleteCharacter(player);
+					newRoom.addCharacter(player);
+					currentRoom = newRoom;
+				}
+//				currentRoom.deleteCharacter(player);
+//				Room newRoom = currentLevel.getRoom(currentRoom.getRow(), currentRoom.getCol() + 1);
+//				newRoom.addCharacter(player);
+//				player.setY(400);
+//				currentRoom = newRoom;
 			} else if(playerSquare[0] > 3){
 				//System.out.println("Abajo");
 				/* Abajo */
-				currentRoom.deleteCharacter(player);
 				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
-				newRoom.addCharacter(player);
-				player.setY(40);
-				currentRoom = newRoom;
+				if(player.isClimbing()){
+					System.out.println("abajo");
+					Entity actualCorner = player.getCornerToClimbDown();
+					if(actualCorner == null){
+						actualCorner = player.getCornerToClimb();
+					}
+					int yDistanceCorner = actualCorner.getCenter()[1] - player.getY();
+					List<Entity> entities = newRoom.getSquare(0, playerSquare[1]).getBackground();
+					for(Entity e : entities){
+						if(e.getTypeOfEntity().startsWith("Corner")){
+							System.out.println("found corner abajo");
+							player.setY(e.getCenter()[1] - yDistanceCorner);
+							player.setCornerToClimb(null);
+							player.setCornerToClimbDown(e);
+						}
+					}
+					currentRoom.deleteCharacter(player);
+					newRoom.addCharacter(player);
+					currentRoom = newRoom;
+				} else{
+					currentRoom.deleteCharacter(player);
+					newRoom.addCharacter(player);
+					player.setY(40);
+					currentRoom = newRoom;
+				}
 			} else if(playerSquare[1] < 0){
 				//System.out.println("Izquierda");
 				/* Izquierda */

@@ -85,8 +85,8 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
-			player = new Player(254,112,loader, 3, "right");
-			player.setCurrentAnimation("idle_right", 5);
+			player = new Player(350,112,loader, 3, "left");
+			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
@@ -304,7 +304,7 @@ public class LevelState extends State{
 						
 						if (currentCorner.getTypeOfEntity().contains("right")) {
 							player.setX(cc[0] + 40);
-							player.setY(cc[1] + 123);
+							player.setY(cc[1] + 125);
 						}
 						else if (currentCorner.getTypeOfEntity().contains("left")) {
 							player.setX(cc[0] - 16);

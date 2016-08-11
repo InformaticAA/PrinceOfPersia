@@ -84,9 +84,11 @@ public class LevelState extends State{
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
-			
-			player = new Player(500,100,loader, 3, "left");
-			player.setCurrentAnimation("falling_left", 5);
+
+			player = new Player(254,112,loader, 3, "right");
+			player.setCurrentAnimation("idle_right", 5);
+//			player = new Player(500,100,loader, 3, "left");
+//			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			
 			currentRoom.addCharacter(player);
@@ -274,6 +276,8 @@ public class LevelState extends State{
 						  (player.isCanClimbDown() && player.getCornerToClimbDown() != null) )
 						){
 				
+//				System.out.println("VENGA VA");
+				
 				/* Normal climbing */
 				// No need to check for collisions
 				player.setCornerPositionFixed(false);
@@ -294,16 +298,32 @@ public class LevelState extends State{
 				
 				if (currentCorner != null) {
 					
-					if (player.getCurrentAnimation().getId().startsWith("scaling down_")) {
+					if (player.getCurrentAnimation().getId().startsWith("scaling down_") &&
+							player.isCornerReached()) {
 						int[] cc = currentCorner.getCenter();
-						player.setX(cc[0] + 40);
-						player.setY(cc[1] + 123);
+						
+						if (currentCorner.getTypeOfEntity().contains("right")) {
+							player.setX(cc[0] + 40);
+							player.setY(cc[1] + 123);
+						}
+						else if (currentCorner.getTypeOfEntity().contains("left")) {
+							player.setX(cc[0] - 16);
+							player.setY(cc[1] + 126);
+						}
+						player.setCornerReached(false);
 					}
 					else if (player.getCurrentAnimation().getId().startsWith("hanging idle_") &&
 							!player.isCornerReached()) {
 						int[] cc = currentCorner.getCenter();
-						player.setX(cc[0] + 8);
-						player.setY(cc[1] + 103);
+						
+						if (currentCorner.getTypeOfEntity().contains("right")) {
+							player.setX(cc[0] + 8);
+							player.setY(cc[1] + 103);
+						}
+						else if (currentCorner.getTypeOfEntity().contains("left")) {
+							player.setX(cc[0] + 10);
+							player.setY(cc[1] + 106);
+						}
 						player.setCornerReached(true);
 					}
 					else if (!player.getCurrentAnimation().getId().startsWith("hanging idle_")) {
@@ -311,7 +331,7 @@ public class LevelState extends State{
 					}
 				}
 			}
-			else if (corner == null) {
+			else if (!player.isClimbing() && corner == null) {
 				player.setCornerToClimb(null);
 			}
 		}
@@ -936,10 +956,13 @@ public class LevelState extends State{
 				
 				/* Checks if there is a corner type object in upleft square */
 				List<Entity> bEntities = new LinkedList<Entity>();
+				List<Entity> fEntities = new LinkedList<Entity>();
 				
 				if (playerSquare[1] > 0) {
 					bEntities = currentRoom.getSquare(
 							playerSquare[0] - 1, playerSquare[1] - 1).getBackground();
+					fEntities = currentRoom.getSquare(
+							playerSquare[0] - 1, playerSquare[1] - 1).getForeground();
 				}
 				
 				/* Checks if there is a corner type object in top square */
@@ -948,6 +971,7 @@ public class LevelState extends State{
 				
 				List<Entity> bgEntities = new LinkedList<Entity>();
 				bgEntities.addAll(bEntities);
+				bgEntities.addAll(fEntities);
 				bgEntities.addAll(topBgEntities);
 				
 				for (Entity bgE : bgEntities) {
@@ -976,6 +1000,11 @@ public class LevelState extends State{
 				/* Checks if there is a corner type object in upright square */
 				bgEntities = currentRoom.getSquare(
 						playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
+				
+				fEntities = currentRoom.getSquare(
+						playerSquare[0] - 1, playerSquare[1] + 1).getForeground();
+				
+				bgEntities.addAll(fEntities);
 				
 				for (Entity bgE : bgEntities) {
 	

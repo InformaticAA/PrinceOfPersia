@@ -453,7 +453,7 @@ public class Loader {
 				background.add(newEntity);
 			} else if(entity.equals("prm")){
 				newEntity = new Pillar(px,py,-12,-2,this,"pillar_right_main");
-				background.add(newEntity);
+//				background.add(newEntity);
 			} else if (entity.equals("t")) {
 				newEntity = new Torch(px, py, this,false);
 				background.add(newEntity);
@@ -597,10 +597,10 @@ public class Loader {
 				
 			} else if(entity.equals("pl")){
 				newEntity = new Pillar(px,py,0,-6,this,"pillar_left");
-				foreground.add(newEntity);
+//				foreground.add(newEntity);
 			} else if(entity.equals("pshadow")){
 				newEntity = new Pillar(px,py,0,-6,this,"pillar_shadow");
-				background.add(newEntity);
+//				background.add(newEntity);
 			} else if(entity.equals("b")){
 				newEntity = new Base(px,py,this,"normal_base");
 				foreground.add(newEntity);

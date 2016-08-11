@@ -82,10 +82,10 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(2, 7);
 			doors = currentLevel.getDoors();
 
-			player = new Player(350,112,loader, 3, "left");
+			player = new Player(200,112,loader, 3, "left");
 			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
@@ -217,7 +217,7 @@ public class LevelState extends State{
 	}
 
 	private void checkPlayerCollisions(long elapsedTime) {
-		boolean floorPanel = false;
+		Entity floorPanel = null;
 		boolean looseFloor = false;
 		Entity cornerFloor = null;
 		Entity corner = null;
@@ -342,14 +342,19 @@ public class LevelState extends State{
 			/* Checks if the player can land on the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
-			if(looseFloor){
-				//System.out.println("LOOOOOOOSE");
-			}
 			wall = checkWall();
+
+			if (player.getCurrentAnimation().getId().contains("landing")) {
+				
+				if (floorPanel != null) {
+					player.setY( (int) floorPanel.getBoundingBox().getMinY());
+				}
+			}
 			
-			if (floorPanel || looseFloor) {
+			if ( (floorPanel != null) || looseFloor) {
 				
 				// player lands the jump
+				player.setCanLand(true);
 				player.setGrounded(true);
 			}
 			
@@ -397,7 +402,7 @@ public class LevelState extends State{
 			looseFloor = checkLooseFloor();
 			wall = checkWall();
 			
-			if ( (floorPanel /*|| looseFloor*/) ) {
+			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
 				if ( player.getFallDistance() <= 150 ) {
 					
@@ -443,8 +448,9 @@ public class LevelState extends State{
 			/* Check for corners */
 			corner = checkCorner();
 			
-			if (!floorPanel && !looseFloor) {
+			if ( (floorPanel == null) && !looseFloor) {
 				player.fall();
+				System.out.println("VAMO A VER O K?");
 			}
 			
 		}
@@ -455,14 +461,27 @@ public class LevelState extends State{
 			/* Checks if the player can stand on the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
-			if(looseFloor){
-				//System.out.println("LOOOOOOOSE");
-			}
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
 			
 			/* Check for corners */
 			corner = checkCorner();
+			
+			// If the player is idle it corrects his position
+//			if (player.getCurrentAnimation().getId().equals("idle_left") ||
+//				player.getCurrentAnimation().getId().equals("idle_right")) {
+				
+				if (floorPanel != null) {
+					player.setY((int) floorPanel.getBoundingBox().getMinY());
+				}
+//				else if (cornerFloor != null) {
+//					player.setY((int) cornerFloor.getBoundingBox().getMinY());
+//				}
+//				else {
+//					// loose floor
+//					System.out.println("LOOOOOOOSE");
+//				}
+//			}
 			
 			/* If there is a corner nearby, the player can climb it */
 			if (corner != null) {
@@ -575,7 +594,7 @@ public class LevelState extends State{
 				
 				// There is nothing beneath the player, it falls
 				if (!player.isFalling() && !player.isOnTheEdge()) {
-					//System.out.println("NOT AGAIN!!!");
+					System.out.println("NOT AGAIN!!!");
 					player.fall();
 				}
 			}
@@ -617,7 +636,8 @@ public class LevelState extends State{
 	 * @return true if there is any type of floor beneath of player
 	 * where it can stand and stay grounded or land
 	 */
-	private boolean checkFloorPanel() {
+	private Entity checkFloorPanel() {
+		Entity floorPanel = null;
 		boolean leftPanel = false;
 		boolean rightPanel = false;
 		boolean leftCorner = false;
@@ -625,7 +645,7 @@ public class LevelState extends State{
 		boolean leftFall = false;
 		boolean rightFall = false;
 		
-		int securityGap = 5;
+		int securityGap = 10;
 		
 		/* Obtains the square where the center point of the player is placed */
 		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
@@ -677,7 +697,7 @@ public class LevelState extends State{
 //					//System.out.println("ph2: " + playerHeight2);
 	
 					if (name.contains("left") &&
-							((ec[1] - playerCenter[1]) <= playerHeight2) ) {
+							((ec[1] - playerCenter[1]) <= playerHeight2 + securityGap) ) {
 						
 						// player lands on the floor (according to y axis)
 						if ( (playerCenter[0] >= bgLeft) &&
@@ -686,10 +706,11 @@ public class LevelState extends State{
 							// player lands on the floor (according to x axis)
 //							//System.out.println("LEFT LANDING");
 							leftPanel = true;
+							floorPanel = bgE;
 							
 							/* Corrects the player's position on the floor */
-							int newPlayerY = ec[1] - 1;
-							player.setY(newPlayerY);
+//							int newPlayerY = ec[1] - 1;
+//							player.setY(newPlayerY);
 						}
 						else {
 							// player falls, there is no floor beneath him
@@ -698,24 +719,24 @@ public class LevelState extends State{
 						}
 					}
 					else if (name.contains("right") &&
-							((ec[1] - playerCenter[1]) <= playerHeight2) ) {
+							((ec[1] - playerCenter[1]) <= playerHeight2 + securityGap) ) {
 						
 						if ( (playerCenter[0] >= bgLeft) &&
 								(playerCenter[0] <= bgRight) ) {
 							
 //							//System.out.println("RIGHT LANDING");
 							rightPanel = true;
+							floorPanel = bgE;
 							
 							/* Corrects the player's position on the floor */
-							int newPlayerY = ec[1] - 1;
-							player.setY(newPlayerY);
+//							int newPlayerY = ec[1] - 1;
+//							player.setY(newPlayerY);
 						}
 						else {
 							rightFall = true;
 							newPlayerX = ec[0] + bgWidth;
 						}
 					}
-					
 					
 					if(name.startsWith("Opener")){
 						if(((Opener) bgE).getDoor() == null){
@@ -768,17 +789,22 @@ public class LevelState extends State{
 			if (leftFall && !leftCorner) leftPanel = true;
 			else if (leftFall && leftCorner) {
 				leftPanel = false;
-				player.setX(newPlayerX);
+//				player.setX(newPlayerX);
 			}
 			
 			if (rightFall && !rightCorner) rightPanel = true;
 			else if (rightFall && rightCorner) {
 				rightPanel = false;
-				player.setX(newPlayerX);
+//				player.setX(newPlayerX);
 			}
 		}
 		
-		return (leftPanel || rightPanel);
+		Entity finalFloor = null;
+		if (leftPanel || rightPanel) {
+			finalFloor = floorPanel;
+		}
+		
+		return finalFloor;
 	}
 	
 	/**

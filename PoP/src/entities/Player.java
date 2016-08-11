@@ -41,6 +41,7 @@ public class Player extends Character {
 	private boolean hanged;
 	private boolean forcedToStop;
 	private boolean onTheEdge;
+	private boolean canLand;
 	private int fallDistance;
 	
 	private boolean enemySaw;	
@@ -85,6 +86,7 @@ public class Player extends Character {
 		this.hanged = false;
 		this.forcedToStop = false;
 		this.onTheEdge = false;
+		this.canLand = false;
 		this.fallDistance = 0;
 		
 		this.enemySaw = false;
@@ -1137,60 +1139,73 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
-				
 				if(this.currentAnimation.isOver(false)){
-					
-					if(this.getOrientation().equals("left")){
-
-					} else{
-
+					System.out.println("WTF: " + this.isCanLand());
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
-					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
-					
+					else {
+						System.out.println("N1");
+						this.fall();
+					}
 				}
 				break;
 				
 			case JUMP:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
-				
 				if(this.currentAnimation.isOver(false)){
-					
-					this.fall();
-					
-					if(this.getOrientation().equals("left")){
-
-					} else{
-
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
-					this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
+					else {
+						System.out.println("N2");
+						this.fall();
+					}
 				}
 				break;
 				
 			case MOVE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-				
-				}
-				
 				if(this.currentAnimation.isOver(false)){
-					
-					this.fall();
-					
-					if(this.getOrientation().equals("left")){
-
-					} else{
-
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
+					else {
+						System.out.println("N3");
+						this.fall();
+					}
+				}
+				break;
+				
+			case COLLIDED:
+				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+		
+		case "running jump landing_left":
+		case "running jump landing_right":
+			
+			// resets can land condition
+			this.setCanLand(false);
+			
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
 					this.setCurrentAnimation("running_" + orientation, FRAME_DURATION);
 				}
 				break;
@@ -2776,6 +2791,20 @@ public class Player extends Character {
 		this.onTheEdge = onTheEdge;
 	}
 	
+	/**
+	 * @return the canLand
+	 */
+	public boolean isCanLand() {
+		return canLand;
+	}
+
+	/**
+	 * @param canLand the canLand to set
+	 */
+	public void setCanLand(boolean canLand) {
+		this.canLand = canLand;
+	}
+
 	public boolean isBlocked() {
 		return this.isWalkingAStep() && this.isOnTheEdge();
 	}

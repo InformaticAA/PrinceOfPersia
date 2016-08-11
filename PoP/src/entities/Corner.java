@@ -36,23 +36,23 @@ public class Corner extends Entity{
 		return null;
 	}
 
-@Override	
-public void drawSelf(Graphics g) {
-		
-		/* Draws the entity */
-		BufferedImage img = currentAnimation.getImage();
-		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
-				y - currentAnimation.getImage().getHeight(), null);
-		
-		/* Draws the entity's bounding box */
-		if (boundingBox != null) {
-			g.setColor(boundingBoxColor);
-			g.drawRect((int) boundingBox.getX(),
-					(int) boundingBox.getY(),
-					(int) boundingBox.getWidth(),
-					(int) boundingBox.getHeight());
-			g.setColor(Color.BLACK);
-		}
-		
-	}
+//@Override	
+//public void drawSelf(Graphics g) {
+//		
+//		/* Draws the entity */
+//		BufferedImage img = currentAnimation.getImage();
+//		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
+//				y - currentAnimation.getImage().getHeight(), null);
+//		
+//		/* Draws the entity's bounding box */
+//		if (boundingBox != null) {
+//			g.setColor(boundingBoxColor);
+//			g.drawRect((int) boundingBox.getX(),
+//					(int) boundingBox.getY(),
+//					(int) boundingBox.getWidth(),
+//					(int) boundingBox.getHeight());
+//			g.setColor(Color.BLACK);
+//		}
+//		
+//	}
 }

@@ -490,6 +490,11 @@ public class Loader {
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
 			} else if(entity.equals("loose")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
+				background.add(newEntity);
+				int px2 = 64 + (y+1) * 64;
+				newEntity = new FloorPanel(px2,py,-12,-2,this,"normal_right");
+				background.add(newEntity);
 				newEntity = new LooseFloor(px,py,52,0,this,"idle");
 				background.add(newEntity);
 			} else if(entity.equals("spike")){

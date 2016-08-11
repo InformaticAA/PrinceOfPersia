@@ -189,6 +189,16 @@ public class Room {
 		square.getBackground().remove(entity);
 	}
 	
+	public Entity returnNamedEntityBackground(String name, Square square){
+		Entity toBeDeleted = null;
+		for (Entity e : square.getBackground()) {
+			if(e.getTypeOfEntity().startsWith(name)){
+				toBeDeleted = e;
+			}
+		}
+		return toBeDeleted;
+	}
+	
 	public void deleteEntityBackground(Entity entity){
 		background.remove(entity);
 	}

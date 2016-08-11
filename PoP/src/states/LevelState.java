@@ -395,12 +395,9 @@ public class LevelState extends State{
 			/* Checks if the player can walk over the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
-			if(looseFloor){
-				//System.out.println("LOOOOOOOSE");
-			}
 			wall = checkWall();
 			
-			if ( (floorPanel || looseFloor) ) {
+			if ( (floorPanel /*|| looseFloor*/) ) {
 				
 				if ( player.getFallDistance() <= 150 ) {
 					
@@ -890,12 +887,16 @@ public class LevelState extends State{
 					playerSquare[0], playerSquare[1]).getBackground();
 			
 			LooseFloor toBeDeleted = null;
+			Entity rightFloor = null;
+			Entity leftFloor = null;
 			for (Entity bgE : bgEntities) {
 	
 				String name = bgE.getTypeOfEntity();
-				if ( name.startsWith("LooseFloor") ) {
+				if (player.isGrounded() && name.startsWith("LooseFloor") ) {
 					LooseFloor loose = (LooseFloor)bgE;
 					if(!loose.isFalling() && !loose.isActivated()){
+						leftFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_left", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
+						rightFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_right", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
 						loose.setActivated(true);
 						loose.setRoom1(currentRoom.getRow() + 1);
 						loose.setRoom2(currentRoom.getCol() + 1);
@@ -929,6 +930,8 @@ public class LevelState extends State{
 			}
 			
 			if(toBeDeleted != null){
+				currentRoom.deleteEntityBackground(leftFloor, currentRoom.getSquare(playerSquare[0], playerSquare[1]));
+				currentRoom.deleteEntityBackground(rightFloor, currentRoom.getSquare(playerSquare[0], playerSquare[1]));
 				//currentRoom.deleteEntityBackground(toBeDeleted);
 				toBeDeleted = null;
 			}

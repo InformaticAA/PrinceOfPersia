@@ -17,6 +17,8 @@ public class Player extends Character {
 	private final String RUNNING = "running";
 	private final int FRAME_DURATION = 5;
 	private final int MOVE_SPEED = 2;
+	private final int SAFE_FALL_DISTANCE = 150;
+	private final int RISKY_FALL_DISTANCE = 300;
 	
 	private boolean up_pressed;
 	private boolean down_pressed;
@@ -42,6 +44,8 @@ public class Player extends Character {
 	private boolean forcedToStop;
 	private boolean onTheEdge;
 	private boolean canLand;
+	private boolean fallCollided;
+	private boolean straightFall;
 	private int fallDistance;
 	
 	private boolean enemySaw;	
@@ -87,6 +91,7 @@ public class Player extends Character {
 		this.forcedToStop = false;
 		this.onTheEdge = false;
 		this.canLand = false;
+		this.fallCollided = false;
 		this.fallDistance = 0;
 		
 		this.enemySaw = false;
@@ -690,6 +695,12 @@ public class Player extends Character {
 			
 		case "falling_left":
 		case "falling_right":
+			
+			if (this.isCanClimb() && shift_pressed) {
+				
+				// player reaches a corner in mid air
+				this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+			}
 
 			if (this.getCurrentAnimation().isOver(true)) {
 				this.setCurrentAnimation("falling idle_" + orientation, FRAME_DURATION);
@@ -697,32 +708,16 @@ public class Player extends Character {
 //				System.out.println("Starts free_fall");
 				this.setFreeFall(true);
 			}
-			
-//			switch(currentState){
-//			case IDLE:
-//				
-//				break;
-//				
-//			case JUMP:
-//				
-//				break;
-//				
-//			case MOVE:
-//				
-//				break;
-//				
-//			case COLLIDED:
-//				
-//				break;
-//				
-//			default:
-//				
-//				break;
-//			}
 			break;
 			
 		case "falling idle_left":
 		case "falling idle_right":
+			
+			if (this.isCanClimb() && shift_pressed) {
+				
+				// player reaches a corner in mid air
+				this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+			}
 			
 			break;
 			
@@ -1136,6 +1131,12 @@ public class Player extends Character {
 		case "running jump_right":
 			
 			this.jumping = true;
+			
+			if (this.isCanClimb() && shift_pressed) {
+				
+				// player reaches a corner in mid air
+				this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+			}
 
 			switch(currentState){
 			case IDLE:
@@ -2473,6 +2474,18 @@ public class Player extends Character {
 		this.fallDistance = fallDistance;
 	}
 	
+	public boolean isSafeFall() {
+		return this.fallDistance <= SAFE_FALL_DISTANCE;
+	}
+	
+	public boolean isRiskyFall() {
+		return this.fallDistance <= RISKY_FALL_DISTANCE;
+	}
+	
+	public boolean isDeadlyFall() {
+		return this.fallDistance > RISKY_FALL_DISTANCE;
+	}
+	
 	public void fall() {
 		
 		// corrects multiple condition values
@@ -2708,12 +2721,36 @@ public class Player extends Character {
 		if ( isFalling() ) {
 			int newySpeed = fallSpeed + gravity;
 			
-			
 			if (newySpeed > maxySpeed) {
 				newySpeed = maxySpeed;
 			}
-			
 			ySpeed = newySpeed;
+			
+			// Applies horizontal speed to the fall
+			if ( !isStraightFall() && (!isFallCollided() || !isDeadlyFall()) ) {
+				
+				if ( isSafeFall() ) {
+					
+					if (this.getOrientation().equals("left")) {
+						xFrameOffset = -fallxSpeed;
+					}
+					else if (this.getOrientation().equals("right")) {
+						xFrameOffset = fallxSpeed;
+					}
+				}
+				else if ( isRiskyFall() ) {
+					
+					if (this.getOrientation().equals("left")) {
+						xFrameOffset = -fallxSpeed/2;
+					}
+					else if (this.getOrientation().equals("right")) {
+						xFrameOffset = fallxSpeed/2;
+					}
+				}
+			}
+			else if ( isFallCollided() ) {
+				xFrameOffset = 0;
+			}
 		}
 		else if ( isGrounded() ) {
 
@@ -2807,6 +2844,34 @@ public class Player extends Character {
 	 */
 	public void setCanLand(boolean canLand) {
 		this.canLand = canLand;
+	}
+
+	/**
+	 * @return the fallCollided
+	 */
+	public boolean isFallCollided() {
+		return fallCollided;
+	}
+
+	/**
+	 * @param fallCollided the fallCollided to set
+	 */
+	public void setFallCollided(boolean fallCollided) {
+		this.fallCollided = fallCollided;
+	}
+
+	/**
+	 * @return the straightFall
+	 */
+	public boolean isStraightFall() {
+		return straightFall;
+	}
+
+	/**
+	 * @param straightFall the straightFall to set
+	 */
+	public void setStraightFall(boolean straightFall) {
+		this.straightFall = straightFall;
 	}
 
 	public boolean isBlocked() {

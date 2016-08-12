@@ -23,6 +23,7 @@ public class Character extends Entity {
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
+	protected final int fallxSpeed = 3;
 	protected final int FRAME_DURATION = 7; //6
 	protected final int MOVE_SPEED = 2;
 	
@@ -47,6 +48,7 @@ public class Character extends Entity {
 	protected boolean freeFall;
 	protected boolean grounded;
 	protected boolean jumping;
+	
 	
 	/* Animations */
 	protected String orientation;
@@ -127,8 +129,7 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("running_right") ||
-				currentAnimation.getId().contains("turn running") ||
+		if (currentAnimation.getId().contains("jump") ||
 //				currentAnimation.getId().contains("jump") ||
 //				currentAnimation.getId().contains("testAnimHere") ){//||
 				!firstTime) {
@@ -166,7 +167,6 @@ public class Character extends Entity {
 			if (newySpeed > maxySpeed) {
 				newySpeed = maxySpeed;
 			}
-			
 			ySpeed = newySpeed;
 		}
 		else if (grounded) {

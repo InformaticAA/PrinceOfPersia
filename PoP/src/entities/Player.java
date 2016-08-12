@@ -1126,7 +1126,59 @@ public class Player extends Character {
 				break;
 			}
 			break;
-		
+			
+		case "running jump start_left":
+		case "running jump start_right":
+			
+			// if player doesnt have floor beneath him to make the jump, he falls
+			if (!this.isCanLand()) {
+				this.fall();
+			}
+			
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.fall();
+					}
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.fall();
+					}
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.fall();
+					}
+				}
+				break;
+				
+			case COLLIDED:
+				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
 		case "running jump_left":
 		case "running jump_right":
 			
@@ -1141,7 +1193,6 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					System.out.println("WTF: " + this.isCanLand());
 					if (this.isCanLand()) {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
@@ -1250,13 +1301,13 @@ public class Player extends Character {
 				if(currentAnimation.isOver(false)){
 					if(this.getOrientation().equals("left")){
 						if(left_pressed){
-							this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+							this.setCurrentAnimation("running jump start_" + orientation, FRAME_DURATION);
 						} else{
 							this.setCurrentAnimation("running stop_" + orientation, FRAME_DURATION);
 						}
 					} else{
 						if(right_pressed){
-							this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+							this.setCurrentAnimation("running jump start_" + orientation, FRAME_DURATION);
 						} else{
 							this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 						}
@@ -1435,13 +1486,13 @@ public class Player extends Character {
 			case JUMP:
 				if(this.getOrientation().equals("left")){
 					if(left_pressed){
-						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						this.setCurrentAnimation("running jump start_" + orientation, FRAME_DURATION);
 					} else{
 						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 					}
 				} else{
 					if(right_pressed){
-						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						this.setCurrentAnimation("running jump start_" + orientation, FRAME_DURATION);
 					} else{
 						this.setCurrentAnimation("running stop start_" + orientation, FRAME_DURATION);
 					}
@@ -2282,7 +2333,7 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(currentAnimation.isOver(false)){
-					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					this.setCurrentAnimation("running jump start_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
@@ -2320,7 +2371,7 @@ public class Player extends Character {
 			
 			case JUMP:
 				if(currentAnimation.isOver(false)){
-					this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+					this.setCurrentAnimation("running jump start_" + orientation, FRAME_DURATION);
 				}
 				break;
 			

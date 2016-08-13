@@ -85,8 +85,8 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
-			player = new Player(270,112,loader, 3, "left");
-			player.setCurrentAnimation("idle_left", 5);
+			player = new Player(300,112,loader, 3, "right");
+			player.setCurrentAnimation("idle_right", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
@@ -233,13 +233,14 @@ public class LevelState extends State{
 		}
 		else if ( player.isClimbing() ) {
 			
-//			//System.out.println("CLIMBING");
+//			System.out.println("CLIMBING");
 			
 			/* Checks if */
 			corner = checkCorner();
 			
 			if (player.startsClimbing() &&
 					(corner != null) &&
+					!player.isCanClimb() &&
 					!player.isCornerPositionFixed() ) {
 				
 				/* Initial climb */
@@ -277,8 +278,6 @@ public class LevelState extends State{
 						  (player.isCanClimbDown() && player.getCornerToClimbDown() != null) )
 						){
 				
-//				System.out.println("VENGA VA");
-				
 				/* Normal climbing */
 				// No need to check for collisions
 				player.setCornerPositionFixed(false);
@@ -289,11 +288,9 @@ public class LevelState extends State{
 				Entity cornerToClimbDown = player.getCornerToClimbDown();
 				
 				if (cornerToClimb != null) {
-//					System.out.println("UP - " + cornerToClimb.getTypeOfEntity());
 					currentCorner = cornerToClimb;
 				}
 				else if (cornerToClimbDown != null) {
-//					System.out.println("DOWN - " + cornerToClimbDown.getTypeOfEntity());
 					currentCorner = cornerToClimbDown;
 				}
 				
@@ -324,6 +321,7 @@ public class LevelState extends State{
 						else if (currentCorner.getTypeOfEntity().contains("left")) {
 							player.setX(cc[0] + 10);
 							player.setY(cc[1] + 106);
+							System.out.println("HANGEADA: " + player.getX() + ", " + player.getY());
 						}
 						player.setCornerReached(true);
 					}
@@ -474,18 +472,28 @@ public class LevelState extends State{
 					// player is close enough in both axis to reach the corner
 					player.setCanClimb(true);
 					player.setCornerToClimb(cornerJumping);
+					System.out.println(cornerJumping.getTypeOfEntity() + ": " + 
+								cornerJumping.getCenter()[0] + ", " + 
+								cornerJumping.getCenter()[1]);
 				}
 				else {
 					
 					// player is too far to reach the corner in mid air
 					player.setCanClimb(false);
 					player.setCornerToClimb(null);
+					System.out.println("VAYA X FAVOR");
 				}
 			}
 			
 			if (wall !=  null) {
 				
 				// player has collided with a wall
+				if (player.getOrientation().equals("left")) {
+					player.setX(wall.getCenter()[0] + 40);
+				}
+				else if (player.getOrientation().equals("left")) {
+					player.setX(wall.getCenter()[0] - 40);
+				}
 				player.setFallCollided(true);
 			}
 		}

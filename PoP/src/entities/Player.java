@@ -718,7 +718,6 @@ public class Player extends Character {
 				// player reaches a corner in mid air
 				this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
 			}
-			
 			break;
 			
 		case "got sword_left":
@@ -1197,7 +1196,6 @@ public class Player extends Character {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
-						System.out.println("N1");
 						this.fall();
 					}
 				}
@@ -1209,7 +1207,6 @@ public class Player extends Character {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
-						System.out.println("N2");
 						this.fall();
 					}
 				}
@@ -1221,7 +1218,6 @@ public class Player extends Character {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
-						System.out.println("N3");
 						this.fall();
 					}
 				}
@@ -1732,39 +1728,106 @@ public class Player extends Character {
 		case "simple jump_left":
 		case "simple jump_right":
 
+			this.jumping = true;
+			this.startsClimbing = false;
+			
+			if (this.isCanClimb() && shift_pressed) {
+				
+				// player reaches a corner in mid air
+				this.setCurrentAnimation("hanging idle_" + orientation, FRAME_DURATION);
+			}
+
 			switch(currentState){
 			case IDLE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
-				
 				if(this.currentAnimation.isOver(false)){
-					
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("simple jump landing_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.setCurrentAnimation("simple jump fall_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			case JUMP:
+				if(this.currentAnimation.isOver(false)){
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("simple jump landing_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.setCurrentAnimation("simple jump fall_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			case MOVE:
+				if(this.currentAnimation.isOver(false)){
+					if (this.isCanLand()) {
+						this.setCurrentAnimation("simple jump landing_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.setCurrentAnimation("simple jump fall_" + orientation, FRAME_DURATION);
+					}
+				}
+				break;
+				
+			case COLLIDED:
+				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "simple jump fall_left":
+		case "simple jump fall_right":
+			
+			switch(currentState){
+			case IDLE:
+				if (this.currentAnimation.isOver(false)){
+					this.fall();
+				}
+				break;
+			case JUMP:
+				if (this.currentAnimation.isOver(false)){
+					this.fall();
+				}
+				break;
+			case MOVE:
+				if (this.currentAnimation.isOver(false)){
+					this.fall();
+				}
+				break;
+			case COLLIDED:
+				this.setCurrentAnimation("running jump collided_" + orientation, FRAME_DURATION);
+				break;
+			default:
+				break;
+			}
+			break;
+			
+		case "simple jump landing_left":
+		case "simple jump landing_right":
+
+			// resets can land condition
+			this.setCanLand(false);
+			
+			switch(currentState){
+			case IDLE:
+				if(this.currentAnimation.isOver(false)){
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case JUMP:
-				if(this.getOrientation().equals("left")){
-					
-				} else{
-
-				}
-				
 				if(this.currentAnimation.isOver(false)){
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
-				
 				if(this.currentAnimation.isOver(false)){
 					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 				}

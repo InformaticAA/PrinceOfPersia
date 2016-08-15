@@ -24,10 +24,16 @@ fs lf b;rf lf t b;rf lf t b;rf pl pshadow bricks(1) b;rc prm fst;fs ls d2(2,0.5,
 cs d2(2,0.5) d2(3,0.2) csb;cs d2(2,0.5) d2(3,0.4) csb;cs d2(2,0.4,mark(3)) d1(3,0.3) csb;rs d1(2,0.5) d2(3,0.3) rsb;fs bl b;pl pshadow br b;prm fst loose;lf b;rf lf bricks(1) b;rf ls d1(2,0.5) lsb;
 
 room 2 7
+b;b;b;b;b;b;rf fst;b;b;b
+pshadow rc fst;bricks(3);ls(mark(3)) d1(2,0.5) lsb;cs d1(2,0.4) d1(3,0.2) random csb;cs d1(2,0.6,mark(3)) d1(3,0.2) csb;rs d2(2,0.6) d2(3,0.3) rsb;fs fsb;bricks(3);ls(mark(3)) d1(2,0.4) lsb;cs(mark(2)) d2(2,0.6) d1(3,0.2) csb
+fs lf b;rf lf t b;rf pl pshadow b;prm lf b;rf lf t b;rf pl pshadow b;prm lf b;rf lf b;rf pl pshadow bricks(1) b;prm lf b
+cs d2(2,0.5) d2(3,0.3) csb;cs d2(2,0.5,mark(3)) d1(3,0.3) csb;cs d1(2,0.6) d2(3,0.3) csb;cs d1(2,0.5,mark(4)) d1(3,0.3) csb;cs d2(2,0.5) d1(3,0.3) csb;cs(mark(4)) d2(2,0.4) d2(3,0.2) csb;cs d2(2,0.4) d1(3,0.2) csb;cs d1(2,0.6,mark(3)) d1(3,0.1) csb;cs d1(2,0.5) d2(3,0.2) csb;cs(mark(3)) d2(2,0.5) d1(3,0.2) csb
+
+room 2 8
 b;b;b;b;b;b;b;b;b;b
-rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b;rf lf b
-rf lf b door(9,door_closed,0);rf lf b;rf loose;loose;loose;loose;lf b;rf lf b; rf lf b;rf lf b
--;-;-;-;-;-;-;-;-;-
+cs d2(2,0.5) d1(3,0.2) csb;cs(mark(3)) d1(2,0.5) d2(3,0.2) csb;cs d1(2,0.5) d1(3,0.2) random csb;cs d1(2,0.5,mark(3)) d1(3,0.2) csb;cs d2(2,0.6) d2(3,0.4) csb;cs d2(2,0.5,mark(4)) d1(3,0.4) csb;cs d1(2,0.4,mark(1)) d2(3,0.3) csb;cs(mark(3)) d1(2,0.4) d2(3,0.3) csb;cs(mark(2)) d2(2,0.6) d1(3,0.3) csb;rs d2(2,0.6) d2(3,0.3,mark(1)) rsb
+rf pl pshadow b;prm lf b;rf lf bricks(1) b;rf lf b;rf lf t b;rf lf bricks(1) b;rf lf t b;rf lf enemy(red,left,3,10) b;rf lf bricks(1) b;rf bricks(1) pl pshadow b
+cs d2(2,0.5,mark(3)) d1(3,0.3) csb;cs d1(2,0.6) d2(3,0.4) csb;cs d1(2,0.5,mark(4)) d1(3,0.3) csb;cs d2(2,0.5) d1(3,0.3) csb;cs(mark(4)) d2(2,0.4) d2(3,0.2) csb;cs d2(2,0.4) d1(3,0.2) csb;cs d1(2,0.6,mark(3)) d1(3,0.2) csb;cs d1(2,0.5) d2(3,0.2) csb;cs(mark(3)) d2(2,0.4) d1(3,0.2) csb;cs random d2(2,0.4) d1(3,0.3) csb
 
 room 3 7
 -;-;-;-;-;-;-;-;-;-

@@ -82,10 +82,10 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(2, 8);
 			doors = currentLevel.getDoors();
 
-			player = new Player(300,112,loader, 3, "right");
+			player = new Player(200,240,loader, 3, "right");
 			player.setCurrentAnimation("idle_right", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
@@ -230,6 +230,11 @@ public class LevelState extends State{
 		
 		if ( player.isColliding() ) {
 			
+			// resets some climb conditions
+			player.setCanClimb(false);
+			player.setCanClimbDown(false);
+			player.setCornerToClimb(null);
+			player.setCornerToClimbDown(null);
 		}
 		else if ( player.isClimbing() ) {
 			
@@ -317,11 +322,12 @@ public class LevelState extends State{
 						if (currentCorner.getTypeOfEntity().contains("right")) {
 							player.setX(cc[0] + 8);
 							player.setY(cc[1] + 103);
+							System.out.println("HANGEADA RIGHT: " + player.getX() + ", " + player.getY());
 						}
 						else if (currentCorner.getTypeOfEntity().contains("left")) {
 							player.setX(cc[0] + 10);
 							player.setY(cc[1] + 106);
-							System.out.println("HANGEADA: " + player.getX() + ", " + player.getY());
+							System.out.println("HANGEADA LEFT: " + player.getX() + ", " + player.getY());
 						}
 						player.setCornerReached(true);
 					}
@@ -410,7 +416,7 @@ public class LevelState extends State{
 					
 					//right wall
 					//System.out.println("LEFT WALL FIX");
-					player.setX(wallCenter[0] - wallxGap);
+					player.setX(wallCenter[0] - wallxGap/4);
 					player.setY(wallCenter[1] + wallyGap);
 				}
 			}

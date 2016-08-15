@@ -129,10 +129,10 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("simple jump") ||
-				currentAnimation.getId().contains("turn") ){//||
+		if (currentAnimation.getId().contains("jump") ||
+				currentAnimation.getId().contains("test") ||
 //				currentAnimation.getId().contains("hanging") ||
-//				!firstTime) {
+				!firstTime) {
 			
 			
 			if (framesDebug == 0) {

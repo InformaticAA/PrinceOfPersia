@@ -454,33 +454,43 @@ public class Loader {
 			} else if(entity.equals("prm")){
 				newEntity = new Pillar(px,py,-12,-2,this,"pillar_right_main");
 				background.add(newEntity);
+			} else if(entity.equals("prt")){
+				newEntity = new Pillar(px,py,-38,0,this,"pillar_right_top");
+				background.add(newEntity);
 			} else if (entity.equals("t")) {
 				newEntity = new Torch(px, py, this,false);
 				background.add(newEntity);
-			} else if(entity.equals("lsb")) {
-				newEntity = new Base(px,py,this,"left_stack_base");
-				background.add(newEntity);
-			} else if(entity.equals("csb")){
-				newEntity = new Base(px,py,this,"centre_stack_base");
-				background.add(newEntity);
-			} else if(entity.equals("rsb")){
-				newEntity = new Base(px,py,this,"right_stack_base");
-				background.add(newEntity);
-			} else if(entity.equals("ssb")){
-				newEntity = new Base(px,py,this,"single_stack_base");
-				background.add(newEntity);
-			} else if(entity.equals("lc")){
+			} 
+			
+			// CORNER TYPES (floor, opener, closer, pillar)
+			else if(entity.equals("lc")){
 				newEntity = new Corner(px,py,0,-6,this,"normal_left");
 				background.add(newEntity);
 			} else if(entity.equals("rc")){
-				if (y == 0) {
-					newEntity = new Corner(px,py,-12,-2,this,"normal_right");
-				}
-				else {
-					newEntity = new Corner(px,py,-12,-2,this,"normal_right");
-				}
+				newEntity = new Corner(px,py,-12,-2,this,"normal_right");
 				background.add(newEntity);
-			} else if(entity.equals("lf")){
+			} else if(entity.equals("loc")){
+				newEntity = new Corner(px,py,0,-6,this,"opener_left");
+				background.add(newEntity);
+			} else if(entity.equals("roc")){
+				newEntity = new Corner(px,py,-12,-2,this,"opener_right");
+				background.add(newEntity);
+			} else if(entity.equals("lcc")){
+				newEntity = new Corner(px,py,0,-6,this,"closer_left");
+				background.add(newEntity);
+			} else if(entity.equals("rcc")){
+				newEntity = new Corner(px,py,-12,-2,this,"closer_right");
+				background.add(newEntity);
+			} else if(entity.equals("lpc")){
+				newEntity = new Corner(px,py,0,-6,this,"pillar_left");
+				background.add(newEntity);
+			} else if(entity.equals("rpc")){
+				newEntity = new Corner(px,py,-12,-2,this,"pillar_right");
+				background.add(newEntity);
+			} 
+			// CORNER TYPES END
+			
+			else if(entity.equals("lf")){
 				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
 				background.add(newEntity);
 			} else if(entity.equals("rf")){
@@ -539,7 +549,19 @@ public class Loader {
 			}
 			
 			/* Loads foreground elements */
-			else if (entity.startsWith("ls")) {
+			else if(entity.equals("lsb")) {
+				newEntity = new Base(px,py,this,"left_stack_base");
+				foreground.add(newEntity);
+			} else if(entity.equals("csb")){
+				newEntity = new Base(px,py,this,"centre_stack_base");
+				foreground.add(newEntity);
+			} else if(entity.equals("rsb")){
+				newEntity = new Base(px,py,this,"right_stack_base");
+				foreground.add(newEntity);
+			} else if(entity.equals("ssb")){
+				newEntity = new Base(px,py,this,"single_stack_base");
+				foreground.add(newEntity);
+			} else if (entity.startsWith("ls")) {
 				newEntity = new Wall(px,py,0,-6,this,"left_stack_main");
 				foreground.add(newEntity);
 				
@@ -598,7 +620,7 @@ public class Loader {
 					newEntity = new Wall(px,py,hoff,voff,this,"mark" + numMark);
 					foreground.add(newEntity);
 				}
-			}else if(entity.startsWith("d")){
+			} else if(entity.startsWith("d")){
 				
 				/* Chooses divider */
 				String numDiv = entity.substring(1,2);

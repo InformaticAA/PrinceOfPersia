@@ -1,5 +1,9 @@
 package entities;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
 import framework.Loader;
 
 public class Pillar extends Entity{
@@ -11,10 +15,12 @@ public class Pillar extends Entity{
 		
 		/* Sets the bounding box */
 		if(type.equals("pillar_left")){
+			boundingBoxColor = Color.YELLOW;
 			enableBoundingBox(this.x + 25, this.y + currentAnimation.getImage().getHeight() - 14,
 						currentAnimation.getImage().getWidth() - 25,
 						13);
 		} else if(type.equals("pillar_right_main")){
+			boundingBoxColor = Color.WHITE;
 			enableBoundingBox(this.x, this.y + currentAnimation.getImage().getHeight() - 18,
 					currentAnimation.getImage().getWidth() -27,
 					17);
@@ -39,5 +45,23 @@ public class Pillar extends Entity{
 	public Entity copy() {
 		return null;
 	}
-
+	
+//	@Override	
+//	public void drawSelf(Graphics g) {
+//			
+//		/* Draws the entity */
+//		BufferedImage img = currentAnimation.getImage();
+//		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
+//				y - currentAnimation.getImage().getHeight(), null);
+//		
+//		/* Draws the entity's bounding box */
+//		if (boundingBox != null) {
+//			g.setColor(boundingBoxColor);
+//			g.drawRect((int) boundingBox.getX(),
+//					(int) boundingBox.getY(),
+//					(int) boundingBox.getWidth(),
+//					(int) boundingBox.getHeight());
+//			g.setColor(Color.BLACK);
+//		}
+//	}
 }

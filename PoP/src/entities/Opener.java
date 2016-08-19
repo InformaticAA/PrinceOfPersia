@@ -24,8 +24,8 @@ public class Opener extends Entity {
 		
 		/* Sets the bounding box */
 		enableBoundingBox(this.x + 25, 
-					this.y + currentAnimation.getImage().getHeight()/2 - 4,
-					currentAnimation.getImage().getWidth() - 25,
+					this.y + currentAnimation.getImage().getHeight()/2 - 3,
+					currentAnimation.getImage().getWidth() - 52,
 					currentAnimation.getImage().getHeight()/2 + 4);
 		
 		baseBoundingBox = new Rectangle(this.x, 

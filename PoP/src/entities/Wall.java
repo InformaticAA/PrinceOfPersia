@@ -10,7 +10,7 @@ public class Wall extends Entity{
 		currentAnimation = animations.get(wall_type);
 		
 		/* Sets the bounding box */
-		if (wall_type.equals("left_stack_main")) {
+		if (wall_type.equals("left_stack_main") || wall_type.equals("single_stack_main")) {
 			enableBoundingBox(this.x + currentAnimation.getImage().getWidth()/2,
 						this.y,
 						currentAnimation.getImage().getWidth()/2,

@@ -44,6 +44,11 @@ public class Player extends Character {
 	private boolean forcedToStop;
 	private boolean onTheEdge;
 	private boolean canLand;
+	private boolean canLandScalingDown;
+	private boolean canLongLand;
+	private boolean longLand;
+	private boolean canSimpleLand;
+	private boolean simpleLand;
 	private boolean fallCollided;
 	private boolean straightFall;
 	private int fallDistance;
@@ -91,6 +96,7 @@ public class Player extends Character {
 		this.forcedToStop = false;
 		this.onTheEdge = false;
 		this.canLand = false;
+		this.canLandScalingDown = false;
 		this.fallCollided = false;
 		this.fallDistance = 0;
 		
@@ -1192,7 +1198,7 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					if (this.isCanLand()) {
+					if (this.isCanLongLand()) {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
@@ -1203,7 +1209,7 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false)){
-					if (this.isCanLand()) {
+					if (this.isCanLongLand()) {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
@@ -1214,7 +1220,7 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(this.currentAnimation.isOver(false)){
-					if (this.isCanLand()) {
+					if (this.isCanLongLand()) {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
@@ -1740,7 +1746,7 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
-					if (this.isCanLand()) {
+					if (this.isCanLongLand()) {
 						this.setCurrentAnimation("simple jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
@@ -1751,7 +1757,7 @@ public class Player extends Character {
 				
 			case JUMP:
 				if(this.currentAnimation.isOver(false)){
-					if (this.isCanLand()) {
+					if (this.isCanLongLand()) {
 						this.setCurrentAnimation("simple jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
@@ -1762,7 +1768,7 @@ public class Player extends Character {
 				
 			case MOVE:
 				if(this.currentAnimation.isOver(false)){
-					if (this.isCanLand()) {
+					if (this.isCanLongLand()) {
 						this.setCurrentAnimation("simple jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
@@ -2958,6 +2964,76 @@ public class Player extends Character {
 	 */
 	public void setCanLand(boolean canLand) {
 		this.canLand = canLand;
+	}
+
+	/**
+	 * @return the canLandScalingDown
+	 */
+	public boolean isCanLandScalingDown() {
+		return canLandScalingDown;
+	}
+
+	/**
+	 * @param canLandScalingDown the canLandScalingDown to set
+	 */
+	public void setCanLandScalingDown(boolean canLandScalingDown) {
+		this.canLandScalingDown = canLandScalingDown;
+	}
+
+	/**
+	 * @return the canLongLand
+	 */
+	public boolean isCanLongLand() {
+		return canLongLand;
+	}
+
+	/**
+	 * @param canLongLand the canLongLand to set
+	 */
+	public void setCanLongLand(boolean canLongLand) {
+		this.canLongLand = canLongLand;
+	}
+
+	/**
+	 * @return the canSimpleLand
+	 */
+	public boolean isCanSimpleLand() {
+		return canSimpleLand;
+	}
+
+	/**
+	 * @param canSimpleLand the canSimpleLand to set
+	 */
+	public void setCanSimpleLand(boolean canSimpleLand) {
+		this.canSimpleLand = canSimpleLand;
+	}
+
+	/**
+	 * @return the longLand
+	 */
+	public boolean isLongLand() {
+		return longLand;
+	}
+
+	/**
+	 * @param longLand the longLand to set
+	 */
+	public void setLongLand(boolean longLand) {
+		this.longLand = longLand;
+	}
+
+	/**
+	 * @return the simpleLand
+	 */
+	public boolean isSimpleLand() {
+		return simpleLand;
+	}
+
+	/**
+	 * @param simpleLand the simpleLand to set
+	 */
+	public void setSimpleLand(boolean simpleLand) {
+		this.simpleLand = simpleLand;
 	}
 
 	/**

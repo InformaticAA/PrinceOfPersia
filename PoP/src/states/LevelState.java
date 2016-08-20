@@ -82,7 +82,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 2);
+			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
 			player = new Player(600,110,loader, 3, "right"); // primer piso

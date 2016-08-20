@@ -343,6 +343,7 @@ public class LevelState extends State{
 						// checks if there is floor panels beneath the player to scale down or fall
 						if (floorBeneath == null) {
 							player.setCanLandScalingDown(false);
+							System.out.println("Vooooy a caer " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
 							player.fall();
 						}
 						else {
@@ -469,6 +470,8 @@ public class LevelState extends State{
 				
 				// player has collided with a wall
 //				player.collide_jump();
+				System.out.println("Vooooy a caer 2 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+
 				player.fall();
 				
 				// corrects the player position after wall collision
@@ -592,7 +595,9 @@ public class LevelState extends State{
 			/* Check for corners */
 			corner = checkCorner();
 			
-			if ( (floorPanel == null) && looseFloor == null) {
+			if ( (floorPanel == null) && looseFloor == null && !checkFloorSides()) {
+				System.out.println("Vooooy a caer 3 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+
 				player.fall();
 			}
 		}
@@ -724,8 +729,10 @@ public class LevelState extends State{
 				player.setCornerToClimbDown(null);
 				
 				// There is nothing beneath the player, it falls
-				if (!player.isFalling() && !player.isOnTheEdge()) {
+				if (!player.isFalling() && !player.isOnTheEdge() && !checkFloorSides()) {
 					player.setStraightFall(true);
+					System.out.println("Vooooy a caer 4 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+
 					player.fall();
 				}
 			}
@@ -1762,14 +1769,51 @@ public class LevelState extends State{
 	
 	public void checkLoosesToShake(){
 		int row = player.getSquare()[0];
-		for(int i = 0; i < 10; i++){
-			System.out.println(row + " - " + i);
-			List<Entity> bg = currentRoom.getSquare(row, i).getBackground();
-			for(Entity e : bg){
-				if(e.getTypeOfEntity().startsWith("LooseFloor")){
-					((LooseFloor)e).justShakeItBaby();
+		if(row < 4){
+			for(int i = 0; i < 10; i++){
+				System.out.println(row + " - " + i);
+				List<Entity> bg = currentRoom.getSquare(row, i).getBackground();
+				for(Entity e : bg){
+					if(e.getTypeOfEntity().startsWith("LooseFloor")){
+						((LooseFloor)e).justShakeItBaby();
+					}
 				}
 			}
 		}
+	}
+	
+	public boolean checkFloorSides(){
+		boolean isFloor = false;
+		/* Comprobar que la ultima casilla de la hab izquierda tiene un suelo si estamos en la primera */
+		if(player.getSquare()[1] == 0 && player.getOrientation().equals("left")){
+			
+			Room leftRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol());
+			List<Entity> bg = leftRoom.getSquare(player.getSquare()[0],9).getBackground();
+			for(Entity e : bg){
+				System.out.println("BORDES");
+				String name = e.getTypeOfEntity();
+				if ( name.startsWith("FloorPanel_") ||
+					(name.startsWith("Pillar_") && !name.contains("shadow") && !name.contains("top")) || 
+					name.startsWith("Opener") || name.startsWith("Closer") || 
+					name.startsWith("SpikeFloor")){
+					isFloor = true;
+				}
+			}
+		} else if(player.getSquare()[1] == 9 && player.getOrientation().equals("right")){
+			
+			Room leftRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol() + 2);
+			List<Entity> bg = leftRoom.getSquare(player.getSquare()[0],9).getBackground();
+			for(Entity e : bg){
+				System.out.println("BORDES");
+				String name = e.getTypeOfEntity();
+				if ( name.startsWith("FloorPanel_") ||
+					(name.startsWith("Pillar_") && !name.contains("shadow") && !name.contains("top")) || 
+					name.startsWith("Opener") || name.startsWith("Closer") || 
+					name.startsWith("SpikeFloor")){
+					isFloor = true;
+				}
+			}
+		}
+		return isFloor;
 	}
 }

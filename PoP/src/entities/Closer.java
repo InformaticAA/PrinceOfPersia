@@ -41,8 +41,8 @@ public class Closer extends Entity {
 		
 		/* Check if the player is pressing the opener */
 		if(p != null){
-			if((p.getBoundingBox().getMinX() > this.getBoundingBox().getMaxX() ) || 
-					(p.getBoundingBox().getMaxX() < this.getBoundingBox().getMinX())){
+			if((p.getBoundingBox().getMinX() > (this.getBoundingBox().getMaxX() + 5) ) || 
+					(p.getBoundingBox().getMaxX() < (this.getBoundingBox().getMinX() - 5))){
 				this.unpress();
 				p = null;
 			}

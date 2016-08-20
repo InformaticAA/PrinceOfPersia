@@ -82,7 +82,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(1, 1);
 			doors = currentLevel.getDoors();
 
 			player = new Player(500,110,loader, 3, "left"); // primer piso
@@ -1130,7 +1130,6 @@ public class LevelState extends State{
 			bgEntities.addAll(topBgEntities);
 			
 			for (Entity bgE : bgEntities) {
-
 				String name = bgE.getTypeOfEntity();
 				if ( name.startsWith("Corner") ) {
 					
@@ -1143,6 +1142,8 @@ public class LevelState extends State{
 						corner = bgE;
 //						//System.out.println("LEFT CORNER DETECTED - (" + ec[0] + ", " + ec[1] + ")");
 					}
+				} else if( name.startsWith("Loose") && player.isClimbingLastFrame()){
+					((LooseFloor)bgE).justShakeItBaby();
 				}
 			}
 			

@@ -16,6 +16,7 @@ public class LooseFloor extends Entity {
 	private int room1;
 	private int room2;
 	private boolean broken;
+	private int lifes;
 	
 	public LooseFloor(int x, int y, int x_offset, int y_offset, Loader loader, String loose_type) {
 		super("LooseFloor" + loose_type, x+x_offset, y+y_offset, loader);
@@ -25,6 +26,7 @@ public class LooseFloor extends Entity {
 		currentAnimation = animations.get(loose_type);
 		currentAnimation.setFrameDuration(4);
 		broken = false;
+		lifes = 3;
 		
 		/* Sets the bounding box */
 		enableBoundingBox(this.x + 25, 
@@ -193,7 +195,8 @@ public class LooseFloor extends Entity {
 	}
 	
 	public void justShakeItBaby(){
-		if(!activated){
+		if(!activated && !this.getCurrentAnimation().getId().startsWith("just shaking")){
+			lifes--;
 			this.setCurrentAnimation("just shaking", FRAME_DURATION*3);
 		}
 	}

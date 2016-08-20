@@ -2819,6 +2819,10 @@ public class Player extends Character {
 		return currentAnimation.getId().contains("jump");
 	}
 	
+	public boolean isClimbingLastFrame(){
+		return (this.getCurrentAnimation().getId().startsWith("scaling up_") && this.getCurrentAnimation().getCurrentFrame() == 8);
+	}
+	
 	/**
 	 * 
 	 * @return true if the player has just executed a jump

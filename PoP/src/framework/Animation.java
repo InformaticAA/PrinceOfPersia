@@ -246,4 +246,8 @@ public class Animation {
 	public boolean isLastFrame() {
 		return lastFrame;
 	}
+	
+	public boolean isLastSprite() {
+		return currentFrame == (frames.size() - 1);
+	}
 }

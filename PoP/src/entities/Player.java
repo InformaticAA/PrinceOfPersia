@@ -97,6 +97,7 @@ public class Player extends Character {
 		this.onTheEdge = false;
 		this.canLand = false;
 		this.canLandScalingDown = false;
+		this.canLongLand = false;
 		this.fallCollided = false;
 		this.fallDistance = 0;
 		
@@ -1140,11 +1141,17 @@ public class Player extends Character {
 				this.fall();
 			}
 			
+			this.setLongLand(true);
+			
 			switch(currentState){
 			case IDLE:
 				if(this.currentAnimation.isOver(false)){
 					if (this.isCanLand()) {
 						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						
+						// resets some variables
+						this.setCanLongLand(false);
+						this.setLongLand(false);
 					}
 					else {
 						this.fall();
@@ -1156,6 +1163,10 @@ public class Player extends Character {
 				if(this.currentAnimation.isOver(false)){
 					if (this.isCanLand()) {
 						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						
+						// resets some variables
+						this.setCanLongLand(false);
+						this.setLongLand(false);
 					}
 					else {
 						this.fall();
@@ -1167,6 +1178,10 @@ public class Player extends Character {
 				if(this.currentAnimation.isOver(false)){
 					if (this.isCanLand()) {
 						this.setCurrentAnimation("running jump_" + orientation, FRAME_DURATION);
+						
+						// resets some variables
+						this.setCanLongLand(false);
+						this.setLongLand(false);
 					}
 					else {
 						this.fall();
@@ -1202,6 +1217,7 @@ public class Player extends Character {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
+						System.out.println("WHAT IDLE");
 						this.fall();
 					}
 				}
@@ -1213,6 +1229,7 @@ public class Player extends Character {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
+						System.out.println("WHAT JUMP");
 						this.fall();
 					}
 				}
@@ -1224,6 +1241,7 @@ public class Player extends Character {
 						this.setCurrentAnimation("running jump landing_" + orientation, FRAME_DURATION);
 					}
 					else {
+						System.out.println("WHAT MOVE");
 						this.fall();
 					}
 				}
@@ -1244,6 +1262,8 @@ public class Player extends Character {
 			
 			// resets can land condition
 			this.setCanLand(false);
+			this.setCanLongLand(false);
+//			this.setLongLand(false);
 			
 			switch(currentState){
 			case IDLE:
@@ -2614,6 +2634,10 @@ public class Player extends Character {
 		this.setOnTheEdge(false);
 		this.setCornerToClimb(null);
 		this.setCornerToClimbDown(null);
+		
+		// lands variables resets
+		this.setCanLongLand(false);
+		this.setLongLand(false);
 		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
 		

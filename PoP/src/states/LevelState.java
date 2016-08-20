@@ -82,12 +82,13 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 1);
+			currentRoom = currentLevel.getRoom(2, 2);
 			doors = currentLevel.getDoors();
 
-			player = new Player(600,110,loader, 3, "left"); // primer piso
-//			player = new Player(600,240,loader, 3, "left"); // segundo piso
-			player.setCurrentAnimation("idle_left", 5);
+			player = new Player(600,110,loader, 3, "right"); // primer piso
+//			player = new Player(500,240,loader, 3, "left"); // segundo piso
+//			player = new Player(300,370,loader, 3, "left"); // tercer piso
+			player.setCurrentAnimation("idle_right", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
@@ -220,6 +221,7 @@ public class LevelState extends State{
 	private void checkPlayerCollisions(long elapsedTime) {
 		Entity floorPanel = null;
 		Entity looseFloor = null;
+		Entity floorBeneath = null;
 		Entity cornerFloor = null;
 		Entity corner = null;
 		Entity cornerJumping = null;
@@ -244,8 +246,10 @@ public class LevelState extends State{
 			
 			/* Checks if */
 			corner = checkCorner();
+			cornerFloor = checkCornerFloor();
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
+			floorBeneath = checkFloorBeneath();
 			
 			if (player.startsClimbing() &&
 					(corner != null) &&
@@ -258,24 +262,41 @@ public class LevelState extends State{
 				player.setCornerToClimb(corner);
 				player.setCanClimbDown(false);
 				
-				if ( (cornerCenter[0] < playerCenter[0]) &&
+				System.out.println("CORNER: " + corner.getTypeOfEntity());
+				
+				if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*4) &&
 						corner.getTypeOfEntity().contains("right") &&
 						player.getOrientation().equals("left") ) {
 					
 					// left corner
-					player.setX(cornerCenter[0] + (2 * climbGap) );
-//					System.out.println("LEFT CORNER FIX");
+					System.out.println("LEFT CORNER FIX");
+					if (cornerFloor != null && cornerFloor.getAnimations() != null){
+						
+						// player is climbing from the edge
+						player.setX(cornerCenter[0] + (climbGap) );
+					}
+					else {
+						player.setX(cornerCenter[0] + (2 * climbGap) );
+					}
 					
 					player.setCornerPositionFixed(true);
 					player.setCanClimb(true);
 				}
-				else if ( (cornerCenter[0] > playerCenter[0]) &&
+				else if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*4) &&
 						corner.getTypeOfEntity().contains("left") &&
 						player.getOrientation().equals("right") ) {
 					
 					// right corner
-					player.setX(cornerCenter[0] - climbGap);
-//					System.out.println("RIGHT CORNER FIX");
+					System.out.println("RIGHT CORNER FIX");
+					
+					if (cornerFloor != null){
+						
+						// player is climbing from the edge
+						player.setX(cornerCenter[0] - climbGap/2);
+					}
+					else {
+						player.setX(cornerCenter[0] - climbGap);
+					}
 					
 					player.setCornerPositionFixed(true);
 					player.setCanClimb(true);
@@ -319,8 +340,8 @@ public class LevelState extends State{
 						}
 						player.setCornerReached(false);
 						
-						// checks if there is floor beneath the player to scale down or fall
-						if (floorPanel == null && looseFloor == null) {
+						// checks if there is floor panels beneath the player to scale down or fall
+						if (floorBeneath == null) {
 							player.setCanLandScalingDown(false);
 							player.fall();
 						}
@@ -363,7 +384,15 @@ public class LevelState extends State{
 			cornerJumping = checkCornerJumping();
 			wall = checkWall();
 			
-			if (!player.isLongLand()) {
+//			if (!player.isLongLand() && 
+//					!player.getCurrentAnimation().getId().contains("jump landing")) {
+//				longLandFloor = checkLongJumpFloor();
+//			}
+			
+			if (!player.isLongLand() && 
+					player.getCurrentAnimation().getId().contains("jump_") &&
+					player.getCurrentAnimation().isLastSprite() &&
+					player.getCurrentAnimation().isLastFrame() ){
 				longLandFloor = checkLongJumpFloor();
 			}
 			
@@ -382,15 +411,32 @@ public class LevelState extends State{
 				player.setCanLand(true);
 				player.setGrounded(true);
 			}
+			else {
+				
+				// player falls while trying to jump
+				player.setCanLand(false);
+				player.setGrounded(false);
+			}
 			
 			// checks if player can land the starting jump
-			if ( longLandFloor != null && !player.isLongLand() ) {
+			System.out.println("isLongLand: " + player.isLongLand());
+			if ( longLandFloor != null && //!player.isLongLand() &&
+					player.getCurrentAnimation().getId().contains("jump_") &&
+					player.getCurrentAnimation().isLastSprite() &&
+					player.getCurrentAnimation().isLastFrame()) {
+				
+				System.out.println("GONNA JUMP AND LAND LIKE A CHARM :D");
 				
 				// player can land the jump
 				player.setCanLongLand(true);
 				player.setLongLand(true);
 			}
-			else if ( longLandFloor == null && !player.isLongLand() ) {
+			else if ( longLandFloor == null && //!player.isLongLand() &&
+					player.getCurrentAnimation().getId().contains("jump_") &&
+					player.getCurrentAnimation().isLastSprite() &&
+					player.getCurrentAnimation().isLastFrame()) {
+				
+				System.out.println("GONNA JUMP AND FALL");
 				
 				// player cannot land the jump, he will fall
 				player.setCanLongLand(false);
@@ -550,6 +596,7 @@ public class LevelState extends State{
 		else { /* Player is grounded */
 			
 //			//System.out.println("GROUNDED");
+			player.setLongLand(false);
 			
 			/* Checks if the player can stand on the floor */
 			floorPanel = checkFloorPanel();
@@ -593,12 +640,6 @@ public class LevelState extends State{
 
 						Entity cornerToClimbDown = player.getCornerToClimbDown();
 						int[] cc = cornerToClimbDown.getCenter();
-						
-//						System.out.println("Corner center: (" + cc[0] + ", " + cc[1] + ")");
-//						System.out.println("Player center before: (" + playerCenter[0] + ", " + playerCenter[1] + ")");
-//						
-//						player.setX(cc[0] - 24);
-//						player.setY(cc[1] - 44);
 						
 						player.setCanClimbDown(true);
 						
@@ -918,10 +959,8 @@ public class LevelState extends State{
 					int[] ec = bgE.getCenter();
 					int[] es = bgE.getSquare();
 					
-//					//System.out.println(name.contains("right") + " - " + ((bgTop - playerCenter[1]) <= playerHeight2));
-	
 					if (name.contains("left") &&
-							((bgTop - playerCenter[1]) <= playerHeight2) ) {
+							(ec[1] > playerCenter[1]) ) {
 						
 						// LEFT CORNER
 						if ( (playerCenter[0] >= bgLeft) &&
@@ -936,9 +975,7 @@ public class LevelState extends State{
 						}
 					}
 					else if (name.contains("right") &&
-							((bgTop - playerCenter[1]) <= playerHeight2) ) {
-						
-//						//System.out.println("ALTURA CORRECTA     " + " " + bgLeft + " - " +  playerCenter[0] + " - " + bgRight);
+							(ec[1] > playerCenter[1]) ) {
 						
 						// RIGHT CORNER
 						if ( (playerCenter[0] >= bgLeft) &&
@@ -1054,8 +1091,6 @@ public class LevelState extends State{
 		Entity corner = null;
 		
 		/* Obtains the square where the center point of the player is placed */
-		int playerWidth2 = player.getCurrentAnimation().getImage().getWidth()/2;
-		int playerHeight2 = player.getCurrentAnimation().getImage().getHeight()/2;
 		int[] playerCenter = player.getCenter();
 		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
 		
@@ -1089,14 +1124,8 @@ public class LevelState extends State{
 				if ( name.startsWith("Corner") ) {
 					
 					int[] ec = bgE.getCenter();
-					int[] es = bgE.getSquare();
-
-//					//System.out.println(bgE.getTypeOfEntity() + "(" + es[0] + ", " + es[1] + "):");
-//					//System.out.println("	E_Coords: (" + ec[0] + ", " + ec[1] + ")" +
-//										"/(" + playerSquare[0] + ", " + playerSquare[1] + ")");
-					
-					if ( (ec[0] < playerCenter[0]) &&
-							(ec[1] < playerCenter[1]) &&
+//					if ( (ec[0] < playerCenter[0]) &&
+							if ((ec[1] < playerCenter[1]) &&
 							(player.getOrientation().equals("left")) ) {
 					
 						// corner is at player's left side and player is looking left
@@ -1122,8 +1151,8 @@ public class LevelState extends State{
 					
 					int[] ec = bgE.getCenter();
 					
-					if ( (ec[0] > playerCenter[0]) &&
-							(player.getOrientation().equals("right")) ) {
+//					if ( (ec[0] > playerCenter[0]) &&
+							if((player.getOrientation().equals("right")) ) {
 					
 						// corner is at player's right side and player is looking right
 						corner = bgE;
@@ -1344,46 +1373,98 @@ public class LevelState extends State{
 			List<Entity> bEntities; 
 			List<Entity> fEntities;
 			
-			if (player.getOrientation().equals("left") &&
-					player.getCurrentAnimation().getId().contains("simple")) {
+//			if (player.getOrientation().equals("left") &&
+//					player.getCurrentAnimation().getId().contains("simple")) {
+//				
+//				bEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] - 3).getBackground();
+//				
+//				fEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] - 3).getForeground();
+//			}
+//			else if (player.getOrientation().equals("right") &&
+//					player.getCurrentAnimation().getId().contains("simple")) {
+//				
+//				bEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] + 3).getBackground();
+//				
+//				fEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] + 3).getForeground();
+//			}
+//			else if (player.getOrientation().equals("left") &&
+//					player.getCurrentAnimation().getId().contains("running jump")) {
+//				
+//				bEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] - 4).getBackground();
+//				
+//				fEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] - 4).getForeground();
+//			}
+//			else if (player.getOrientation().equals("right") &&
+//					player.getCurrentAnimation().getId().contains("running jump")) {
+//				
+//				bEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] + 4).getBackground();
+//				
+//				fEntities = currentRoom.getSquare(
+//						playerSquare[0], playerSquare[1] + 4).getForeground();
+//			}
+//			else {
+//				bEntities = null;
+//				fEntities = null;
+//			}
+			
+			bEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			fEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			List<Entity> bgEntities = new LinkedList<Entity>();
+			bgEntities.addAll(bEntities);
+			bgEntities.addAll(fEntities);
 				
-				bEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] - 3).getBackground();
-				
-				fEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] - 3).getForeground();
+			for (Entity bgE : bgEntities) {
+				String name = bgE.getTypeOfEntity();
+				System.out.println("entities: " + name);
+				if ( name.startsWith("FloorPanel_") ||
+					name.startsWith("Loose") ||
+					name.startsWith("Corner") ||
+					(name.startsWith("Pillar_") && !name.contains("shadow")) || 
+					name.startsWith("Opener") || name.startsWith("Closer") || 
+					name.startsWith("SpikeFloor")){
+					
+					floorPanel = bgE;
+				}
 			}
-			else if (player.getOrientation().equals("right") &&
-					player.getCurrentAnimation().getId().contains("simple")) {
-				
-				bEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] + 3).getBackground();
-				
-				fEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] + 3).getForeground();
-			}
-			else if (player.getOrientation().equals("left") &&
-					player.getCurrentAnimation().getId().contains("running jump")) {
-				
-				bEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] - 4).getBackground();
-				
-				fEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] - 4).getForeground();
-			}
-			else if (player.getOrientation().equals("right") &&
-					player.getCurrentAnimation().getId().contains("running jump")) {
-				
-				bEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] + 4).getBackground();
-				
-				fEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] + 4).getForeground();
-			}
-			else {
-				bEntities = null;
-				fEntities = null;
-			}
+		}
+			
+		return floorPanel;
+	}
+	
+	/**
+	 * 
+	 * @return true if there is any type of floor beneath the player
+	 * so he can scale down from a corner without falling
+	 */
+	private Entity checkFloorBeneath() {
+		Entity floorPanel = null;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		System.out.println("ps: " + playerSquare[0] + ", " + playerSquare[1]);
+
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			/* Checks if there is a panel floor type object beneath the player */
+			List<Entity> bEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			List<Entity> fEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getForeground();
 			
 			List<Entity> bgEntities = new LinkedList<Entity>();
 			bgEntities.addAll(bEntities);
@@ -1393,6 +1474,7 @@ public class LevelState extends State{
 				String name = bgE.getTypeOfEntity();
 				if ( name.startsWith("FloorPanel_") ||
 					name.startsWith("Corner") ||
+					name.startsWith("Loose") ||
 					(name.startsWith("Pillar_") && !name.contains("shadow")) || 
 					name.startsWith("Opener") || name.startsWith("Closer") || 
 					name.startsWith("SpikeFloor")){

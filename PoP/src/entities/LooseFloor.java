@@ -16,7 +16,7 @@ public class LooseFloor extends Entity {
 	private int room1;
 	private int room2;
 	private boolean broken;
-
+	
 	public LooseFloor(int x, int y, int x_offset, int y_offset, Loader loader, String loose_type) {
 		super("LooseFloor" + loose_type, x+x_offset, y+y_offset, loader);
 		activated = false;
@@ -51,7 +51,9 @@ public class LooseFloor extends Entity {
 	 */
 	public void setActivated(boolean activated) {
 		this.activated = activated;
-		this.setCurrentAnimation("shaking", FRAME_DURATION*3);
+		if(!this.getCurrentAnimation().getId().equals("shaking")){
+			this.setCurrentAnimation("shaking", FRAME_DURATION*3);
+		}
 	}
 	
 	public boolean isFalling() {
@@ -64,7 +66,19 @@ public class LooseFloor extends Entity {
 
 	@Override
 	public void update(long elapsedTime){
-		
+		if(this.getCurrentAnimation().getId().equals("just shaking") && !activated){
+			currentAnimation.update(elapsedTime);
+			if(this.currentAnimation.isLastFrame()){
+				int currentFrame = currentAnimation.getCurrentFrame();
+				String newSound = currentAnimation.getFrame(currentFrame).getSound();
+				if(!newSound.equals("")){
+					makeSound();
+				}
+			}
+			if(this.getCurrentAnimation().isOver(false)){
+				this.setCurrentAnimation("idle", FRAME_DURATION);
+			}
+		}
 	}
 	
 	@Override
@@ -143,7 +157,7 @@ public class LooseFloor extends Entity {
 	public void increaseRoom1(){
 		this.room1++;
 	}
-	
+
 	public void updateReal(long elapsedTime){
 		/* Entity */
 		currentAnimation.update(elapsedTime);
@@ -158,7 +172,11 @@ public class LooseFloor extends Entity {
 		/* LooseFloor */
 		if(this.getCurrentAnimation().getId().equals("shaking")){
 			if(this.getCurrentAnimation().isOver(false)){
-				this.setCurrentAnimation("falling", FRAME_DURATION);
+				if(this.activated){
+					this.setCurrentAnimation("falling", FRAME_DURATION);
+				} else{
+					this.setCurrentAnimation("idle", FRAME_DURATION);
+				}
 			}
 		}
 		if(this.getCurrentAnimation().getId().equals("falling")){
@@ -172,5 +190,11 @@ public class LooseFloor extends Entity {
 		return (this.getCurrentAnimation().getId().equals("shaking") && 
 				this.getCurrentAnimation().getCurrentFrame() == 3 &&
 				this.getCurrentAnimation().isLastFrame());
+	}
+	
+	public void justShakeItBaby(){
+		if(!activated){
+			this.setCurrentAnimation("just shaking", FRAME_DURATION*3);
+		}
 	}
 }

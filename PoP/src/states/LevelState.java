@@ -82,7 +82,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 1);
+			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
 			player = new Player(500,110,loader, 3, "left"); // primer piso
@@ -537,6 +537,9 @@ public class LevelState extends State{
 				player.setFallCollided(false);
 				player.setStraightFall(false);
 				player.setGrounded(true);
+				
+				/* Check loose floors in that row to shake it baby */
+				checkLoosesToShake();
 			}
 			
 			// Checks for corner to reach in mid air
@@ -1025,6 +1028,7 @@ public class LevelState extends State{
 				if (player.isGrounded() && name.startsWith("LooseFloor") ) {
 					LooseFloor loose = (LooseFloor)bgE;
 					if(!loose.isFalling() && !loose.isActivated()){
+						System.out.println(playerSquare[0] + " - " + playerSquare[1]);
 						leftFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_left", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
 						rightFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_right", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
 						loose.setActivated(true);
@@ -1752,6 +1756,19 @@ public class LevelState extends State{
 				newRoom.addCharacter(player);
 				player.setX(20);
 				currentRoom = newRoom;
+			}
+		}
+	}
+	
+	public void checkLoosesToShake(){
+		int row = player.getSquare()[0];
+		for(int i = 0; i < 10; i++){
+			System.out.println(row + " - " + i);
+			List<Entity> bg = currentRoom.getSquare(row, i).getBackground();
+			for(Entity e : bg){
+				if(e.getTypeOfEntity().startsWith("LooseFloor")){
+					((LooseFloor)e).justShakeItBaby();
+				}
 			}
 		}
 	}

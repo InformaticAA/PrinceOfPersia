@@ -82,12 +82,12 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 1);
+			currentRoom = currentLevel.getRoom(3, 5);
 			doors = currentLevel.getDoors();
 
-			player = new Player(500,110,loader, 3, "left"); // primer piso
-//			player = new Player(500,240,loader, 3, "left"); // segundo piso
-//			player = new Player(500,370,loader, 3, "left"); // tercer piso
+//			player = new Player(400,110,loader, 3, "left"); // primer piso
+//			player = new Player(200,240,loader, 3, "left"); // segundo piso
+			player = new Player(400,370,loader, 3, "left"); // tercer piso
 			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);

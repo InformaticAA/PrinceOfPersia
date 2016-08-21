@@ -502,6 +502,12 @@ public class Loader {
 			} else if(entity.equals("br")){
 				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
 				background.add(newEntity);
+			} else if(entity.equals("sl")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"skeleton_left");
+				background.add(newEntity);
+			} else if(entity.equals("sr")){
+				newEntity = new FloorPanel(px,py,-12,-2,this,"skeleton_right");
+				background.add(newEntity);
 			} else if(entity.equals("loose")){
 				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
 				background.add(newEntity);

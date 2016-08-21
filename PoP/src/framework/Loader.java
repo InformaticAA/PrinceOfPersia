@@ -26,6 +26,7 @@ import entities.FloorPanel;
 import entities.LooseFloor;
 import entities.Opener;
 import entities.Pillar;
+import entities.Potion;
 import entities.Spike;
 import entities.SpikeFloor;
 import entities.Torch;
@@ -460,7 +461,7 @@ public class Loader {
 			} else if (entity.equals("t")) {
 				newEntity = new Torch(px, py, this,false);
 				background.add(newEntity);
-			} 
+			}
 			
 			// CORNER TYPES (floor, opener, closer, pillar)
 			else if(entity.equals("lc")){
@@ -555,7 +556,10 @@ public class Loader {
 			}
 			
 			/* Loads foreground elements */
-			else if(entity.equals("lsb")) {
+			else if (entity.equals("gp")) {
+				newEntity = new Potion(px, py, 0, -12, this,"good potion");
+				foreground.add(newEntity);
+			} else if(entity.equals("lsb")) {
 				newEntity = new Base(px,py,this,"left_stack_base");
 				foreground.add(newEntity);
 			} else if(entity.equals("csb")){

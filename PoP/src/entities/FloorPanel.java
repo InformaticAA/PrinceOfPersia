@@ -23,7 +23,7 @@ public class FloorPanel extends Entity{
 			enableBoundingBox(this.x, this.y + currentAnimation.getImage().getHeight()/2 - 3,
 					currentAnimation.getImage().getWidth() - 27,
 					currentAnimation.getImage().getHeight()/2);
-		} else{
+		} else if(floor_type.equals("broken_left")){
 			enableBoundingBox(this.x, this.y + currentAnimation.getImage().getHeight()/2 - 2,
 					currentAnimation.getImage().getWidth() - 27,
 					currentAnimation.getImage().getHeight()/2);

@@ -46,7 +46,7 @@ room 2 1
 b;rc prt;-;-;-;lpc b;b;b;b;b
 fs pl pshadow b;rpc prm prt;-;bricks(4);-;lpc pl pshadow b;prm lf b;rf lf b;rf lf b;rf lf bricks(1) b
 fs pl pshadow b;rpc prm fst;-;bricks(3);-;lpc pl pshadow b;prm lf b;rf lf t b;rf lf t b;rf pl pshadow b
-rsb rs d1(2,0.5,mark(4)) d1(3,0.3);fs lf b;rf lf b;rf lf b;rf bl b;br pl pshadow b;rpc prm prt;lsb ls d2(2,0.6);csb cs d1(2,0.5) d1(3,0.3);csb cs d1(2,0.5) d2(3,0.3)
+rsb rs d1(2,0.5,mark(4)) d1(3,0.3);fs lf b;rf lf b;rf lf sl b;rf sr bl b;br pl pshadow b;rpc prm prt;lsb ls d2(2,0.6);csb cs d1(2,0.5) d1(3,0.3);csb cs d1(2,0.5) d2(3,0.3)
 
 room 2 2
 b;b;b;b;b;b;b;b;b;b
@@ -124,7 +124,7 @@ room 3 5
 b;b;b;fst;-;b;b;b;b;b
 csb cs(mark(2) d2(2,0.7) d1(3,0.2);csb cs d2(2,0.5,mark(3)) d2(3,0.3);rsb rs d2(2,0.5) d2(3,0.2);fs fst;bricks(3);lsb ls d2(2,0.6,mark(2));csb cs random d2(2,0.5) d1(3,0.3);csb cs d2(2,0.5,mark(1)) d2(3,0.3);csb cs d1(2,0.6) d2(3,0.3);csb cs random d1(2,0.6) d1(3,0.3)
 csb cs d2(2,0.5) d2(3,0.2);csb cs d2(2,0.5) d2(3,0.4);rsb rs d2(2,0.5) d1(3,0.4,mark(1));fs prt;bricks(3);-;lsb ls(mark(4)) d2(2,0.3);csb cs d2(2,0.3) d1(3,0.2);csb cs d1(2,0.6,mark(3)) d1(3,0.2);csb cs d1(2,0.5) d2(3,0.2)
-prm pl pshadow b;prm lf b;rf pl pshadow b;prm lf b;rf bl b;br lf b;rf lsb ls(mark(3)) d2(2,0.4,mark(1));csb cs d2(2,0.6) d1(3,0.2);csb cs d1(2,0.5,mark(3)) d2(3,0.2);csb cs d1(2,0.5) d1(3,0.3)
+prm pl pshadow b;prm lf sl b;rf sr pl pshadow b;prm lf b;rf bl b;br lf b;rf lsb ls(mark(3)) d2(2,0.4,mark(1));csb cs d2(2,0.6) d1(3,0.2);csb cs d1(2,0.5,mark(3)) d2(3,0.2);csb cs d1(2,0.5) d1(3,0.3)
 
 room 1 8
 ;;;;;;;;;

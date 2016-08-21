@@ -82,12 +82,12 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 4);
+			currentRoom = currentLevel.getRoom(2, 7);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(400,110,loader, 3, "left"); // primer piso
-//			player = new Player(200,240,loader, 3, "left"); // segundo piso
-			player = new Player(400,370,loader, 3, "left"); // tercer piso
+			player = new Player(600,240,loader, 3, "left"); // segundo piso
+//			player = new Player(400,370,loader, 3, "left"); // tercer piso
 			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
@@ -584,26 +584,26 @@ public class LevelState extends State{
 				player.setFallCollided(true);
 			}
 		}
-		else if (player.wasJumping()) {
-			
-			/* Checks if the player can stand on the floor */
-			floorPanel = checkFloorPanel();
-			looseFloor = checkLooseFloor();
-			cornerFloor = checkCornerFloor();
-			wall = checkWall();
-			
-			/* Check for corners */
-			corner = checkCorner();
-			
-			if ( (floorPanel == null) && looseFloor == null && !checkFloorSides()) {
-				System.out.println("Vooooy a caer 3 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
-
-				player.fall();
-			}
-		}
+//		else if (player.wasJumping()) {
+//			
+//			/* Checks if the player can stand on the floor */
+//			floorPanel = checkFloorPanel();
+//			looseFloor = checkLooseFloor();
+//			cornerFloor = checkCornerFloor();
+//			wall = checkWall();
+//			
+//			/* Check for corners */
+//			corner = checkCorner();
+//			
+//			if ( (floorPanel == null) && looseFloor == null && !checkFloorSides()) {
+//				System.out.println("Vooooy a caer 3 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+//
+//				player.fall();
+//			}
+//		}
 		else { /* Player is grounded */
 			
-//			//System.out.println("GROUNDED");
+//			System.out.println("GROUNDED");
 			player.setLongLand(false);
 			
 			/* Checks if the player can stand on the floor */
@@ -744,6 +744,7 @@ public class LevelState extends State{
 			if (wall != null) {
 
 				// player has collided with a wall
+				System.out.println("Wall Collision: " + wall.getTypeOfEntity());
 				
 				// corrects the player position after wall collision
 				int wallxGap = 40;

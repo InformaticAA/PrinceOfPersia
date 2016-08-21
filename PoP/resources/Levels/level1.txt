@@ -34,7 +34,7 @@ room 1 6
 b;b;b;b;b;b;b;b;b;b
 prm pl pshadow b;prm lf b;rf t closer(5);lf b;rf t opener(4);lf b;doorfr door(4,door_closed,0) opener(5);roc prt;bricks(3) lc lf b;rf lf b
 csb cs d1(2,0.6) d2(3,0.3);csb cs d2(2,0.6) d2(3,0.3,mark(1));csb cs random d2(2,0.5) d1(3,0.3);csb cs d2(2,0.4,mark(1)) d2(3,0.2);csb cs d1(2,0.6) d2(3,0.3);rsb rs d1(2,0.5,mark(3)) d1(3,0.3);fs pl pshadow b;rpc prm prt;lsb ls d2(2,0.4,mark(3));rsb rs d1(2,0.5) d2(3,0.3)
-csb cs d1(2,0.5,mark(4)) d1(3,0.3);rsb rs d2(2,0.5) d1(3,0.4);fs lf b;rf lf t b;rf lf b;rf rc bricks(1) prt;lpc pl pshadow b;prm bl b;br lsb ls(mark(4)) d2(2,0.3);csb cs d1(2,0.6,mark(2)) d1(3,0.3)
+csb cs d1(2,0.5,mark(4)) d1(3,0.3);rsb rs d2(2,0.5) d1(3,0.4);fs lf b;rf lf t b;rf lf b;rf loose bricks(1);pl pshadow b;prm bl b;br lsb ls(mark(4)) d2(2,0.3);csb cs d1(2,0.6,mark(2)) d1(3,0.3)
 
 room 1 7
 b;b;b;b;b;b;b;b;b;b
@@ -49,7 +49,7 @@ fs pl pshadow b;rpc prm fst;-;bricks(3);-;lpc pl pshadow b;prm lf b;rf lf t b;rf
 rsb rs d1(2,0.5,mark(4)) d1(3,0.3);fs lf b;rf lf b;rf lf sl b;rf sr bl b;br pl pshadow b;rpc prm prt;lsb ls d2(2,0.6);csb cs d1(2,0.5) d1(3,0.3);csb cs d1(2,0.5) d2(3,0.3)
 
 room 2 2
-b;b;b;b;b;b;b;b;b;b
+b;b;b;b;b;b;b;b;loose;b
 rf lf b;rf prt loose;loose;opener(3);roc fst;bricks(3);lc lf b;bricks(1) rf pl pshadow b;prm lf b;rf lf b
 prm pl pshadow b;prm lf b;rf lf b;rf ssb ss(mark(1));fs fst;bricks(3);lsb ls d2(2,0.4);csb cs d1(2,0.6,mark(3)) d1(3,0.2);csb cs d1(2,0.4) d2(3,0.2);rsb rs(mark(2)) d2(2,0.5) d1(3,0.2)
 csb cs random d2(2,0.4) d1(3,0.3);csb cs(mark(4)) d2(2,0.4) d2(3,0.3);csb cs d1(2,0.6,mark(2)) d1(3,0.3);rsb rs d1(2,0.5,mark(4)) d1(3,0.3);fs spike; fst;lsb ls d2(2,0.5);csb cs d1(2,0.5,mark(3)) d2(3,0.2);csb cs d1(2,0.4) d1(3,0.1);csb cs d2(2,0.4) d2(3,0.3)
@@ -73,8 +73,8 @@ fs lf b;rf lf t b;rf lf t b;rf fst loose;rc;lc lf bricks(3) b;rf pl pshadow b;pr
 csb cs d2(2,0.4) d1(3,0.2);csb cs d1(2,0.5,mark(3)) d1(3,0.2);rsb rs d1(2,0.6,mark(3)) d1(3,0.2);fs fst;bricks(3);lsb ls(mark(4)) d2(2,0.4);csb cs d1(2,0.5,mark(2)) d1(3,0.2);csb cs random d1(2,0.5,mark(4)) d1(3,0.3);csb cs(mark(2)) d2(2,0.4) d2(3,0.2);csb cs(mark(1)) d2(2,0.4) d1(3,0.2)
 
 room 2 6
-b;b;b;b;b;b;b;b;b;b
-doorfr door(1,door_closed,0) lf b;rc rf lf t b;rf lf bricks(1) opener(1);roc fst;loc pl pshadow b;prm lf b;rf lf b;rf lf bricks(1) b;rf lf t b;rf pl pshadow b
+b;b;b;b;b;loose;b;b;b;b
+doorfr door(1,door_closed,0) lf b;rf lf t b;rf bricks(1) opener(1);roc fst;lpc pl pshadow b;prm lf b;rf lf b;rf lf bricks(1) b;rf lf t b;rf pl pshadow b
 csb cs d2(2,0.6) d2(3,0.3,mark(1));csb cs random d2(2,0.5) d1(3,0.3);rsb rs d2(2,0.5) d2(3,0.3);fs fst;lsb ls random d1(2,0.5);csb cs d2(2,0.5) d2(3,0.2);csb cs d2(2,0.5) d2(3,0.4);csb cs d2(2,0.4,mark(3)) d1(3,0.3);csb cs d1(2,0.6) d2(3,0.4);rsb rs d1(2,0.5) d1(3,0.3,mark(1))
 csb cs d2(2,0.4) d1(3,0.2);csb cs(mark(4)) d2(2,0.4) d2(3,0.3);rsb rs d2(2,0.5) d1(3,0.2);fs spike;spike;lsb ls(mark(3)) d2(2,0.4);csb cs random d2(2,0.4) d1(3,0.3);csb cs(mark(4)) d2(2,0.4) d2(3,0.3);csb cs d1(2,0.5,mark(2)) d1(3,0.3);csb cs random d1(2,0.5,mark(4)) d1(3,0.3)
 
@@ -98,7 +98,7 @@ csb cs d1(2,0.6,mark(3)) d1(3,0.2);csb cs d1(2,0.5) d2(3,0.2);csb cs(mark(3)) d2
 
 room 3 1
 b;b;b;b;b;b;rpc prt;b;b;b
-rsb rs d1(2,0.5,mark(1)) d2(3,0.2);fs fst;bricks(3);lc b;rf lf b;bricks(1) rf pl pshadow b;prm bl b;br pl pshadow b;prm fst rpc;lsb ls d1(2,0.6)
+rsb rs d1(2,0.5,mark(1)) d2(3,0.2);fs fst;bricks(3);lc lf b;rf lf b;bricks(1) rf pl pshadow b;prm bl b;br pl pshadow b;prm fst rpc;lsb ls d1(2,0.6)
 rsb rs d1(2,0.5,mark(3)) d1(3,0.2);fs fst;bricks(3);lsb ls d2(2,0.4,mark(3));csb cs d1(2,0.6) d2(3,0.3);csb cs d1(2,0.5,mark(4)) d1(3,0.3);csb cs d2(2,0.5) d1(3,0.3);rsb rs(mark(1)) d2(2,0.5) d2(3,0.3);fs bl b;br pl pshadow b
 rsb rs d1(2,0.5,mark(3)) d1(3,0.2);fs spike;spike;lsb ls(mark(4)) d2(2,0.4);csb cs d1(2,0.6,mark(2)) d1(3,0.3);csb cs random d1(2,0.5,mark(4)) d1(3,0.3);csb cs(mark(2)) d2(2,0.5) d2(3,0.2);csb cs(mark(1)) d2(2,0.4) d1(3,0.2);csb cs d2(2,0.6) d1(3,0.2);csb cs d1(2,0.6,mark(3)) d2(3,0.2)
 
@@ -116,7 +116,7 @@ csb cs d1(2,0.6) d2(3,0.3);csb cs d1(2,0.5,mark(4)) d1(3,0.3);csb cs d2(2,0.5) d
 
 room 3 4
 b;b;b;fst loose;b;b;b;b;b;b
-csb cs random d1(2,0.4) d1(3,0.2);csb cs d1(2,0.7) d2(3,0.3);rsb rs d2(2,0.5) d2(3,0.3);fs lf b;rf pl pshadow b;prm lf b;rf lf b;prt t rc;bricks(3);lsb ls d2(2,0.4,mark(3))
+csb cs random d1(2,0.4) d1(3,0.2);csb cs d1(2,0.7) d2(3,0.3);rsb rs d2(2,0.5) d2(3,0.3);fs lf b;rf pl pshadow b;prm lf b;rf lf b;prt t rf rc;bricks(3);lsb ls d2(2,0.4,mark(3))
 csb cs d1(2,0.6) d2(3,0.3);csb cs d1(2,0.5,mark(4)) d1(3,0.3);csb cs d2(2,0.5) d1(3,0.3);csb cs(mark(4)) d2(2,0.4) d2(3,0.2);csb cs d2(2,0.3) d1(3,0.2);rsb rs(mark(1)) d1(2,0.5) d1(3,0.2);fs pl pshadow b;prm fst rpc;bricks(3);lsb ls(mark(4)) d2(2,0.4)
 csb cs d1(2,0.5,mark(2)) d1(3,0.3);csb cs random d1(2,0.5,mark(4)) d1(3,0.3);csb cs(mark(2)) d2(2,0.5) d2(3,0.2);csb cs(mark(1)) d2(2,0.4) d1(3,0.2);csb cs d2(2,0.6) d1(3,0.2);csb cs d1(2,0.5,mark(3)) d2(3,0.2);rsb rs d1(2,0.5) d1(3,0.2);fs spike;spike;pl pshadow b
 

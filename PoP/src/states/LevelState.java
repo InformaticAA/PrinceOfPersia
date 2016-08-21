@@ -82,7 +82,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 7);
+			currentRoom = currentLevel.getRoom(3, 1);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(400,110,loader, 3, "left"); // primer piso
@@ -857,7 +857,7 @@ public class LevelState extends State{
 						}
 					}
 					
-					if(name.startsWith("Opener")){
+					if(name.startsWith("Opener") && player.isGrounded()){
 						finalFloor = bgE;
 						if(((Opener) bgE).getDoor() == null){
 							for(Door d : doors){
@@ -867,7 +867,7 @@ public class LevelState extends State{
 							}
 						}
 						((Opener) bgE).openDoor(player);
-					} else if(name.startsWith("Closer")){
+					} else if(name.startsWith("Closer") && player.isGrounded()){
 						finalFloor = bgE;
 						if(((Closer) bgE).getDoor() == null){
 							for(Door d : doors){

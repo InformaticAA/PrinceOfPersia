@@ -85,13 +85,16 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 4);
 			doors = currentLevel.getDoors();
 
-			player = new Player(400,110,loader, 3, "left"); // primer piso
-//			player = new Player(600,240,loader, 3, "left"); // segundo piso
-//			player = new Player(400,370,loader, 3, "left"); // tercer piso
+			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
+//			player = new Player(600,240,loader, INITIAL_HEALTH, "left"); // segundo piso
+//			player = new Player(400,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
+			
+			// DEBUG POTIONS
+			player.setHp(1);
 			
 			currentRoom.addCharacter(player);
 		}
@@ -217,7 +220,7 @@ public class LevelState extends State{
 			}
 		}
 	}
-
+	
 	private void checkPlayerCollisions(long elapsedTime) {
 		Entity floorPanel = null;
 		Entity looseFloor = null;
@@ -227,6 +230,7 @@ public class LevelState extends State{
 		Entity cornerJumping = null;
 		Entity wall = null;
 		Entity longLandFloor = null;
+		Entity potion = null;
 		
 		int[] playerCenter = player.getCenter();
 		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
@@ -344,6 +348,7 @@ public class LevelState extends State{
 						if (floorBeneath == null) {
 							player.setCanLandScalingDown(false);
 							System.out.println("Vooooy a caer " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+							player.setStraightFall(true);
 							player.fall();
 						}
 						else {
@@ -611,10 +616,18 @@ public class LevelState extends State{
 			looseFloor = checkLooseFloor();
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
+			potion = checkPotion();
 			
 			/* Check for corners */
 			corner = checkCorner();
 				
+			// checks if player can drink a nearby potion
+			player.setCanDrink(potion != null);
+			
+			if (player.isDrinkingPotion() && potion != null) {
+				deletePotion(potion);
+			}
+			
 			if (floorPanel != null) {
 				player.setY((int) floorPanel.getBoundingBox().getMinY());
 			}
@@ -770,6 +783,7 @@ public class LevelState extends State{
 			}
 		}	// END GROUNDED
 	}
+	
 	
 	/**
 	 * 
@@ -1903,5 +1917,183 @@ public class LevelState extends State{
 			}
 		}
 		return isFloor;
+	}
+	
+	/**
+	 * 
+	 * @return true if there is a potion in front of the player
+	 * that he can drink
+	 */
+	private Entity checkPotion() {
+		Entity potion = null;
+		int potionGap = 50;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			if (player.getOrientation().equals("left")) {
+				
+				/* Checks if there is a potion type object in current square */
+				List<Entity> bgEntities = new LinkedList<Entity>();
+				
+				List<Entity> fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getForeground();
+				
+				List<Entity> fEntities2;
+				
+				if (playerSquare[1] > 0) {
+					fEntities2 = currentRoom.getSquare(
+							playerSquare[0], playerSquare[1] - 1).getForeground();
+					bgEntities.addAll(fEntities2);
+				}
+				
+				bgEntities.addAll(fEntities);
+	
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Potion_") &&
+						ec[0] < playerCenter[0] &&
+						(Math.abs(ec[0] - playerCenter[0]) < potionGap) ) {
+						
+						// player is close to the potion
+						potion = bgE;
+					}
+				}
+			}
+			else if (player.getOrientation().equals("right")) {
+				/* Checks if there is a potion type object in current square */
+				List<Entity> bgEntities = new LinkedList<Entity>();
+				
+				List<Entity> fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getForeground();
+
+				List<Entity> fEntities2;
+				if (playerSquare[1] < 9) {
+					fEntities2 = currentRoom.getSquare(
+							playerSquare[0], playerSquare[1] + 1).getForeground();
+					bgEntities.addAll(fEntities2);
+				}
+				
+				bgEntities.addAll(fEntities);
+	
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Potion_") &&
+						ec[0] > playerCenter[0] &&
+						(Math.abs(ec[0] - playerCenter[0]) < potionGap) ) {
+						
+						// player is close to the potion
+						potion = bgE;
+					}
+				}
+			}		
+		}
+		return potion;
+	}
+	
+	/**
+	 * 
+	 * @return deletes the potion that the player is drinking
+	 */
+	private Entity deletePotion(Entity potion) {
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			/* Checks if there is a potion type object in current square */
+			List<Entity> bgEntities = new LinkedList<Entity>();
+			Square currentSquare = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]);
+			List<Entity> fEntities = currentSquare.getForeground();
+			bgEntities.addAll(fEntities);
+			
+			/* Checks if there is a potion type object in left square */
+			List<Entity> bgEntitiesLeft = new LinkedList<Entity>();
+			Square currentSquareLeft = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1] - 1);
+			List<Entity> fEntitiesLeft = currentSquareLeft.getForeground();
+			bgEntitiesLeft.addAll(fEntitiesLeft);
+			
+			/* Checks if there is a potion type object in right square */
+			List<Entity> bgEntitiesRight = new LinkedList<Entity>();
+			Square currentSquareRight = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1] + 1);
+			List<Entity> fEntitiesRight = currentSquareRight.getForeground();
+			bgEntitiesRight.addAll(fEntitiesRight);
+			
+			if (player.getOrientation().equals("left")) {
+				
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Potion_") &&
+						ec[0] < playerCenter[0] ){
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(bgE, currentSquare);
+					}
+				}
+				
+				// Searches for potion type objects
+				for (Entity bgE : bgEntitiesLeft) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Potion_") &&
+						ec[0] < playerCenter[0] ){
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(bgE, currentSquareLeft);
+					}
+				}
+			}
+			else if (player.getOrientation().equals("right")) {
+
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Potion_") &&
+						ec[0] > playerCenter[0] ){
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(potion, currentSquare);
+					}
+				}
+				
+				// Searches for potion type objects
+				for (Entity bgE : bgEntitiesRight) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Potion_") &&
+						ec[0] > playerCenter[0] ){
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(potion, currentSquareRight);
+					}
+				}
+			}
+		}
+		return potion;
 	}
 }

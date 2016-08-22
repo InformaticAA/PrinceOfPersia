@@ -61,7 +61,7 @@ public class VersusState extends State{
 		this.player1 = player1;
 		this.player2 = player2;
 		this.room = room;
-		//main_theme = TinySound.loadMusic(new File("resources/Music/Star.ogg"));
+//		main_theme = TinySound.loadMusic(new File("resources/Music/Star.ogg"));
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class VersusState extends State{
 //		enemy.setPlayer(true,prince);
 		
 		texts = new ArrayList<Text>();
-		//main_theme.play(true);
+//		main_theme.play(true);
 	}
 
 	@Override
@@ -105,11 +105,11 @@ public class VersusState extends State{
 				String message;
 				if(prince.getHp() == 0 && player1 == 0){
 					message = "P2 WINS (ESPACIO PARA SALIR)"; 
-					//main_theme.stop();
+//					main_theme.stop();
 					guard_wins.play(false);
 				} else{
 					message = "P1 WINS (ESPACIO PARA SALIR)";
-					//main_theme.stop();
+//					main_theme.stop();
 					prince_wins.play(false);
 					
 				}

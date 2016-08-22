@@ -90,9 +90,9 @@ public class Corner extends Entity{
 	public void drawSelf(Graphics g) {
 		
 		/* Draws the entity */
-		BufferedImage img = currentAnimation.getImage();
-		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
-				y - currentAnimation.getImage().getHeight(), null);
+//		BufferedImage img = currentAnimation.getImage();
+//		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
+//				y - currentAnimation.getImage().getHeight(), null);
 		
 		/* Draws the entity's bounding box */
 		if (boundingBox != null) {

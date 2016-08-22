@@ -869,7 +869,7 @@ public class LevelState extends State{
 						}
 					}
 					
-					if(name.startsWith("Opener")){
+					if(name.startsWith("Opener") && player.isGrounded()){
 						finalFloor = bgE;
 						if(((Opener) bgE).getDoor() == null){
 							for(Door d : doors){
@@ -879,7 +879,7 @@ public class LevelState extends State{
 							}
 						}
 						((Opener) bgE).openDoor(player);
-					} else if(name.startsWith("Closer")){
+					} else if(name.startsWith("Closer") && player.isGrounded()){
 						finalFloor = bgE;
 						if(((Closer) bgE).getDoor() == null){
 							for(Door d : doors){
@@ -1720,11 +1720,13 @@ public class LevelState extends State{
 					/* Put broken */
 					int[] looseCenter = loose.getCenter();
 					int[] looseSquare = loose.getSquare(looseCenter[0], looseCenter[1]);
+					System.out.println("SE VA A ROMPEEEER " + looseSquare[0] + " - " + looseSquare[1]);
 					int px = 64 + looseSquare[1] * 64;
 					int py = (int)(6 + looseSquare[0] * 126);
 					newEntities.add(new FloorPanel(px,py,0,-6,loader,"broken_left"));
 					px = 64 + (looseSquare[1]+1) * 64;
 					py = (int)(6 + looseSquare[0] * 126);
+					System.out.println("ROTIIIISIMA " + px + " - " + py);
 					newEntities.add(new FloorPanel(px,py,-12,-2,loader,"broken_right"));
 					currentLevel.getRoom(loose.getRoom1(), loose.getRoom2()).addBackground(newEntities);
 					
@@ -1736,26 +1738,53 @@ public class LevelState extends State{
 						//System.out.println("AHORA CREARIAMOS ESQUINA");
 						
 						/* Create corners */
-						Corner newCorner = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol()));
-						Corner newCornerRight = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol() + 1));
+						Entity newCorner = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol()));
+						Entity newCornerRight = returnCorner(currentRoom.getSquare(loose.getRow(), loose.getCol() + 1));
 						if(newCorner == null && newCornerRight == null){
-							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
-							newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
-							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
-							newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
-							currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
-							
-							/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */
-							if(loose.getRow() == 3){
-								Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
-								Square underSquare = newRoom.getSquare(0, loose.getCol());
-								Entity base = newRoom.returnNamedEntityForeground("Base", underSquare);
-								newRoom.deleteEntityForeground(base, underSquare);
-								newCorner = new Corner(getPX(loose.getCol()),getPY(0),-12,-2,loader,"normal_right");
-								currentRoom.addToBackground(newCorner, underSquare);
-								newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
-								currentRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
+							//Si no hay ninguna esquina -> mirar que haya pared
+							newCorner = currentRoom.returnNamedEntityBackground("Wall_face_stack_main", currentRoom.getSquare(loose.getRow(), loose.getCol()));
+							if(newCorner == null){
+								
+								//No hay pared
+								newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
+								currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
+								newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
+								currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+								
+								/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */
+								if(loose.getRow() == 3){
+									Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
+									Square underSquare = newRoom.getSquare(0, loose.getCol());
+									Entity looseUnder = newRoom.returnNamedEntityBackground("LooseFloor", underSquare);
+									newRoom.deleteEntityBackground(looseUnder, underSquare);
+									looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
+									newRoom.deleteEntityBackground(looseUnder, underSquare);
+									newCorner = new Corner(getPX(loose.getCol()),getPY(0),-12,-2,loader,"normal_right");
+									newRoom.addToBackground(newCorner, underSquare);
+									newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
+									newRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
+								}
+							} else{
+								//Hay pared -> Crear solo esquina a la derecha
+								newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
+								currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
+								
+								/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */
+								if(loose.getRow() == 3){
+									Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
+									Square underSquare = newRoom.getSquare(0, loose.getCol());
+									Entity looseUnder = newRoom.returnNamedEntityBackground("LooseFloor", underSquare);
+									newRoom.deleteEntityBackground(looseUnder, underSquare);
+									looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
+									newRoom.deleteEntityBackground(looseUnder, underSquare);
+									newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
+									newRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
+								}
 							}
+							
+							
+							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
+							
 						} else if(newCorner != null && newCorner.getTypeOfEntity().contains("left")){
 							//Si hay esquina con nombre left -> se quita de la casilla actual y se mete una left en la casilla derecha
 							currentRoom.deleteEntityBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()));
@@ -1767,12 +1796,14 @@ public class LevelState extends State{
 							if(loose.getRow() == 3){
 								Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
 								Square underSquare = newRoom.getSquare(0, loose.getCol());
-								Entity base = newRoom.returnNamedEntityForeground("Base", underSquare);
-								newRoom.deleteEntityForeground(base, underSquare);
-								base = newRoom.returnNamedEntityBackground("Corner", underSquare);
-								newRoom.deleteEntityBackground(base, underSquare);
+								Entity looseUnder = newRoom.returnNamedEntityBackground("Loose", underSquare);
+								newRoom.deleteEntityBackground(looseUnder, underSquare);
+								looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
+								newRoom.deleteEntityBackground(looseUnder, underSquare);
+								looseUnder = newRoom.returnNamedEntityBackground("Corner", underSquare);
+								newRoom.deleteEntityBackground(looseUnder, underSquare);
 								newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
-								currentRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
+								newRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
 							}
 						} else if(newCornerRight.getTypeOfEntity().contains("right")){
 							//Si hay una esquina con nombre right -> se quita de la casilla actual, y se mete una right en la casilla de la izq
@@ -1784,16 +1815,19 @@ public class LevelState extends State{
 							if(loose.getRow() == 3){
 								Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
 								Square underSquare = newRoom.getSquare(0, loose.getCol());
-								Entity base = newRoom.returnNamedEntityForeground("Base", underSquare);
-								newRoom.deleteEntityForeground(base, underSquare);
+								Entity looseUnder = newRoom.returnNamedEntityBackground("Loose", underSquare);
+								newRoom.deleteEntityBackground(looseUnder, underSquare);
+								looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
+								newRoom.deleteEntityBackground(looseUnder, underSquare);
 								newCorner = new Corner(getPX(loose.getCol()),getPY(0),-12,-2,loader,"normal_right");
-								currentRoom.addToBackground(newCorner, underSquare);
+								newRoom.addToBackground(newCorner, underSquare);
 							}
 						}
 						
 					}
 					
 					if(loose.getY() > (400 + loose.getCurrentAnimation().getImage().getHeight())){
+						System.out.println("CAMBIO DE ROOOOOM");
 						/* Changed room */
 						Room looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
 						looseRoom.deleteEntityBackground(loose);
@@ -1829,8 +1863,10 @@ public class LevelState extends State{
 			List<Entity> bEntities = looseRoom.getSquare(
 					looseSquare[0], looseSquare[1]).getBackground();
 			
+			System.out.println("======================");
 			for (Entity bgE : bEntities) {
 				String name = bgE.getTypeOfEntity();
+				System.out.println(name);
 				if(name.startsWith("FloorPanel_normal_left") || name.startsWith("FloorPanel_broken_right")){
 					int[] ec = bgE.getCenter();
 					if(loose.getCenter()[1] - ec[1] > -10 && loose.getCenter()[1] - ec[1] <= 10){

@@ -87,12 +87,13 @@ public class LevelState extends State{
 
 			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
 //			player = new Player(600,240,loader, INITIAL_HEALTH, "left"); // segundo piso
-//			player = new Player(400,370,loader, INITIAL_HEALTH, "left"); // tercer piso
+//			player = new Player(600,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
 			
+			// DEBUG POTIONS
 			player.setHp(1);
 			
 			currentRoom.addCharacter(player);

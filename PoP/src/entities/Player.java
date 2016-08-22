@@ -18,7 +18,7 @@ public class Player extends Character {
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
-	private final int FRAME_DURATION = 40;
+	private final int FRAME_DURATION = 5;
 	private final int MOVE_SPEED = 2;
 	private final int SAFE_FALL_DISTANCE = 150;
 	private final int RISKY_FALL_DISTANCE = 300;
@@ -1297,7 +1297,14 @@ public class Player extends Character {
 			// resets can land condition
 			this.setCanLand(false);
 			this.setCanLongLand(false);
-//			this.setLongLand(false);
+			
+			// resets climb up and down conditions
+			if (this.getCurrentAnimation().isOver(false)) {
+				this.setCanClimb(false);
+				this.setCornerToClimb(null);
+				this.setCanClimbDown(false);
+				this.setCornerToClimbDown(null);
+			}
 			
 			switch(currentState){
 			case IDLE:
@@ -1873,6 +1880,14 @@ public class Player extends Character {
 
 			// resets can land condition
 			this.setCanLand(false);
+			
+			// resets climb up and down conditions
+			if (this.getCurrentAnimation().isOver(false)) {
+				this.setCanClimb(false);
+				this.setCornerToClimb(null);
+				this.setCanClimbDown(false);
+				this.setCornerToClimbDown(null);
+			}
 			
 			switch(currentState){
 			case IDLE:
@@ -2674,13 +2689,13 @@ public class Player extends Character {
 		this.setLongLand(false);
 		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
-		
-		if (orientation.equals("left")) {
-			this.move(-10, 0);
-		}
-		else if (orientation.equals("right")) {
-			this.move(10, 0);
-		}
+//		int fallOffset = 20;		
+//		if (orientation.equals("left")) {
+//			this.move(-fallOffset, 0);
+//		}
+//		else if (orientation.equals("right")) {
+//			this.move(fallOffset, 0);
+//		}
 		this.falling = true;
 	}
 	
@@ -2888,7 +2903,12 @@ public class Player extends Character {
 	 * jumping nor falling
 	 */
 	public boolean isGrounded() {
-		return !isJumping() && !isFalling() && !isClimbing();
+		return (!isJumping() || isLanding()) &&
+				!isFalling() && !isClimbing();
+	}
+	
+	public boolean isLanding() {
+		return this.getCurrentAnimation().getId().contains("landing");
 	}
 	
 	@Override

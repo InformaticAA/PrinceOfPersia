@@ -130,15 +130,15 @@ public class Character extends Entity {
 		super.update(elapsedTime);
 		
 		if (currentAnimation.getId().contains("jump") ||
-				currentAnimation.getId().contains("drinking") ||
-//				currentAnimation.getId().contains("hanging") ||
+				currentAnimation.getId().contains("simple") ||
+//				currentAnimation.getId().contains("crouching") ||
 				!firstTime) {
 			
 			
 			if (framesDebug == 0) {
-//				System.out.println(currentAnimation.getId() + ": "
-//									+ currentAnimation.getCurrentFrame()
-//									+ " -> (" + getX() + ", " + getY() + ")");
+				System.out.println(currentAnimation.getId() + ": "
+									+ currentAnimation.getCurrentFrame()
+									+ " -> (" + getX() + ", " + getY() + ")");
 			}
 			
 			if (framesDebug == 4) {

@@ -2666,13 +2666,13 @@ public class Player extends Character {
 		this.setLongLand(false);
 		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
-		
-		if (orientation.equals("left")) {
-			this.move(-10, 0);
-		}
-		else if (orientation.equals("right")) {
-			this.move(10, 0);
-		}
+//		int fallOffset = 20;		
+//		if (orientation.equals("left")) {
+//			this.move(-fallOffset, 0);
+//		}
+//		else if (orientation.equals("right")) {
+//			this.move(fallOffset, 0);
+//		}
 		this.falling = true;
 	}
 	
@@ -2880,7 +2880,12 @@ public class Player extends Character {
 	 * jumping nor falling
 	 */
 	public boolean isGrounded() {
-		return !isJumping() && !isFalling() && !isClimbing();
+		return (!isJumping() || isLanding()) &&
+				!isFalling() && !isClimbing();
+	}
+	
+	public boolean isLanding() {
+		return this.getCurrentAnimation().getId().contains("landing");
 	}
 	
 	@Override

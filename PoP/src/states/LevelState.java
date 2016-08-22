@@ -82,11 +82,11 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 4);
+			currentRoom = currentLevel.getRoom(2, 2);
 			doors = currentLevel.getDoors();
 
-//			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
-			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
+			player = new Player(270,110,loader, INITIAL_HEALTH, "right"); // primer piso
+//			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(400,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
 //			player = new Player(500,100,loader, 3, "left");
@@ -391,18 +391,15 @@ public class LevelState extends State{
 		}
 		else if ( player.isJumping() ) {
 			
-//			//System.out.println("JUMPING");
+//			System.out.println("JUMPING");
+//			System.out.println("canLand: " + player.isCanLand());
+//			System.out.println("canLongLand: " + player.isCanLongLand());
 			
 			/* Checks if the player can land on the floor */
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
 			cornerJumping = checkCornerJumping();
 			wall = checkWall();
-			
-//			if (!player.isLongLand() && 
-//					!player.getCurrentAnimation().getId().contains("jump landing")) {
-//				longLandFloor = checkLongJumpFloor();
-//			}
 			
 			if (!player.isLongLand() && 
 					player.getCurrentAnimation().getId().contains("jump_") &&
@@ -590,17 +587,28 @@ public class LevelState extends State{
 					// player is too far to reach the corner in mid air
 					player.setCanClimb(false);
 					player.setCornerToClimb(null);
-					System.out.println("VAYA X FAVOR");
 				}
 			}
 			
 			if (wall !=  null) {
 				
 				// player has collided with a wall
-				if (player.getOrientation().equals("left")) {
+				if ( player.getOrientation().equals("left") &&
+					 wall.getTypeOfEntity().contains("face") ) {
+					
 					player.setX(wall.getCenter()[0] + 40);
 				}
 				else if (player.getOrientation().equals("left")) {
+					
+					player.setX(wall.getCenter()[0] - 40);
+				}
+				else if ( player.getOrientation().equals("right") &&
+					 wall.getTypeOfEntity().contains("face") ) {
+				
+					player.setX(wall.getCenter()[0] + 40);
+				}
+				else if (player.getOrientation().equals("right")) {
+					
 					player.setX(wall.getCenter()[0] - 40);
 				}
 				player.setFallCollided(true);
@@ -1415,51 +1423,32 @@ public class LevelState extends State{
 			List<Entity> bEntities; 
 			List<Entity> fEntities;
 			
-//			if (player.getOrientation().equals("left") &&
-//					player.getCurrentAnimation().getId().contains("simple")) {
-//				
-//				bEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] - 3).getBackground();
-//				
-//				fEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] - 3).getForeground();
-//			}
-//			else if (player.getOrientation().equals("right") &&
-//					player.getCurrentAnimation().getId().contains("simple")) {
-//				
-//				bEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] + 3).getBackground();
-//				
-//				fEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] + 3).getForeground();
-//			}
-//			else if (player.getOrientation().equals("left") &&
-//					player.getCurrentAnimation().getId().contains("running jump")) {
-//				
-//				bEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] - 4).getBackground();
-//				
-//				fEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] - 4).getForeground();
-//			}
-//			else if (player.getOrientation().equals("right") &&
-//					player.getCurrentAnimation().getId().contains("running jump")) {
-//				
-//				bEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] + 4).getBackground();
-//				
-//				fEntities = currentRoom.getSquare(
-//						playerSquare[0], playerSquare[1] + 4).getForeground();
-//			}
-//			else {
-//				bEntities = null;
-//				fEntities = null;
-//			}
-			
-			bEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getBackground();
-			fEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getBackground();
+			if (player.getOrientation().equals("left") ) {
+				
+				bEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] - 1).getBackground();
+				
+				fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] - 1).getForeground();
+			}
+			else if (player.getOrientation().equals("right") ) {
+				
+				bEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] + 1).getBackground();
+				
+				fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1] + 1).getForeground();
+			}
+			else if (playerSquare[1] == 0 || playerSquare[1] == 9) {
+				bEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getBackground();
+				fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getBackground();
+			}
+			else {
+				bEntities = null;
+				fEntities = null;
+			}
 			
 			List<Entity> bgEntities = new LinkedList<Entity>();
 			bgEntities.addAll(bEntities);

@@ -246,6 +246,13 @@ public class LevelState extends State{
 		}
 		else if ( player.isClimbing() ) {
 			
+			Entity debugCorner = player.getCornerToClimb();
+			
+			if (debugCorner != null) {
+				System.out.println("debugCorner: " + debugCorner.getTypeOfEntity() + ": " +
+						debugCorner.getCenter()[0] + ", " + debugCorner.getCenter()[1]);
+			}
+			
 //			System.out.println("CLIMBING");
 			
 			/* Checks if */
@@ -266,7 +273,7 @@ public class LevelState extends State{
 				player.setCornerToClimb(corner);
 				player.setCanClimbDown(false);
 				
-				System.out.println("CORNER: " + corner.getTypeOfEntity());
+				System.out.println("STARTING CORNER: " + corner.getTypeOfEntity());
 				
 				if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*4) &&
 						corner.getTypeOfEntity().contains("right") &&
@@ -323,9 +330,11 @@ public class LevelState extends State{
 				
 				if (cornerToClimb != null) {
 					currentCorner = cornerToClimb;
+					System.out.println("CLIMB UP");
 				}
 				else if (cornerToClimbDown != null) {
 					currentCorner = cornerToClimbDown;
+					System.out.println("CLIMB DOWN");
 				}
 				
 				if (currentCorner != null) {
@@ -425,13 +434,13 @@ public class LevelState extends State{
 			}
 			
 			// checks if player can land the starting jump
-			System.out.println("isLongLand: " + player.isLongLand());
+//			System.out.println("isLongLand: " + player.isLongLand());
 			if ( longLandFloor != null && //!player.isLongLand() &&
 					player.getCurrentAnimation().getId().contains("jump_") &&
 					player.getCurrentAnimation().isLastSprite() &&
 					player.getCurrentAnimation().isLastFrame()) {
 				
-				System.out.println("GONNA JUMP AND LAND LIKE A CHARM :D");
+				System.out.println("GONNA LAND LIKE A CHARM :D");
 				
 				// player can land the jump
 				player.setCanLongLand(true);
@@ -442,7 +451,7 @@ public class LevelState extends State{
 					player.getCurrentAnimation().isLastSprite() &&
 					player.getCurrentAnimation().isLastFrame()) {
 				
-				System.out.println("GONNA JUMP AND FALL");
+				System.out.println("GONNA FALL");
 				
 				// player cannot land the jump, he will fall
 				player.setCanLongLand(false);
@@ -525,26 +534,34 @@ public class LevelState extends State{
 					
 					// short fall, player lands nicely
 					loader.getSound("landing soft").play();
-					//System.out.println("SAFE LAND");
 					player.safeLand();
+					System.out.println("SAFE LAND");
 				}
 				else if ( player.isRiskyFall() ) {
 					
 					// long fall, but not dying
 					player.riskyLand();
 					loader.getSound("landing medium").play();
+					System.out.println("RISKY LAND");
 				}
 				else {
 					
 					// free fall, player dies
 					player.die();
 					loader.getSound("landing hard").play();
+					System.out.println("DEATH LAND");
 				}
 				
 				player.setFreeFall(false);
 				player.setFallCollided(false);
 				player.setStraightFall(false);
 				player.setGrounded(true);
+				
+				// resets some climb conditions
+				player.setCanClimb(false);
+				player.setCanClimbDown(false);
+				player.setCornerToClimb(null);
+				player.setCornerToClimbDown(null);
 				
 				/* Check loose floors in that row to shake it baby */
 				checkLoosesToShake();
@@ -699,8 +716,6 @@ public class LevelState extends State{
 						
 						// player is walking right, into a right corner
 						if (player.isForcedToStop()) {
-							
-							//System.out.println("VAMOH A CALMARNOH: " + cornerCenter[0] + " - " + playerCenter[0]);
 							
 							if ( (playerCenter[0] > cornerCenter[0] - 10) || player.isOnTheEdge()) {
 								//System.out.println("ole: " + safeWalkingGap/8);
@@ -1061,7 +1076,7 @@ public class LevelState extends State{
 						//System.out.println("SQUARE[0] " + playerSquare[0] + " SQUARE[1] " + playerSquare[1]);;
 						toBeDeleted = loose;
 						falling_floor.add(loose);
-						
+
 						// returns the current loose floor
 						looseFloor = bgE;
 					}
@@ -1480,8 +1495,6 @@ public class LevelState extends State{
 		int[] playerCenter = player.getCenter();
 		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
 		
-		System.out.println("ps: " + playerSquare[0] + ", " + playerSquare[1]);
-
 		// Checks that the square is within the room
 		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
 				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
@@ -1650,8 +1663,18 @@ public class LevelState extends State{
 								currentRoom.addToBackground(newCorner, currentRoom.getSquare(loose.getRow(), loose.getCol()+1));
 							} else{
 								System.out.println("CASO 5 - ESQUINA IZQUIERDA PARED DERECHA");
+								
+								// makes the player fall if he is in the same square as the falling loose floor
+								int looseSquareX = loose.getRow();
+								int looseSquareY = loose.getCol();
+								int[] newPlayerCenter = player.getCenter();
+								int[] newPlayerSquare = player.getSquare(newPlayerCenter[0], newPlayerCenter[1]);
+								if (newPlayerSquare[0] == looseSquareX &&
+										newPlayerSquare[1] == looseSquareY) {
+									player.setStraightFall(true);
+									player.fall();
+								}
 							}
-							
 							
 							/* Comprobar si es en la ultima fila => eliminar base y esquina izquierda, y colocar esquina izquierda en la siguiente */
 							if(loose.getRow() == 3){
@@ -1682,6 +1705,17 @@ public class LevelState extends State{
 								currentRoom.addToBackground(newCornerRight, currentRoom.getSquare(loose.getRow(), loose.getCol()));
 							} else{
 								System.out.println("CASO 7 - ESQUINA DERECHA PARED IZQUIERDA");
+								
+								// makes the player fall if he is in the same square as the falling loose floor
+								int looseSquareX = loose.getRow();
+								int looseSquareY = loose.getCol();
+								int[] newPlayerCenter = player.getCenter();
+								int[] newPlayerSquare = player.getSquare(newPlayerCenter[0], newPlayerCenter[1]);
+								if (newPlayerSquare[0] == looseSquareX &&
+										newPlayerSquare[1] == looseSquareY) {
+									player.setStraightFall(true);
+									player.fall();
+								}
 							}
 						
 							/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */

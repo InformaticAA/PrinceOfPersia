@@ -1274,7 +1274,14 @@ public class Player extends Character {
 			// resets can land condition
 			this.setCanLand(false);
 			this.setCanLongLand(false);
-//			this.setLongLand(false);
+			
+			// resets climb up and down conditions
+			if (this.getCurrentAnimation().isOver(false)) {
+				this.setCanClimb(false);
+				this.setCornerToClimb(null);
+				this.setCanClimbDown(false);
+				this.setCornerToClimbDown(null);
+			}
 			
 			switch(currentState){
 			case IDLE:
@@ -1850,6 +1857,14 @@ public class Player extends Character {
 
 			// resets can land condition
 			this.setCanLand(false);
+			
+			// resets climb up and down conditions
+			if (this.getCurrentAnimation().isOver(false)) {
+				this.setCanClimb(false);
+				this.setCornerToClimb(null);
+				this.setCanClimbDown(false);
+				this.setCornerToClimbDown(null);
+			}
 			
 			switch(currentState){
 			case IDLE:

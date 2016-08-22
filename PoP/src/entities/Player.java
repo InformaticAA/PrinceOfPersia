@@ -3267,6 +3267,7 @@ public class Player extends Character {
 	}
 	
 	public void setSpiked(){
+		System.out.println("spiked");
 		this.currentState = PlayerState.DIED;
 		this.setCurrentAnimation("dead spiked_" + orientation, FRAME_DURATION);
 	}

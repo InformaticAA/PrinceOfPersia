@@ -99,7 +99,7 @@ public class LevelState extends State{
 			player.setCurrentAnimation("idle_right", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
-			player.setySpeed(4);
+			player.setySpeed(6);
 			
 			// DEBUG POTIONS
 			player.setHp(1);
@@ -161,7 +161,9 @@ public class LevelState extends State{
 
 		manageKeys();
 		currentLevel.update(elapsedTime);
-		checkPlayerCollisions(elapsedTime);
+		if(!player.isDead()){
+			checkPlayerCollisions(elapsedTime);
+		}
 		updateFallingFloor(elapsedTime);
 		updateDoors(elapsedTime);
 		checkPlayerSquare();
@@ -536,7 +538,10 @@ public class LevelState extends State{
 			
 			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
-				if ( player.isSafeFall() ) {
+				if( player.isDead()){
+					
+				}
+				else if ( player.isSafeFall() ) {
 					
 					// short fall, player lands nicely
 					loader.getSound("landing soft").play();
@@ -941,7 +946,14 @@ public class LevelState extends State{
 						finalFloor = bgE;
 						if(!((SpikeFloor) bgE).isActivated()){
 							((SpikeFloor) bgE).activate(player);
-							if(player.getCurrentAnimation().getId().startsWith("running") && !player.isJumping()){
+							if(player.isFalling() || player.isFreeFall() || (player.getCurrentAnimation().getId().startsWith("running") && !player.isJumping())){
+								if(player.isFalling() || player.isFreeFall()){
+									player.setGrounded(true);
+									player.setFreeFall(false);
+									player.setFalling(false);
+									
+								}
+								
 								bgRight = (int) bgE.getBoundingBox().getMaxX();
 								bgTop = (int) bgE.getBoundingBox().getMaxY();
 								if(player.getCurrentAnimation().equals("right")){

@@ -1454,7 +1454,13 @@ public class LevelState extends State{
 			List<Entity> bEntities; 
 			List<Entity> fEntities;
 			
-			if (player.getOrientation().equals("left") ) {
+			if (playerSquare[1] == 0 || playerSquare[1] == 9) {
+				bEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getBackground();
+				fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getBackground();
+			}
+			else if (player.getOrientation().equals("left") ) {
 				
 				bEntities = currentRoom.getSquare(
 						playerSquare[0], playerSquare[1] - 1).getBackground();
@@ -1469,12 +1475,6 @@ public class LevelState extends State{
 				
 				fEntities = currentRoom.getSquare(
 						playerSquare[0], playerSquare[1] + 1).getForeground();
-			}
-			else if (playerSquare[1] == 0 || playerSquare[1] == 9) {
-				bEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1]).getBackground();
-				fEntities = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1]).getBackground();
 			}
 			else {
 				bEntities = null;

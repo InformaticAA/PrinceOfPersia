@@ -51,6 +51,8 @@ public class Player extends Character {
 	private boolean simpleLand;
 	private boolean fallCollided;
 	private boolean straightFall;
+	private boolean canDrink;
+	private boolean drinkingPotion;
 	private int fallDistance;
 	
 	private boolean enemySaw;	
@@ -100,6 +102,7 @@ public class Player extends Character {
 		this.canLongLand = false;
 		this.fallCollided = false;
 		this.fallDistance = 0;
+		this.canDrink = false;
 		
 		this.enemySaw = false;
 		
@@ -405,7 +408,12 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(currentAnimation.isOver(false)){
-					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					if (this.isDrinkingPotion()) {
+						this.setCurrentAnimation("drinking_" + orientation, FRAME_DURATION);
+					}
+					else {
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
 				}
 				break;
 				
@@ -416,11 +424,6 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				if(currentAnimation.isOver(false)){
 					if(changed_position){
 						changed_position = false;
@@ -461,7 +464,11 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(!down_pressed){
+				if(this.isCanDrink() && shift_pressed){
+					this.setCurrentAnimation("drinking_" + orientation, FRAME_DURATION);
+					this.setDrinkingPotion(true);
+				}
+				else if(!down_pressed){
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
 				} 
 				break;
@@ -677,26 +684,27 @@ public class Player extends Character {
 		case "drinking_left":
 		case "drinking_right":
 
-			switch(currentState){
-			case IDLE:
+			if (this.getCurrentAnimation().isOver(false)) {
 				
-				break;
+				// Restores player's health in 1 point
+				int maxHealth = this.getMaxHp();
+				int currentHealth = this.getHp();
 				
-			case JUMP:
-				
-				break;
-				
-			case MOVE:
-				
-				break;
-				
-			case COLLIDED:
-				System.out.println("COLLIDED EN ANIMATION TO RARA");
-				break;
-				
-			default:
-				
-				break;
+				if (currentHealth < maxHealth) {
+					currentHealth = currentHealth + 1;
+					this.setHp(currentHealth);
+				}
+				this.setDrinkingPotion(false);
+				this.setCurrentAnimation("drinking to idle_" + orientation, FRAME_DURATION);
+			}
+			
+			break;
+			
+		case "drinking to idle_left":
+		case "drinking to idle_right":
+
+			if (this.getCurrentAnimation().isOver(false)) {
+				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
 			}
 			break;
 			
@@ -900,6 +908,9 @@ public class Player extends Character {
 						else {
 							this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 						}
+					} else if (this.isCanDrink() && shift_pressed) {
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+						this.setDrinkingPotion(true);
 					}
 				} else{
 					this.currentState = PlayerState.COMBAT;
@@ -3090,6 +3101,34 @@ public class Player extends Character {
 	 */
 	public void setStraightFall(boolean straightFall) {
 		this.straightFall = straightFall;
+	}
+
+	/**
+	 * @return the canDrink
+	 */
+	public boolean isCanDrink() {
+		return canDrink;
+	}
+
+	/**
+	 * @param canDrink the canDrink to set
+	 */
+	public void setCanDrink(boolean canDrink) {
+		this.canDrink = canDrink;
+	}
+
+	/**
+	 * @return the drinkingPotion
+	 */
+	public boolean isDrinkingPotion() {
+		return drinkingPotion;
+	}
+
+	/**
+	 * @param drinkingPotion the drinkingPotion to set
+	 */
+	public void setDrinkingPotion(boolean drinkingPotion) {
+		this.drinkingPotion = drinkingPotion;
 	}
 
 	public boolean isBlocked() {

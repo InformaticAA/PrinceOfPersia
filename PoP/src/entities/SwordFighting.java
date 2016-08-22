@@ -28,5 +28,4 @@ public class SwordFighting extends Entity{
 	public Entity copy() {
 		return null;
 	}
-
 }

@@ -27,6 +27,8 @@ import entities.SpikeFloor;
 import framework.Loader;
 import framework.Writter;
 import input.Key;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.TinySound;
 
 public class LevelState extends State{
 	
@@ -49,11 +51,17 @@ public class LevelState extends State{
 	private List<LooseFloor> falling_floor;
 	private List<Door> doors;
 	
+	private Music win_song;
+	private Music death_song;
+	private Music potion_song;
+	
 	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, 
 			Hashtable<String,Integer> keys_mapped, Loader loader, boolean start, Writter writter) {
 		super(gsm, keys, keys_mapped, loader, writter);
 
 		this.start = start;
+		win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+		death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
 	}
 
 	@Override
@@ -82,13 +90,13 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 4);
+			currentRoom = currentLevel.getRoom(2, 1);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
-			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
-//			player = new Player(400,370,loader, INITIAL_HEALTH, "left"); // tercer piso
-			player.setCurrentAnimation("idle_right", 5);
+//			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
+			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
+			player.setCurrentAnimation("idle_left", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
@@ -231,6 +239,7 @@ public class LevelState extends State{
 		Entity wall = null;
 		Entity longLandFloor = null;
 		Entity potion = null;
+		Entity sword = null;
 		
 		int[] playerCenter = player.getCenter();
 		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
@@ -617,15 +626,27 @@ public class LevelState extends State{
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
 			potion = checkPotion();
+			if(!player.hasSword()){
+				sword = checkSword();
+			}
 			
 			/* Check for corners */
 			corner = checkCorner();
+			
+			//checks if player can take the sword from floor
 				
 			// checks if player can drink a nearby potion
 			player.setCanDrink(potion != null);
 			
+			player.setCanPickSword(sword!=null);
+			
 			if (player.isDrinkingPotion() && potion != null) {
 				deletePotion(potion);
+			}
+			
+			if(player.isPickingSword() && sword != null && !player.hasSword()){
+				win_song.play(false);
+				deleteSword(sword);
 			}
 			
 			if (floorPanel != null) {
@@ -1918,6 +1939,179 @@ public class LevelState extends State{
 		}
 		return isFloor;
 	}
+	
+	/**
+	 * 
+	 * @return true if there is a sword in front of the player
+	 * that he can pick
+	 */
+	private Entity checkSword() {
+		Entity sword = null;
+		int swordGap = 50;
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			if (player.getOrientation().equals("left")) {
+				
+				/* Checks if there is a potion type object in current square */
+				List<Entity> bgEntities = new LinkedList<Entity>();
+				
+				List<Entity> fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getForeground();
+				
+				List<Entity> fEntities2;
+				
+				if (playerSquare[1] > 0) {
+					fEntities2 = currentRoom.getSquare(
+							playerSquare[0], playerSquare[1] - 1).getForeground();
+					bgEntities.addAll(fEntities2);
+				}
+				
+				bgEntities.addAll(fEntities);
+	
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("SwordFloor") &&
+						ec[0] < playerCenter[0] &&
+						(Math.abs(ec[0] - playerCenter[0]) < swordGap) ) {
+						
+						// player is close to the potion
+						sword = bgE;
+					}
+				}
+			}
+			else if (player.getOrientation().equals("right")) {
+				/* Checks if there is a potion type object in current square */
+				List<Entity> bgEntities = new LinkedList<Entity>();
+				
+				List<Entity> fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getForeground();
+
+				List<Entity> fEntities2;
+				if (playerSquare[1] < 9) {
+					fEntities2 = currentRoom.getSquare(
+							playerSquare[0], playerSquare[1] + 1).getForeground();
+					bgEntities.addAll(fEntities2);
+				}
+				
+				bgEntities.addAll(fEntities);
+	
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					int[] ec = bgE.getCenter();
+					if ( name.startsWith("Sword") &&
+						ec[0] > playerCenter[0] &&
+						(Math.abs(ec[0] - playerCenter[0]) < swordGap) ) {
+						
+						// player is close to the potion
+						sword = bgE;
+					}
+				}
+			}		
+		}
+		return sword;
+	}
+	
+	
+	/**
+	 * 
+	 * @return deletes the potion that the player is drinking
+	 */
+	private Entity deleteSword(Entity sword) {
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			/* Checks if there is a potion type object in current square */
+			List<Entity> bgEntities = new LinkedList<Entity>();
+			Square currentSquare = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]);
+			List<Entity> fEntities = currentSquare.getForeground();
+			bgEntities.addAll(fEntities);
+			
+			/* Checks if there is a potion type object in left square */
+			List<Entity> bgEntitiesLeft = new LinkedList<Entity>();
+			Square currentSquareLeft = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1] - 1);
+			List<Entity> fEntitiesLeft = currentSquareLeft.getForeground();
+			bgEntitiesLeft.addAll(fEntitiesLeft);
+			
+			/* Checks if there is a potion type object in right square */
+			List<Entity> bgEntitiesRight = new LinkedList<Entity>();
+			Square currentSquareRight = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1] + 1);
+			List<Entity> fEntitiesRight = currentSquareRight.getForeground();
+			bgEntitiesRight.addAll(fEntitiesRight);
+			
+			if (player.getOrientation().equals("left")) {
+				
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("SwordFloor")) {
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(bgE, currentSquare);
+					}
+				}
+				
+				// Searches for potion type objects
+				for (Entity bgE : bgEntitiesLeft) {
+					
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("SwordFloor")) {
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(bgE, currentSquareLeft);
+					}
+				}
+			}
+			else if (player.getOrientation().equals("right")) {
+
+				// Searches for potion type objects
+				for (Entity bgE : bgEntities) {
+					
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("SwordFloor")) {
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(sword, currentSquare);
+					}
+				}
+				
+				// Searches for potion type objects
+				for (Entity bgE : bgEntitiesRight) {
+					
+					String name = bgE.getTypeOfEntity();
+					if ( name.startsWith("SwordFloor")) {
+						
+						// player is close to the potion
+						currentRoom.deleteEntityForeground(sword, currentSquareRight);
+					}
+				}
+			}
+		}
+		return sword;
+	}
+	
+	
 	
 	/**
 	 * 

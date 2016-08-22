@@ -29,6 +29,7 @@ import entities.Pillar;
 import entities.Potion;
 import entities.Spike;
 import entities.SpikeFloor;
+import entities.SwordFloor;
 import entities.Torch;
 import entities.Wall;
 import kuusisto.tinysound.Sound;
@@ -558,6 +559,9 @@ public class Loader {
 			/* Loads foreground elements */
 			else if (entity.equals("gp")) {
 				newEntity = new Potion(px, py, 0, -12, this,"good potion");
+				foreground.add(newEntity);
+			} else if (entity.equals("sword")) {
+				newEntity = new SwordFloor(px, py, 0, -12, this);
 				foreground.add(newEntity);
 			} else if(entity.equals("lsb")) {
 				newEntity = new Base(px,py,this,"left_stack_base");

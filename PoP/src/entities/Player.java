@@ -2,11 +2,14 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.Hashtable;
 
 import framework.Loader;
 import game.Game;
 import input.Key;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.TinySound;
 
 public class Player extends Character {
 
@@ -15,7 +18,7 @@ public class Player extends Character {
 	/* Constants */
 	private final String RUNNING_START = "running start";
 	private final String RUNNING = "running";
-	private final int FRAME_DURATION = 5;
+	private final int FRAME_DURATION = 40;
 	private final int MOVE_SPEED = 2;
 	private final int SAFE_FALL_DISTANCE = 150;
 	private final int RISKY_FALL_DISTANCE = 300;
@@ -53,7 +56,11 @@ public class Player extends Character {
 	private boolean straightFall;
 	private boolean canDrink;
 	private boolean drinkingPotion;
+	private boolean canPickSword;
+	private boolean pickingSword;
 	private int fallDistance;
+	
+	private boolean hasSword;
 	
 	private boolean enemySaw;	
 	private boolean combatStepRight;
@@ -69,6 +76,8 @@ public class Player extends Character {
 	private boolean goingToBlock;
 	private boolean goingToAttack;
 	private boolean goingToCounter;
+	
+	private Music drinking_song;
 	
 	public Player(int x, int y, Loader loader, int hp, String orientation) {
 		super(x, y, loader, orientation);
@@ -103,6 +112,7 @@ public class Player extends Character {
 		this.fallCollided = false;
 		this.fallDistance = 0;
 		this.canDrink = false;
+		this.canPickSword = false;
 		
 		this.enemySaw = false;
 		
@@ -123,6 +133,8 @@ public class Player extends Character {
 		this.goingToAttack = false;
 		this.goingToCounter = false;
 		
+		this.hasSword = false;
+		
 		this.splash = new Splash(0,0,0,0,loader,"red");
 		this.life = new Life[this.maxHp];
 		for(int i = 0; i < this.maxHp; i++){
@@ -136,6 +148,8 @@ public class Player extends Character {
 		}
 		
 		this.typeOfEntity = "Player";
+		
+		drinking_song = TinySound.loadMusic(new File("resources/Music/potion.ogg"));
 	}
 	
 	@Override
@@ -409,7 +423,12 @@ public class Player extends Character {
 			case IDLE:
 				if(currentAnimation.isOver(false)){
 					if (this.isDrinkingPotion()) {
+						loader.getSound("drinking").play();
 						this.setCurrentAnimation("drinking_" + orientation, FRAME_DURATION);
+					} else if(this.isPickingSword()){
+						this.hasSword = true;
+						this.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION);
+						this.manageSword("got sword", 0, true);
 					}
 					else {
 						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
@@ -465,8 +484,14 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(this.isCanDrink() && shift_pressed){
+					loader.getSound("drinking").play();
 					this.setCurrentAnimation("drinking_" + orientation, FRAME_DURATION);
 					this.setDrinkingPotion(true);
+				} else if(this.isCanPickSword() && shift_pressed){
+					this.hasSword = true;
+					this.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION);
+					manageSword("got sword",0,true);
+					this.setPickingSword(true);
 				}
 				else if(!down_pressed){
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
@@ -696,6 +721,8 @@ public class Player extends Character {
 				}
 				this.setDrinkingPotion(false);
 				this.setCurrentAnimation("drinking to idle_" + orientation, FRAME_DURATION);
+				
+				drinking_song.play(false);
 			}
 			
 			break;
@@ -737,27 +764,12 @@ public class Player extends Character {
 			
 		case "got sword_left":
 		case "got sword_right":
-
-			switch(currentState){
-			case IDLE:
-				
-				break;
-				
-			case JUMP:
-				
-				break;
-				
-			case MOVE:
-				
-				break;
-				
-			case COLLIDED:
-				System.out.println("COLLIDED EN POS TO RARA");
-				break;
-				
-			default:
-				
-				break;
+			
+			manageSword("got sword",this.getCurrentAnimation().getCurrentFrame(),false);
+			if(this.getCurrentAnimation().isOver(false)){
+				this.setCurrentAnimation("putting down sword_" + orientation, FRAME_DURATION);
+				this.setPickingSword(false);
+				this.sword = null;
 			}
 			break;
 			
@@ -911,6 +923,9 @@ public class Player extends Character {
 					} else if (this.isCanDrink() && shift_pressed) {
 						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 						this.setDrinkingPotion(true);
+					} else if (this.isCanPickSword() && shift_pressed) {
+						this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
+						this.setPickingSword(true);
 					}
 				} else{
 					this.currentState = PlayerState.COMBAT;
@@ -1040,7 +1055,11 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.wantCombat = false;
+					this.currentState = PlayerState.IDLE;
+				}
 				break;
 				
 			case JUMP:
@@ -1048,7 +1067,11 @@ public class Player extends Character {
 				break;
 				
 			case MOVE:
-				
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+					this.wantCombat = false;
+					this.currentState = PlayerState.IDLE;
+				}
 				break;
 				
 			case COLLIDED:
@@ -3102,6 +3125,34 @@ public class Player extends Character {
 	public void setStraightFall(boolean straightFall) {
 		this.straightFall = straightFall;
 	}
+	
+	/**
+	 * @return the canPickSword
+	 */
+	public boolean isCanPickSword() {
+		return canPickSword;
+	}
+	
+	/**
+	 * @param canDrink the canPickSword to set
+	 */
+	public void setCanPickSword(boolean canPickSword) {
+		this.canPickSword = canPickSword;
+	}
+	
+	/**
+	 * @return the pickingSword
+	 */
+	public boolean isPickingSword() {
+		return pickingSword;
+	}
+
+	/**
+	 * @param pickingSword the pickingSword to set
+	 */
+	public void setPickingSword(boolean pickingSword) {
+		this.pickingSword = pickingSword;
+	}
 
 	/**
 	 * @return the canDrink
@@ -3198,6 +3249,14 @@ public class Player extends Character {
 	public void setSpiked(){
 		this.currentState = PlayerState.DIED;
 		this.setCurrentAnimation("dead spiked_" + orientation, FRAME_DURATION);
+	}
+	
+	public void setSword(){
+		this.hasSword = true;
+	}
+	
+	public boolean hasSword(){
+		return this.hasSword;
 	}
 	
 	@Override
@@ -3377,6 +3436,24 @@ public class Player extends Character {
 			y_offset = y_offsets[currentFrame];
 			
 			this.sword.setCurrentAnimation("moving backwards_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+			break;
+			
+		case "got sword":
+			x_offsets = new int[]{14,-38,28,-40,28,-38,28,-42,56,-36,56,-40,36,-40,26,-40};
+			y_offsets = new int[]{-64,-64,-62,-58,-56,-56,-50,-42};
+			
+			if(this.getOrientation().equals("right")){
+				x_offset = x_offsets[2 * currentFrame];
+			} else{
+				x_offset = x_offsets[2 * currentFrame + 1];
+			}
+			y_offset = y_offsets[currentFrame];
+			
+			if(newSword){
+				this.sword = new SwordFighting(this.x,this.y,x_offset,y_offset,this.loader,"got sword_" + orientation, "prince");
+			} else{
+				this.sword.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+			}
 			break;
 		
 		default:

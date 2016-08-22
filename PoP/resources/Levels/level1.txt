@@ -46,7 +46,7 @@ room 2 1
 b;rc prt;-;-;-;lpc b;b;b;b;b
 fs pl pshadow b;rpc prm prt;-;bricks(4);-;lpc pl pshadow b;prm lf b;rf lf b;rf lf b;rf lf bricks(1) b
 fs pl pshadow b;rpc prm fst;-;bricks(3);-;lpc pl pshadow b;prm lf b;rf lf t b;rf lf t b;rf pl pshadow b
-rsb rs d1(2,0.5,mark(4)) d1(3,0.3);fs lf b;rf lf b;rf lf sl b;rf sr bl b;br pl pshadow b;rpc prm prt;lsb ls d2(2,0.6);csb cs d1(2,0.5) d1(3,0.3);csb cs d1(2,0.5) d2(3,0.3)
+rsb rs d1(2,0.5,mark(4)) d1(3,0.3);fs lf b;rf lf b sword;rf lf sl b;rf sr bl b;br pl pshadow b;rpc prm prt;lsb ls d2(2,0.6);csb cs d1(2,0.5) d1(3,0.3);csb cs d1(2,0.5) d2(3,0.3)
 
 room 2 2
 b;b;b;b;b;b;b;b;loose;b
@@ -175,3 +175,4 @@ enemy(colour, orientacion, vida, dificultad)
 opener(identificador) = interruptor para abrir puerta con id identificador
 closer(identificador) = interruptor para cerrar puerta con id identificador
 spike = pinchos
+sword = espada

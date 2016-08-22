@@ -489,9 +489,9 @@ public class Player extends Character {
 					this.setDrinkingPotion(true);
 				} else if(this.isCanPickSword() && shift_pressed){
 					this.hasSword = true;
+					this.setPickingSword(true);
 					this.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION);
 					manageSword("got sword",0,true);
-					this.setPickingSword(true);
 				}
 				else if(!down_pressed){
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);

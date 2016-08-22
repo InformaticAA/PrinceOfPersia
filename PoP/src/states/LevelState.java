@@ -90,7 +90,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 2);
+			currentRoom = currentLevel.getRoom(2, 1);
 			doors = currentLevel.getDoors();
 
 			player = new Player(400,110,loader, INITIAL_HEALTH, "right"); // primer piso
@@ -656,9 +656,7 @@ public class LevelState extends State{
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
 			potion = checkPotion();
-			if(!player.hasSword()){
-				sword = checkSword();
-			}
+			sword = checkSword();
 			
 			/* Check for corners */
 			corner = checkCorner();
@@ -674,7 +672,7 @@ public class LevelState extends State{
 				deletePotion(potion);
 			}
 			
-			if(player.isPickingSword() && sword != null && !player.hasSword()){
+			if(player.isPickingSword() && sword != null && player.hasSword()){
 				win_song.play(false);
 				deleteSword(sword);
 			}

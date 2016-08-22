@@ -539,7 +539,7 @@ public class Loader {
 				openertype.close();
 				newEntity = new Closer(px,py,52,0,this,id);
 				background.add(newEntity);
-			} else if(entity.equals("doorfr")){
+			} else if(entity.equals("framedoorr")){
 				newEntity = new DoorFrame(px,py,-12,-2,this,"door_frame_right");
 				background.add(newEntity);
 			} else if(entity.startsWith("door")){
@@ -557,6 +557,10 @@ public class Loader {
 			}
 			
 			/* Loads foreground elements */
+			else if(entity.equals("framedoorl")){
+				newEntity = new DoorFrame(px,py,0,-6,this,"door_frame_left");
+				foreground.add(newEntity);
+			}
 			else if (entity.equals("gp")) {
 				newEntity = new Potion(px, py, 0, -12, this,"good potion");
 				foreground.add(newEntity);

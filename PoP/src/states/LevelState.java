@@ -85,10 +85,10 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 4);
 			doors = currentLevel.getDoors();
 
-			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
-//			player = new Player(600,240,loader, INITIAL_HEALTH, "left"); // segundo piso
+//			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
+			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(400,370,loader, INITIAL_HEALTH, "left"); // tercer piso
-			player.setCurrentAnimation("idle_left", 5);
+			player.setCurrentAnimation("idle_right", 5);
 //			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(4);
@@ -2043,9 +2043,7 @@ public class LevelState extends State{
 				for (Entity bgE : bgEntities) {
 					
 					String name = bgE.getTypeOfEntity();
-					int[] ec = bgE.getCenter();
-					if ( name.startsWith("Potion_") &&
-						ec[0] < playerCenter[0] ){
+					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
 						currentRoom.deleteEntityForeground(bgE, currentSquare);
@@ -2056,9 +2054,7 @@ public class LevelState extends State{
 				for (Entity bgE : bgEntitiesLeft) {
 					
 					String name = bgE.getTypeOfEntity();
-					int[] ec = bgE.getCenter();
-					if ( name.startsWith("Potion_") &&
-						ec[0] < playerCenter[0] ){
+					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
 						currentRoom.deleteEntityForeground(bgE, currentSquareLeft);
@@ -2071,9 +2067,7 @@ public class LevelState extends State{
 				for (Entity bgE : bgEntities) {
 					
 					String name = bgE.getTypeOfEntity();
-					int[] ec = bgE.getCenter();
-					if ( name.startsWith("Potion_") &&
-						ec[0] > playerCenter[0] ){
+					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
 						currentRoom.deleteEntityForeground(potion, currentSquare);
@@ -2084,9 +2078,7 @@ public class LevelState extends State{
 				for (Entity bgE : bgEntitiesRight) {
 					
 					String name = bgE.getTypeOfEntity();
-					int[] ec = bgE.getCenter();
-					if ( name.startsWith("Potion_") &&
-						ec[0] > playerCenter[0] ){
+					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
 						currentRoom.deleteEntityForeground(potion, currentSquareRight);

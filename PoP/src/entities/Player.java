@@ -2692,13 +2692,13 @@ public class Player extends Character {
 		this.setLongLand(false);
 		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
-//		int fallOffset = 20;		
-//		if (orientation.equals("left")) {
-//			this.move(-fallOffset, 0);
-//		}
-//		else if (orientation.equals("right")) {
-//			this.move(fallOffset, 0);
-//		}
+		int fallOffset = 20;		
+		if (orientation.equals("left")) {
+			this.move(-fallOffset/2, 0);
+		}
+		else if (orientation.equals("right")) {
+			this.move(fallOffset, 0);
+		}
 		this.falling = true;
 	}
 	

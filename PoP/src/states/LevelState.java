@@ -101,7 +101,7 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
-//			player = new Player(250,110,loader, INITIAL_HEALTH, "right"); // primer piso
+//			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
 			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
@@ -840,9 +840,8 @@ public class LevelState extends State{
 				
 				// There is nothing beneath the player, it falls
 				if (!player.isFalling() && !player.isOnTheEdge() && !checkFloorSides()) {
-					player.setStraightFall(true);
 					System.out.println("Vooooy a caer 4 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
-
+					player.setStraightFall(true);
 					player.fall();
 				}
 			}
@@ -1778,13 +1777,13 @@ public class LevelState extends State{
 			List<Entity> bgEntities = new LinkedList<Entity>();
 			bgEntities.addAll(bEntities);
 			bgEntities.addAll(fEntities);
-				
+			
 			for (Entity bgE : bgEntities) {
 				String name = bgE.getTypeOfEntity();
 				if ( name.startsWith("FloorPanel_") ||
 					name.startsWith("Corner") ||
 					name.startsWith("Loose") ||
-					(name.startsWith("Pillar_") && !name.contains("shadow")) || 
+					(name.startsWith("Pillar_") && !name.contains("shadow") && !name.contains("top")) || 
 					name.startsWith("Opener") || name.startsWith("Closer") || 
 					name.startsWith("SpikeFloor")){
 					
@@ -2232,6 +2231,20 @@ public class LevelState extends State{
 		boolean isFloor = false;
 		/* Comprobar que la ultima casilla de la hab izquierda tiene un suelo si estamos en la primera */
 		if(player.getSquare()[1] == 0 && player.getOrientation().equals("left")){
+			
+			Room leftRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol());
+			List<Entity> bg = leftRoom.getSquare(player.getSquare()[0],9).getBackground();
+			for(Entity e : bg){
+				System.out.println("BORDES");
+				String name = e.getTypeOfEntity();
+				if ( name.startsWith("FloorPanel_") ||
+					(name.startsWith("Pillar_") && !name.contains("shadow") && !name.contains("top")) || 
+					name.startsWith("Opener") || name.startsWith("Closer") || 
+					name.startsWith("SpikeFloor")){
+					isFloor = true;
+				}
+			}
+		} else if(player.getSquare()[1] == 0 && player.getOrientation().equals("right")){
 			
 			Room leftRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol());
 			List<Entity> bg = leftRoom.getSquare(player.getSquare()[0],9).getBackground();

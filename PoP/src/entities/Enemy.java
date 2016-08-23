@@ -151,15 +151,17 @@ public class Enemy extends Character {
 	}
 	
 	public void setPlayer(boolean saw, Player p){
-		this.playerSaw = saw;
-		if(saw){
-			this.player = p;
-			this.currentState = EnemyState.COMBAT;
-			this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
-		} else{
-			this.player = null;
-			this.currentState = EnemyState.IDLE;
-			this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+		if(this.currentState != EnemyState.DIED){
+			this.playerSaw = saw;
+			if(saw){
+				this.player = p;
+				this.currentState = EnemyState.COMBAT;
+				this.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION);
+			} else{
+				this.player = null;
+				this.currentState = EnemyState.IDLE;
+				this.setCurrentAnimation("idle_" + orientation, FRAME_DURATION);
+			}
 		}
 	}
 	
@@ -515,6 +517,7 @@ public class Enemy extends Character {
 	}
 	
 	public void dead(){
+		this.currentState = EnemyState.DIED;
 		player.putSwordDown();
 		player.isEnemySaw(false);
 		this.setCurrentAnimation("died_" + orientation, FRAME_DURATION);
@@ -544,177 +547,182 @@ public class Enemy extends Character {
 		return (this.getCurrentAnimation().getCurrentFrame() == 3);
 	}
 	
+	public boolean isDead(){
+		return this.currentState == EnemyState.DIED;
+	}
+	
 	@Override
 	public void manageSword(String animation, int currentFrame, boolean newSword){
 		int x_offset = 0;
 		int y_offset = -18;
 		int[] x_offsets;
 		int[] y_offsets;
-		
-		switch(animation){
-		
-		case "idle":
-			if(this.getOrientation().equals("right")){
-				x_offset = 24;
-			} else{
-				x_offset = -36;
+		if(sword != null){
+			switch(animation){
+			
+			case "idle":
+				if(this.getOrientation().equals("right")){
+					x_offset = 24;
+				} else{
+					x_offset = -36;
+				}
+				this.sword.setCurrentAnimation("idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "sword idle":
+				if(this.getOrientation().equals("right")){
+					x_offset = 32;
+				} else{
+					x_offset = -46;
+				}
+				y_offset = -38;
+				this.sword.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "walking":
+				x_offsets = new int[]{32,-46,12,-42,12,-54,18,-60};
+				y_offsets = new int[]{-38,-54,-46,-42};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("walking_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "walking end":
+				x_offsets = new int[]{32,-46,32,-44};
+				y_offsets = new int[]{-38,-38};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("walking end_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "attack start":
+				x_offsets = new int[]{44,-56,0,-56,-18,-44,16,-72};
+				y_offsets = new int[]{-42,-18,-58,-50};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("attack start_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "attack end success":
+				x_offsets = new int[]{34,-90,14,-56,0,-42,36,-50};
+				y_offsets = new int[]{-52,-28,-10,-32};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("attack end success_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "attack end blocked":
+				x_offsets = new int[]{14,-56,0,-42,36,-50};
+				y_offsets = new int[]{-28,-10,-32};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("attack end blocked_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "block and attack":
+				x_offsets = new int[]{20,-50,0,0,-18,-44};
+				y_offsets = new int[]{-24,0,-58};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "block only":
+				x_offsets = new int[]{20,-50,20,-48,36,-50};
+				y_offsets = new int[]{-24,-32,-32};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("block only_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "blocked":
+				x_offsets = new int[]{26,-68};
+				y_offsets = new int[]{-68};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "blocked and prepare block":
+				x_offsets = new int[]{14,-66,20,-48};
+				y_offsets = new int[]{-50,-32};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			case "hit":
+				x_offsets = new int[]{34,-56,26,-54,0,0,0,-42,36,-50};
+				y_offsets = new int[]{-50,-46,0,-10,-32};
+				
+				if(this.getOrientation().equals("right")){
+					x_offset = x_offsets[2 * currentFrame];
+				} else{
+					x_offset = x_offsets[2 * currentFrame + 1];
+				}
+				y_offset = y_offsets[currentFrame];
+				
+				this.sword.setCurrentAnimation("hit_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
+				break;
+				
+			default:
+				break;
+			
 			}
-			this.sword.setCurrentAnimation("idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "sword idle":
-			if(this.getOrientation().equals("right")){
-				x_offset = 32;
-			} else{
-				x_offset = -46;
-			}
-			y_offset = -38;
-			this.sword.setCurrentAnimation("sword idle_" + orientation, FRAME_DURATION, 0, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "walking":
-			x_offsets = new int[]{32,-46,12,-42,12,-54,18,-60};
-			y_offsets = new int[]{-38,-54,-46,-42};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("walking_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "walking end":
-			x_offsets = new int[]{32,-46,32,-44};
-			y_offsets = new int[]{-38,-38};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("walking end_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "attack start":
-			x_offsets = new int[]{44,-56,0,-56,-18,-44,16,-72};
-			y_offsets = new int[]{-42,-18,-58,-50};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("attack start_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "attack end success":
-			x_offsets = new int[]{34,-90,14,-56,0,-42,36,-50};
-			y_offsets = new int[]{-52,-28,-10,-32};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("attack end success_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "attack end blocked":
-			x_offsets = new int[]{14,-56,0,-42,36,-50};
-			y_offsets = new int[]{-28,-10,-32};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("attack end blocked_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "block and attack":
-			x_offsets = new int[]{20,-50,0,0,-18,-44};
-			y_offsets = new int[]{-24,0,-58};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("block and attack_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "block only":
-			x_offsets = new int[]{20,-50,20,-48,36,-50};
-			y_offsets = new int[]{-24,-32,-32};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("block only_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "blocked":
-			x_offsets = new int[]{26,-68};
-			y_offsets = new int[]{-68};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("blocked_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "blocked and prepare block":
-			x_offsets = new int[]{14,-66,20,-48};
-			y_offsets = new int[]{-50,-32};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("blocked and prepare block_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		case "hit":
-			x_offsets = new int[]{34,-56,26,-54,0,0,0,-42,36,-50};
-			y_offsets = new int[]{-50,-46,0,-10,-32};
-			
-			if(this.getOrientation().equals("right")){
-				x_offset = x_offsets[2 * currentFrame];
-			} else{
-				x_offset = x_offsets[2 * currentFrame + 1];
-			}
-			y_offset = y_offsets[currentFrame];
-			
-			this.sword.setCurrentAnimation("hit_" + orientation, FRAME_DURATION, currentFrame, this.x + x_offset,this.y + y_offset);
-			break;
-			
-		default:
-			break;
-		
 		}
 	}
 

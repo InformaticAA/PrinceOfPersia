@@ -249,4 +249,14 @@ public class Room {
 		this.characters.remove(character);
 	}
 	
+	public Entity getGuard(){
+		Entity guard = null;
+		for(Character e : this.getCharacters()){
+			if(e.getTypeOfEntity().startsWith("Enemy")){
+				guard = e;
+			}
+		}
+		return guard;
+	}
+	
 }

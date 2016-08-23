@@ -101,8 +101,8 @@ public class LevelState extends State{
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
-//			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
-			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
+//			player = new Player(100,110,loader, INITIAL_HEALTH, "right"); // primer piso
+			player = new Player(100,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
 //			player.setCurrentAnimation("falling_left", 5);
@@ -297,8 +297,6 @@ public class LevelState extends State{
 				int[] cornerCenter = corner.getCenter();
 				player.setCornerToClimb(corner);
 				player.setCanClimbDown(false);
-				
-				System.out.println("STARTING CORNER: " + corner.getTypeOfEntity());
 				
 				if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*4) &&
 						corner.getTypeOfEntity().contains("right") &&
@@ -577,7 +575,7 @@ public class LevelState extends State{
 			
 			/* Increases player's fall distance */
 			int prevFallDistance = player.getFallDistance();
-			player.setFallDistance(prevFallDistance + 1);
+			player.setFallDistance(prevFallDistance + 4);
 			
 			/* Checks if the player can walk over the floor */
 			floorPanel = checkFloorPanel();
@@ -587,6 +585,8 @@ public class LevelState extends State{
 			
 			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
+				
+				System.out.println("falling distance: " + player.getFallDistance());
 				if( player.isDead()){
 					
 				}
@@ -608,6 +608,7 @@ public class LevelState extends State{
 					
 					// free fall, player dies
 					player.die();
+					loader.getSound("falling").stop();
 					loader.getSound("landing hard").play();
 					System.out.println("DEATH LAND");
 				}
@@ -625,6 +626,15 @@ public class LevelState extends State{
 				
 				/* Check loose floors in that row to shake it baby */
 				checkLoosesToShake();
+			}
+			else {
+				if(!player.isSafeFall() && !player.isRiskyFall() &&
+						!player.isScreaming()) {
+					
+					// player screams when the fall is going to kill him
+					loader.getSound("falling").play();
+					player.setScreaming(true);
+				}
 			}
 			
 			// Checks for corner to reach in mid air
@@ -879,7 +889,7 @@ public class LevelState extends State{
 			}
 			
 			// Door collision behaviour
-			if (door != null) {
+			if (door != null && door.getTypeOfEntity().contains("normal")) {
 
 				if ( (door.getCurrentAnimation().getId().contains("closed")) ||
 					 (door.getCurrentAnimation().getId().contains("half") &&

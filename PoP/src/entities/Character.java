@@ -17,9 +17,9 @@ public class Character extends Entity {
 	protected int maxHp;
 	
 	/* Movement constants */
-	protected final int gravity = 1;
+	protected final int gravity = 4;
 	protected final int maxxSpeed = 10;
-	protected final int maxySpeed = 30;
+	protected final int maxySpeed = 100;
 	protected final int maxfightSpeed = 3;
 	protected final int jumpSpeed = 5;
 	protected final int fallSpeed = 3;
@@ -123,8 +123,8 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("hanging") ||
-				currentAnimation.getId().contains("scaling down") ||
+		if (currentAnimation.getId().contains("running jump") ||
+				currentAnimation.getId().contains("test") ||
 //				currentAnimation.getId().contains("crouching") ||
 				!firstTime) {
 			

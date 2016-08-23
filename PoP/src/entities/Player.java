@@ -21,7 +21,7 @@ public class Player extends Character {
 	private final int FRAME_DURATION = 5;
 	private final int MOVE_SPEED = 2;
 	private final int SAFE_FALL_DISTANCE = 150;
-	private final int RISKY_FALL_DISTANCE = 300;
+	private final int RISKY_FALL_DISTANCE = 200;
 	
 	private boolean up_pressed;
 	private boolean down_pressed;
@@ -59,6 +59,7 @@ public class Player extends Character {
 	private boolean canPickSword;
 	private boolean pickingSword;
 	private int fallDistance;
+	private boolean screaming;
 	
 	private boolean hasSword;
 	
@@ -2697,7 +2698,7 @@ public class Player extends Character {
 			this.move(-fallOffset/2, 0);
 		}
 		else if (orientation.equals("right")) {
-			this.move(fallOffset, 0);
+			this.move(fallOffset*2/3, 0);
 		}
 		this.falling = true;
 	}
@@ -2720,11 +2721,24 @@ public class Player extends Character {
 	public void riskyLand() {
 		this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 		this.enableBoundingBox();
+		
+		// player gets damaged by 1 hit point
+		loader.getSound("kid hurt").play();
+		this.hp = this.hp - 1;
+		if (this.hp == 0) {
+			this.currentState = PlayerState.DIED;
+			this.sword = null;
+			this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
+		}
 	}
 	
 	public void die() {
 		
-		// TODO
+		// player dies from a long fall
+		this.hp = 0;
+		this.currentState = PlayerState.DIED;
+		this.sword = null;
+		this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);
 	}
 	
 	public void scaleDown() {
@@ -3207,6 +3221,20 @@ public class Player extends Character {
 	 */
 	public void setDrinkingPotion(boolean drinkingPotion) {
 		this.drinkingPotion = drinkingPotion;
+	}
+
+	/**
+	 * @return the screaming
+	 */
+	public boolean isScreaming() {
+		return screaming;
+	}
+
+	/**
+	 * @param screaming the screaming to set
+	 */
+	public void setScreaming(boolean screaming) {
+		this.screaming = screaming;
 	}
 
 	public boolean isBlocked() {

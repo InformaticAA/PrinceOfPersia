@@ -90,23 +90,30 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 1);
+			currentRoom = currentLevel.getRoom(1, 4);
 			doors = currentLevel.getDoors();
 
-			player = new Player(400,110,loader, INITIAL_HEALTH, "right"); // primer piso
+			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
 //			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
-//			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(6);
 			
 			// DEBUG POTIONS
 			player.setHp(1);
 			
+			System.out.println(currentRoom.getCharacters().size());
+			
+			Enemy e15 = (Enemy)currentLevel.getRoom(1, 5).getCharacters().get(0);
+			Enemy e28 = (Enemy)currentLevel.getRoom(2, 8).getCharacters().get(0);
+			
 			currentRoom.addCharacter(player);
+			
+			player.isEnemySaw(false);
+			e15.setPlayer(false, player);
+			e28.setPlayer(false, player);
 		}
-		
 		else{
 			
 			/* Load game */

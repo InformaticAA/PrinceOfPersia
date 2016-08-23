@@ -2,11 +2,13 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.Random;
 
-import entities.MultiPlayer.MultiState;
 import framework.Loader;
 import game.Game;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.TinySound;
 
 public class Enemy extends Character {
 	
@@ -42,6 +44,8 @@ public class Enemy extends Character {
 	/* Cooldowns */
 	private long counterMove;
 	private long counterAttack;
+	
+	private Music princeWins;
 
 	public Enemy(int x, int y, Loader loader, String orientation, String colour, int health, int difficulty) {
 		super(x, y - 20, loader, orientation);
@@ -84,6 +88,8 @@ public class Enemy extends Character {
 			}
 		}
 		this.typeOfEntity = "Enemy";
+		
+		princeWins = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
 	}
 	
 	@Override
@@ -521,6 +527,7 @@ public class Enemy extends Character {
 		player.putSwordDown();
 		player.isEnemySaw(false);
 		this.setCurrentAnimation("died_" + orientation, FRAME_DURATION);
+		princeWins.play(false);
 		this.sword = null;
 	}
 	

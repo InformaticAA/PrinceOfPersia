@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import data.Level;
 import data.Room;
 import data.Square;
+import data.Text;
 import entities.Closer;
 import entities.Corner;
 import entities.Door;
@@ -26,6 +28,7 @@ import entities.Player;
 import entities.SpikeFloor;
 import framework.Loader;
 import framework.Writter;
+import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.TinySound;
@@ -53,7 +56,10 @@ public class LevelState extends State{
 	
 	private Music win_song;
 	private Music death_song;
-	private Music potion_song;
+	
+	private boolean over;
+	
+	private List<Text> texts;
 	
 	public LevelState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, 
 			Hashtable<String,Integer> keys_mapped, Loader loader, boolean start, Writter writter) {
@@ -69,6 +75,8 @@ public class LevelState extends State{
 		
 		falling_floor = new LinkedList<LooseFloor>();
 		interfaz = new Interface(640, 400, 0, 0, loader);
+		over = false;
+		texts = new LinkedList<Text>();
 		
 //		// TESTING ENEMY
 //		currentLevel = loader.loadLevel(INITIAL_LEVEL);
@@ -90,7 +98,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 4);
+			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
 			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
@@ -101,18 +109,9 @@ public class LevelState extends State{
 			player.setySpeed(6);
 			
 			// DEBUG POTIONS
-			player.setHp(1);
-			
-			System.out.println(currentRoom.getCharacters().size());
-			
-			Enemy e15 = (Enemy)currentLevel.getRoom(1, 5).getCharacters().get(0);
-			Enemy e28 = (Enemy)currentLevel.getRoom(2, 8).getCharacters().get(0);
+			player.setHp(3);
 			
 			currentRoom.addCharacter(player);
-			
-			player.isEnemySaw(false);
-			e15.setPlayer(false, player);
-			e28.setPlayer(false, player);
 		}
 		
 		else{
@@ -170,7 +169,13 @@ public class LevelState extends State{
 		manageKeys();
 		//currentLevel.update(elapsedTime);
 		currentRoom.update(elapsedTime);
-		if(!player.isDead()){
+		if(!over && player.isDead()){
+			over = true;
+			death_song.play(false);
+			String message = "Press space to restart";
+			texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , Game.HEIGHT - 16));
+		}
+		if(!over){
 			checkPlayerCollisions(elapsedTime);
 		}
 		updateFallingFloor(elapsedTime);
@@ -185,6 +190,9 @@ public class LevelState extends State{
 		player.drawLife(g);
 		if(enemy!=null){
 			enemy.drawLife(g);
+		}
+		for(Text t : texts){
+			t.drawSelf(g);
 		}
 	}
 
@@ -203,8 +211,10 @@ public class LevelState extends State{
 					
 					if(key_pressed == keys_mapped.get(Key.ESCAPE)){
 						
-					} else if(key_pressed == keys_mapped.get(Key.CONTROL)){
-						currentRoom = currentLevel.getRoom(3, 7);
+					} else if(key_pressed == keys_mapped.get(Key.SPACE)){
+						win_song.stop();
+						death_song.stop();
+						gsm.setState(GameStateManager.MAINGAMESTATE);
 					} else{
 						player.manageKeyPressed(key_pressed, keys_mapped);
 					}

@@ -136,7 +136,7 @@ public class Player extends Character {
 		
 		
 		//CHANGEEEE
-		this.hasSword = false;
+		this.hasSword = true;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");
 		this.life = new Life[this.maxHp];
@@ -3246,6 +3246,7 @@ public class Player extends Character {
 		loader.getSound("kid hurt").play();
 		this.hp = this.hp - 1;
 		if(this.currentState != PlayerState.COMBAT || this.hp == 0){
+			this.hp = 0;
 			this.currentState = PlayerState.DIED;
 			this.sword = null;
 			this.setCurrentAnimation("dieing_" + orientation, FRAME_DURATION);

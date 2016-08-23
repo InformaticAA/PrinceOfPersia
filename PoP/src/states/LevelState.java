@@ -90,7 +90,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 7);
+			currentRoom = currentLevel.getRoom(1, 4);
 			doors = currentLevel.getDoors();
 
 			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
@@ -103,7 +103,16 @@ public class LevelState extends State{
 			// DEBUG POTIONS
 			player.setHp(1);
 			
+			System.out.println(currentRoom.getCharacters().size());
+			
+			Enemy e15 = (Enemy)currentLevel.getRoom(1, 5).getCharacters().get(0);
+			Enemy e28 = (Enemy)currentLevel.getRoom(2, 8).getCharacters().get(0);
+			
 			currentRoom.addCharacter(player);
+			
+			player.isEnemySaw(false);
+			e15.setPlayer(false, player);
+			e28.setPlayer(false, player);
 		}
 		
 		else{
@@ -1456,7 +1465,13 @@ public class LevelState extends State{
 			
 			System.out.println(playerSquare[0] + " - " + playerSquare[1]);
 			
-			if (player.getOrientation().equals("left") ) {
+			if (playerSquare[1] == 0 || playerSquare[1] == 9) {
+				bEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getBackground();
+				fEntities = currentRoom.getSquare(
+						playerSquare[0], playerSquare[1]).getBackground();
+			}
+			else if (player.getOrientation().equals("left") ) {
 				
 				bEntities = currentRoom.getSquare(
 						playerSquare[0], playerSquare[1] - 1).getBackground();

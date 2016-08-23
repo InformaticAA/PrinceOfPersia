@@ -92,8 +92,8 @@ csb cs d2(2,0.5,mark(3)) d1(3,0.3);csb cs d1(2,0.6) d2(3,0.4);csb cs d1(2,0.5,ma
 
 room 2 9
 b;b;b;b;b;b;b;b;b;b
-fs opener(1);roc prt;-;-;-;-;bricks(4);-;-;lsb ls d2(2,0.4,mark(2))
-prm pl pshadow b;prm lf b;bricks(1) rf lf b;rf lf t b;rf lf b;rf lf b;rf lf t b;rf lf b;bricks(1) rf lf b;lsb ls d2(2,0.3)
+fs opener(0);roc prt;-;-;-;-;bricks(4);-;-;lsb ls d2(2,0.4,mark(2))
+prm pl pshadow b;prm lf b;bricks(1) rf lf b;rf lf t b;rf lf final_door(0,final_door_closed,0) b;rf lf b;rf lf t b;rf lf b;bricks(1) rf lf b;lsb ls d2(2,0.3)
 csb cs d1(2,0.6,mark(3)) d1(3,0.2);csb cs d1(2,0.5) d2(3,0.2);csb cs(mark(3)) d2(2,0.5) d1(3,0.3);csb cs random d2(2,0.5) d1(3,0.3);csb cs(mark(4)) d2(2,0.4) d2(3,0.3);csb cs d1(2,0.5,mark(2)) d1(3,0.3);csb cs random d1(2,0.5,mark(4)) d1(3,0.3);csb cs(mark(2)) d2(2,0.4) d2(3,0.2);csb cs(mark(3)) d2(2,0.4) d1(3,0.2);csb cs d2(2,0.6) d1(3,0.2)
 
 room 3 1

@@ -237,7 +237,7 @@ public class Room {
 		List<Entity> bEntities = this.getBackground();
 		
 		for(Entity bgE : bEntities){
-			if(bgE.getTypeOfEntity().equals("Door")){
+			if(bgE.getTypeOfEntity().equals("Door_normal") || bgE.getTypeOfEntity().equals("Door_final")){
 				doors.add((Door) bgE);
 			}
 		}

@@ -98,10 +98,10 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(2, 9);
 			doors = currentLevel.getDoors();
 
-//			player = new Player(250,110,loader, INITIAL_HEALTH, "right"); // primer piso
+//			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
 			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
@@ -261,7 +261,6 @@ public class LevelState extends State{
 		Entity longLandFloor = null;
 		Entity potion = null;
 		Entity sword = null;
-		Entity door = null;
 		
 		int[] playerCenter = player.getCenter();
 		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
@@ -277,6 +276,13 @@ public class LevelState extends State{
 		}
 		else if ( player.isClimbing() ) {
 			
+			Entity debugCorner = player.getCornerToClimb();
+			
+			if (debugCorner != null) {
+				System.out.println("debugCorner: " + debugCorner.getTypeOfEntity() + ": " +
+						debugCorner.getCenter()[0] + ", " + debugCorner.getCenter()[1]);
+			}
+			
 //			System.out.println("CLIMBING");
 			
 			/* Checks if */
@@ -285,7 +291,6 @@ public class LevelState extends State{
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
 			floorBeneath = checkFloorBeneath();
-			door = checkClimbingDoor();
 			
 			if (player.startsClimbing() &&
 					(corner != null) &&
@@ -355,9 +360,11 @@ public class LevelState extends State{
 				
 				if (cornerToClimb != null) {
 					currentCorner = cornerToClimb;
+					System.out.println("CLIMB UP");
 				}
 				else if (cornerToClimbDown != null) {
 					currentCorner = cornerToClimbDown;
+					System.out.println("CLIMB DOWN");
 				}
 				
 				if (currentCorner != null) {
@@ -403,27 +410,6 @@ public class LevelState extends State{
 						}
 						player.setCornerReached(true);
 					}
-					else if (player.getCurrentAnimation().getId().startsWith("clipping_")) {
-						
-						System.out.println("BIEN 1");
-						
-						// player is getting up, have to check if there is a closed door
-						if (door != null && door.getCurrentAnimation().getId().contains("closed")) {
-							System.out.println("BIEN 2");
-							
-							int[] cc = currentCorner.getCenter();
-							
-							if (currentCorner.getTypeOfEntity().contains("right")) {
-								player.setX(cc[0] + 40);
-								player.setY(cc[1] + 125);
-							}
-							else if (currentCorner.getTypeOfEntity().contains("left")) {
-								player.setX(cc[0] - 16);
-								player.setY(cc[1] + 126);
-							}
-							player.scaleDown();
-						}
-					}
 					else if (!player.getCurrentAnimation().getId().startsWith("hanging idle_")) {
 						player.setCornerReached(false);
 					}
@@ -444,7 +430,6 @@ public class LevelState extends State{
 			looseFloor = checkLooseFloor();
 			cornerJumping = checkCornerJumping();
 			wall = checkWall();
-			door = checkDoor();
 			
 			if (!player.isLongLand() && 
 					player.getCurrentAnimation().getId().contains("jump_") &&
@@ -525,6 +510,9 @@ public class LevelState extends State{
 			if (wall != null) {
 				
 				// player has collided with a wall
+//				player.collide_jump();
+				System.out.println("Vooooy a caer 2 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+
 				player.fall();
 				
 				// corrects the player position after wall collision
@@ -532,9 +520,13 @@ public class LevelState extends State{
 				int wallyGap = 36;
 				int[] wallCenter = wall.getCenter();
 				
+				//DEBUG
+				//System.out.println("TIPO DE MURO: " + wall.getTypeOfEntity());
+				
 				if (wall.getTypeOfEntity().contains("face")){ //wallCenter[0] < playerCenter[0]) {
 
 					// left wall
+					//System.out.println("RIGHT WALL FIX");
 					player.setX(wallCenter[0] + wallxGap);
 					player.setY(wallCenter[1] + wallyGap);
 				}
@@ -542,34 +534,12 @@ public class LevelState extends State{
 						 wall.getTypeOfEntity().contains("single") ){ //wallCenter[0] > playerCenter[0]) {
 					
 					//right wall
+					//System.out.println("LEFT WALL FIX");
 					player.setX(wallCenter[0] - wallxGap/4);
 					player.setY(wallCenter[1] + wallyGap);
 				}
 			}
-
-			if (door != null) {
-				
-				// player has collided with a door
-				player.fall();
-				
-				// corrects the player position after wall collision
-				int doorxGap = 58;
-				int dooryGap = 36;
-				int[] doorCenter = door.getCenter();
-				
-				if (doorCenter[0] < playerCenter[0]) {
-
-					// left wall
-					player.setX(doorCenter[0] + doorxGap);
-					player.setY(doorCenter[1] + dooryGap);
-				}
-				else if (doorCenter[0] > playerCenter[0]) {
-					
-					//right wall
-					player.setX(doorCenter[0] - doorxGap/4);
-					player.setY(doorCenter[1] + dooryGap);
-				}
-			}
+			
 		}
 		else if ( player.isFalling() ) {
 			
@@ -704,7 +674,6 @@ public class LevelState extends State{
 			looseFloor = checkLooseFloor();
 			cornerFloor = checkCornerFloor();
 			wall = checkWall();
-			door = checkDoor();
 			potion = checkPotion();
 			sword = checkSword();
 			
@@ -876,39 +845,6 @@ public class LevelState extends State{
 					player.setOrientation("right");
 					player.collide(wall);
 					player.setX(wallCenter[0] - (wallxGap/4) );
-				}
-			}
-			
-			// Door collision behaviour
-			if (door != null) {
-
-				if ( (door.getCurrentAnimation().getId().contains("closed")) ||
-					 (door.getCurrentAnimation().getId().contains("half") &&
-						!player.getCurrentAnimation().getId().contains("crouching")) ) {
-					
-					// player has collided with a door
-					// corrects the player position after wall collision
-					int doorxGap = 40;
-					int[] doorCenter = door.getCenter();
-					
-					if (doorCenter[0] < playerCenter[0]) {
-		
-						// left side door
-						player.setOrientation("left");
-						player.collide(door);
-						player.setX(doorCenter[0] + doorxGap);
-					}
-					else if (doorCenter[0] > playerCenter[0]) {
-						
-						//right side door
-						player.setOrientation("right");
-						player.collide(door);
-						player.setX(doorCenter[0] - (doorxGap/2) );
-					}
-				}
-				else {
-					// door is opened enough to player to go through
-					
 				}
 			}
 		}	// END GROUNDED
@@ -1514,164 +1450,6 @@ public class LevelState extends State{
 			}
 		}		
 		return wall;
-	}
-	
-	/**
-	 * 
-	 * @return true if there is a door in front of the player
-	 * where he will collide
-	 */
-	private Entity checkDoor() {
-		Entity door = null;
-		int doorGap = 20;
-		
-		/* Obtains the square where the center point of the player is placed */
-		int[] playerCenter = player.getCenter();
-		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
-		
-		// Checks that the square is within the room
-		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
-				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
-			
-			/* Checks if there is a wall type object in current square */
-			List<Entity> bgEntities = new LinkedList<Entity>();
-			
-			List<Entity> bEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getBackground();
-			
-			List<Entity> fEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getForeground();
-			
-			bgEntities.addAll(bEntities);
-			bgEntities.addAll(fEntities);
-
-			if (playerSquare[1] > 0) {
-				
-				// Left square
-				List<Entity> bEntitiesLeft = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] - 1).getBackground();
-				
-				List<Entity> fEntitiesLeft = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] - 1).getForeground();
-				
-				bgEntities.addAll(bEntitiesLeft);
-				bgEntities.addAll(fEntitiesLeft);
-			}
-
-			if (playerSquare[1] < 9) {
-			
-				// Right square
-				List<Entity> bEntitiesRight = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] + 1).getBackground();
-				
-				List<Entity> fEntitiesRight = currentRoom.getSquare(
-						playerSquare[0], playerSquare[1] + 1).getForeground();
-	
-				bgEntities.addAll(bEntitiesRight);
-				bgEntities.addAll(fEntitiesRight);
-			}
-			
-			// Searches for wall type objects
-			for (Entity bgE : bgEntities) {
-				
-				if (bgE.getBoundingBox() != null) {
-					
-					String name = bgE.getTypeOfEntity();
-					if ( name.startsWith("Door") ) {
-						
-						// wall detected nearby
-						int[] ec = bgE.getCenter();
-						
-						if ( Math.abs(ec[0] - playerCenter[0]) < doorGap) {
-
-							// player is close to the door
-							door = bgE;
-						}
-					}
-				}
-			}
-		}		
-		return door;
-	}
-	
-	/**
-	 * 
-	 * @return true if there is a door in in the middle
-	 * of player's climbing animation
-	 */
-	private Entity checkClimbingDoor() {
-		Entity door = null;
-		int doorGap = 20;
-		
-		/* Obtains the square where the center point of the player is placed */
-		int[] playerCenter = player.getCenter();
-		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
-		
-		// Checks that the square is within the room
-		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
-				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
-			
-			/* Checks if there is a wall type object in current square */
-			List<Entity> bgEntities = new LinkedList<Entity>();
-			
-			List<Entity> bEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getBackground();
-			
-			List<Entity> fEntities = currentRoom.getSquare(
-					playerSquare[0], playerSquare[1]).getForeground();
-			
-			bgEntities.addAll(bEntities);
-			bgEntities.addAll(fEntities);
-
-			if (player.getOrientation().equals("left") &&
-					playerSquare[1] > 0 && playerSquare[0] > 0) {
-				
-				// Left square
-				List<Entity> bEntitiesLeft = currentRoom.getSquare(
-						playerSquare[0] - 1, playerSquare[1] - 1).getBackground();
-				
-				List<Entity> fEntitiesLeft = currentRoom.getSquare(
-						playerSquare[0] - 1, playerSquare[1] - 1).getForeground();
-				
-				bgEntities.addAll(bEntitiesLeft);
-				bgEntities.addAll(fEntitiesLeft);
-			}
-
-			if (player.getOrientation().equals("right") &&
-					playerSquare[1] < 9 && playerSquare[0] > 0) {
-			
-				// Right square
-				List<Entity> bEntitiesRight = currentRoom.getSquare(
-						playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
-				
-				List<Entity> fEntitiesRight = currentRoom.getSquare(
-						playerSquare[0] - 1, playerSquare[1] + 1).getForeground();
-	
-				bgEntities.addAll(bEntitiesRight);
-				bgEntities.addAll(fEntitiesRight);
-			}
-			
-			// Searches for wall type objects
-			for (Entity bgE : bgEntities) {
-				
-				if (bgE.getBoundingBox() != null) {
-					
-					String name = bgE.getTypeOfEntity();
-					if ( name.startsWith("Door") ) {
-						
-						// wall detected nearby
-						int[] ec = bgE.getCenter();
-						
-						if (ec[1] < playerCenter[1]) {
-
-							// player is close to the door
-							door = bgE;
-						}
-					}
-				}
-			}
-		}		
-		return door;
 	}
 	
 	/**

@@ -550,7 +550,19 @@ public class Loader {
 				String animation = doortype.next();
 				int frame = doortype.nextInt();
 				doortype.close();
-				newEntity = new Door(px,py,-24,-6,this,animation, id, frame);
+				newEntity = new Door(px,py,-24,-6,this,animation, id, frame, "normal");
+				
+				/* Si principe a la izquierda -> foreground, si principe a la derecha -> background */
+				background.add(newEntity);
+			} else if(entity.startsWith("final_door")){
+				
+				Scanner doortype = new Scanner(entity.substring(11,entity.length()-1));
+				doortype.useDelimiter(",");
+				int id = doortype.nextInt();
+				String animation = doortype.next();
+				int frame = doortype.nextInt();
+				doortype.close();
+				newEntity = new Door(px,py,-24,-6,this,animation, id, frame, "final");
 				
 				/* Si principe a la izquierda -> foreground, si principe a la derecha -> background */
 				background.add(newEntity);

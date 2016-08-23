@@ -562,7 +562,7 @@ public class Loader {
 				String animation = doortype.next();
 				int frame = doortype.nextInt();
 				doortype.close();
-				newEntity = new Door(px,py,-24,-6,this,animation, id, frame, "final");
+				newEntity = new Door(px,py,52,-32,this,animation, id, frame, "final");
 				
 				/* Si principe a la izquierda -> foreground, si principe a la derecha -> background */
 				background.add(newEntity);

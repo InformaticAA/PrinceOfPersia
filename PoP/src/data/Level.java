@@ -1,6 +1,7 @@
 package data;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import entities.Door;
 
@@ -96,8 +97,8 @@ public class Level {
 		this.rooms = rooms;
 	}
 	
-	public ArrayList<Door> getDoors(){
-		ArrayList<Door> doors = new ArrayList<Door>();
+	public List<Door> getDoors(){
+		List<Door> doors = new LinkedList<Door>();
 		for (int i = 0; i < rooms.length; i++) {
 			for (int j = 0; j < rooms[0].length; j++) {
 				if (rooms[i][j] != null) {

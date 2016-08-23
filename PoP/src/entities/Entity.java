@@ -68,14 +68,14 @@ public abstract class Entity {
 				y - currentAnimation.getImage().getHeight(), null);
 		
 		/* Draws the entity's bounding box */
-//		if (boundingBox != null) {
-//			g.setColor(boundingBoxColor);
-//			g.drawRect((int) boundingBox.getX(),
-//					(int) boundingBox.getY(),
-//					(int) boundingBox.getWidth(),
-//					(int) boundingBox.getHeight());
-//			g.setColor(Color.BLACK);
-//		}
+		if (boundingBox != null) {
+			g.setColor(boundingBoxColor);
+			g.drawRect((int) boundingBox.getX(),
+					(int) boundingBox.getY(),
+					(int) boundingBox.getWidth(),
+					(int) boundingBox.getHeight());
+			g.setColor(Color.BLACK);
+		}
 		
 		/* Draws a red cross in the center of the entity */
 //		if (typeOfEntity.startsWith("FloorPanel_")) {

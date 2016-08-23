@@ -14,10 +14,10 @@ public class Door extends Entity{
 	private Sound closed;
 	private long remaining_time;
 	
-	public final int MAX_TIME = 15 * 1000;
+	public final int MAX_TIME = 10 * 1000;
 	
-	public Door(int x, int y, int x_offset, int y_offset, Loader loader, String door_state, int id, int frame) {
-		super("Door", x + x_offset, y + y_offset, loader);
+	public Door(int x, int y, int x_offset, int y_offset, Loader loader, String door_state, int id, int frame, String type) {
+		super("Door_" + type, x + x_offset, y + y_offset, loader);
 		this.id = id;
 		animations = loader.getAnimations("door");
 		this.setCurrentAnimation(door_state, FRAME_DURATION*6);
@@ -53,6 +53,7 @@ public class Door extends Entity{
 	
 	public void updateReal(long elapsedTime){
 		super.update(elapsedTime);
+		System.out.println("ANIMACION " + this.getCurrentAnimation().getId() + " (" + this.getCurrentAnimation().getCurrentFrame() + ")");
 		switch(currentAnimation.getId()){
 		
 		case "door_opened":
@@ -104,6 +105,15 @@ public class Door extends Entity{
 			if(this.getCurrentAnimation().isOver(false)){
 				closed.play();
 				this.setCurrentAnimation("door_closed", FRAME_DURATION);
+			}
+			break;
+			
+		case "final_door_opening":
+			if(this.currentAnimation.isLastFrame()){
+				opening.play();
+			}
+			if(this.getCurrentAnimation().isOver(false)){
+				this.setCurrentAnimation("final_door_opened", FRAME_DURATION*2);
 			}
 			break;
 			
@@ -160,6 +170,11 @@ public class Door extends Entity{
 			this.getCurrentAnimation().setCurrentFrame(10 - frame);
 			break;
 			
+		case "final_door_closed":
+			System.out.println("ENTRA AQUI?");
+			this.setCurrentAnimation("final_door_opening", FRAME_DURATION * 2);
+			break;
+			
 		default:
 			
 			break;
@@ -167,6 +182,7 @@ public class Door extends Entity{
 	}
 	
 	public void closeDoor(){
+		System.out.println("CERRRRRAMOS");
 		if(!this.getCurrentAnimation().getId().equals("door_closed")){
 			this.setCurrentAnimation("door_closed", FRAME_DURATION);
 			closing_fast.play();

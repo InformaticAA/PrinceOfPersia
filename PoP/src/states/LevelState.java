@@ -98,7 +98,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 9);
+			currentRoom = currentLevel.getRoom(2, 4);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(100,110,loader, INITIAL_HEALTH, "right"); // primer piso
@@ -1060,13 +1060,13 @@ public class LevelState extends State{
 								
 								bgRight = (int) bgE.getBoundingBox().getMaxX();
 								bgTop = (int) bgE.getBoundingBox().getMaxY();
-								if(player.getCurrentAnimation().equals("right")){
-									player.setX(bgRight - 16);
-								} else{
-									player.setX(bgRight - 32);
-								}
 								player.setY(bgTop - 16);
 								player.setSpiked();
+								if(player.getOrientation().equals("right")){
+									player.setX(bgRight - 12);
+								} else{
+									player.setX(bgRight - 30);
+								}
 							}
 						}
 					}

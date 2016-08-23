@@ -192,6 +192,11 @@ public class Character extends Entity {
 		yFrameOffset = 0;
 	}
 	
+	public void cleanXSpeed(){
+		xSpeed = 0;
+		xFrameOffset = 0;
+	}
+	
 	public void move(int x, int y) {
 		
 		// moves the character

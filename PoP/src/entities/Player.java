@@ -3307,6 +3307,7 @@ public class Player extends Character {
 		this.hp = 0;
 		this.currentState = PlayerState.DIED;
 		this.setCurrentAnimation("dead spiked_" + orientation, FRAME_DURATION);
+		this.cleanXSpeed();
 	}
 	
 	public void setSword(){

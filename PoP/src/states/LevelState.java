@@ -90,14 +90,13 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 1);
+			currentRoom = currentLevel.getRoom(2, 7);
 			doors = currentLevel.getDoors();
 
-			player = new Player(400,110,loader, INITIAL_HEALTH, "right"); // primer piso
+			player = new Player(600,110,loader, INITIAL_HEALTH, "right"); // primer piso
 //			player = new Player(200,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
-//			player = new Player(500,100,loader, 3, "left");
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(6);
 			
@@ -160,7 +159,8 @@ public class LevelState extends State{
 		remainingTime = remainingTime - elapsedTime;
 
 		manageKeys();
-		currentLevel.update(elapsedTime);
+		//currentLevel.update(elapsedTime);
+		currentRoom.update(elapsedTime);
 		if(!player.isDead()){
 			checkPlayerCollisions(elapsedTime);
 		}
@@ -1454,6 +1454,8 @@ public class LevelState extends State{
 			List<Entity> bEntities; 
 			List<Entity> fEntities;
 			
+			System.out.println(playerSquare[0] + " - " + playerSquare[1]);
+			
 			if (player.getOrientation().equals("left") ) {
 				
 				bEntities = currentRoom.getSquare(
@@ -1844,10 +1846,8 @@ public class LevelState extends State{
 				playerSquare[0] <= 3 && playerSquare[1] <= 9)) {
 			
 			if(playerSquare[0] <= 0){
-				//System.out.println("Arriba");
+
 				/* Arriba */
-				
-				//TODO: SOLVE
 				if(player.isClimbing()){
 					System.out.println("arriba");
 					System.out.println("NEW ROOM : " + currentRoom.getRow() + " - " + (currentRoom.getCol() + 1));
@@ -1866,17 +1866,24 @@ public class LevelState extends State{
 							player.setCornerToClimb(e);
 						}
 					}
+					if(enemy != null){
+						enemy.setPlayer(false, player);
+					}
 					currentRoom.deleteCharacter(player);
+					enemy = (Enemy)newRoom.getGuard();
 					newRoom.addCharacter(player);
+					if(enemy != null){
+						if(!enemy.isDead()){
+							enemy.setPlayer(true, player);
+							if(player.hasSword()){
+								player.isEnemySaw(true);
+							}
+						}
+					}
 					currentRoom = newRoom;
 				}
-//				currentRoom.deleteCharacter(player);
-//				Room newRoom = currentLevel.getRoom(currentRoom.getRow(), currentRoom.getCol() + 1);
-//				newRoom.addCharacter(player);
-//				player.setY(400);
-//				currentRoom = newRoom;
 			} else if(playerSquare[0] > 3){
-				//System.out.println("Abajo");
+
 				/* Abajo */
 				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 2, currentRoom.getCol() + 1);
 				if(player.isClimbing()){
@@ -1896,7 +1903,19 @@ public class LevelState extends State{
 						}
 					}
 					currentRoom.deleteCharacter(player);
+					if(enemy != null){
+						enemy.setPlayer(false, player);
+					}
+					enemy = (Enemy)newRoom.getGuard();
 					newRoom.addCharacter(player);
+					if(enemy != null){
+						if(!enemy.isDead()){
+							enemy.setPlayer(true, player);
+							if(player.hasSword()){
+								player.isEnemySaw(true);
+							}
+						}
+					}
 					currentRoom = newRoom;
 				} else{
 					currentRoom.deleteCharacter(player);
@@ -1905,19 +1924,43 @@ public class LevelState extends State{
 					currentRoom = newRoom;
 				}
 			} else if(playerSquare[1] < 0){
-				//System.out.println("Izquierda");
+
 				/* Izquierda */
 				currentRoom.deleteCharacter(player);
 				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol());
+				if(enemy != null){
+					enemy.setPlayer(false, player);
+				}
+				enemy = (Enemy)newRoom.getGuard();
 				newRoom.addCharacter(player);
+				if(enemy != null){
+					if(!enemy.isDead()){
+						enemy.setPlayer(true, player);
+						if(player.hasSword()){
+							player.isEnemySaw(true);
+						}
+					}
+				}
 				player.setX(620);
 				currentRoom = newRoom;
 			} else if(playerSquare[1] > 9){
-				//System.out.println("Derecha");
+
 				/* Derecha */
 				currentRoom.deleteCharacter(player);
 				Room newRoom = currentLevel.getRoom(currentRoom.getRow() + 1, currentRoom.getCol() + 2);
+				if(enemy != null){
+					enemy.setPlayer(false, player);
+				}
+				enemy = (Enemy)newRoom.getGuard();
 				newRoom.addCharacter(player);
+				if(enemy != null){
+					if(!enemy.isDead()){
+						enemy.setPlayer(true, player);
+						if(player.hasSword()){
+							player.isEnemySaw(true);
+						}
+					}
+				}
 				player.setX(20);
 				currentRoom = newRoom;
 			}

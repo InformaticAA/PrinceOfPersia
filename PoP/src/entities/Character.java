@@ -78,11 +78,6 @@ public class Character extends Entity {
 			int newxFrameOffset = currentAnimation.getFrameXOffset(currentFrame, prevImage);
 			int newyFrameOffset = currentAnimation.getFrameYOffset(currentFrame, prevImage);
 			
-			if (currentAnimation.getId().contains("got sword") || 
-					currentAnimation.getId().contains("putting")) {
-				System.out.println(currentAnimation.getId() + "    " + this.getX() + " - " + this.getY() + " (" + currentAnimation.getCurrentFrame()+")");
-			}
-			
 			if (newxSpeed != 0 || newySpeed != 0 ||
 					xFrameOffset != 0 || yFrameOffset != 0) {
 				

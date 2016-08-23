@@ -133,6 +133,9 @@ public class Player extends Character {
 		this.goingToAttack = false;
 		this.goingToCounter = false;
 		
+		
+		
+		//CHANGEEEE
 		this.hasSword = false;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");

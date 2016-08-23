@@ -1,5 +1,7 @@
 package entities;
 
+import java.awt.Color;
+
 import framework.Loader;
 import kuusisto.tinysound.Sound;
 
@@ -25,6 +27,15 @@ public class Door extends Entity{
 		closing_fast = loader.getSound("gate closing fast");
 		closed = loader.getSound("gate stop");
 		remaining_time = -1000;
+		
+		boundingBoxColor = Color.GREEN;
+		
+		/* Sets the bounding box */
+		if(door_state.contains("closed")){
+			enableBoundingBox(this.x, this.y,
+						currentAnimation.getImage().getWidth() - currentAnimation.getImage().getWidth()/2,
+						currentAnimation.getImage().getHeight());
+		}
 	}
 	
 	public int getId() {
@@ -99,6 +110,23 @@ public class Door extends Entity{
 		default:
 			
 			break;
+		}
+		
+		// updates door's bounding box
+		if(currentAnimation.getId().contains("closed")){
+			enableBoundingBox(this.x, this.y,
+						currentAnimation.getImage().getWidth() - currentAnimation.getImage().getWidth()/2,
+						currentAnimation.getImage().getHeight());
+		}
+		else if(currentAnimation.getId().contains("half")){
+			enableBoundingBox(this.x, this.y,
+					currentAnimation.getImage().getWidth() - currentAnimation.getImage().getWidth()/2,
+					currentAnimation.getImage().getHeight()/2);
+		}
+		else if(currentAnimation.getId().contains("opened")){
+			enableBoundingBox(this.x, this.y,
+					currentAnimation.getImage().getWidth() - currentAnimation.getImage().getWidth()/2,
+					0);
 		}
 	}
 

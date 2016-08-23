@@ -2724,6 +2724,10 @@ public class Player extends Character {
 		// TODO
 	}
 	
+	public void scaleDown() {
+		this.setCurrentAnimation("scaling down_" + orientation, FRAME_DURATION);
+	}
+	
 	/**
 	 * Sets the player's current animation to collided
 	 */

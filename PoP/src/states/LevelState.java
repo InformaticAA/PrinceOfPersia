@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,7 +105,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 9);
+			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(100,110,loader, INITIAL_HEALTH, "right"); // primer piso
@@ -617,13 +616,13 @@ public class LevelState extends State{
 			}
 			
 		}
-		else if ( player.isFalling() ) {
+		else if ( player.isFalling()) {
 			
-			System.out.println("FALLING");
+//			System.out.println("FALLING");
 			
 			/* Increases player's fall distance */
 			int prevFallDistance = player.getFallDistance();
-			player.setFallDistance(prevFallDistance + 4);
+			player.setFallDistance(prevFallDistance + player.getFallingSpeed()/4);
 			
 			/* Checks if the player can walk over the floor */
 			floorPanel = checkFloorPanel();
@@ -633,10 +632,8 @@ public class LevelState extends State{
 			
 			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
-				
-				System.out.println("falling distance: " + player.getFallDistance());
 				if( player.isDead()){
-					
+					// player is dead D:
 				}
 				else if ( player.isSafeFall() ) {
 					
@@ -658,6 +655,7 @@ public class LevelState extends State{
 					player.die();
 					loader.getSound("falling").stop();
 					loader.getSound("landing hard").play();
+					player.setY((int) floorPanel.getBoundingBox().getMaxY()); 
 					System.out.println("DEATH LAND");
 				}
 				

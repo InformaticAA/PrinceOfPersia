@@ -20,7 +20,7 @@ public class Player extends Character {
 	private final String RUNNING = "running";
 	private final int FRAME_DURATION = 5;
 	private final int MOVE_SPEED = 2;
-	private final int SAFE_FALL_DISTANCE = 200;
+	private final int SAFE_FALL_DISTANCE = 100;
 	private final int RISKY_FALL_DISTANCE = 250;
 	
 	private boolean up_pressed;
@@ -2710,6 +2710,7 @@ public class Player extends Character {
 		this.setOnTheEdge(false);
 		this.setCornerToClimb(null);
 		this.setCornerToClimbDown(null);
+		this.setFallDistance(0);
 		this.setFallingSpeed(0);
 		
 		// lands variables resets
@@ -2969,7 +2970,7 @@ public class Player extends Character {
 			fallingSpeed = fallingSpeed + gravity;
 			int newySpeed = fallSpeed + fallingSpeed;
 			
-//			System.out.println("newySpeed: " + newySpeed);
+			System.out.println("newySpeed: " + newySpeed);
 			
 			if (newySpeed > maxySpeed) {
 				newySpeed = maxySpeed;

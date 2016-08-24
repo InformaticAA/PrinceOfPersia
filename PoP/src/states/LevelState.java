@@ -631,6 +631,7 @@ public class LevelState extends State{
 			
 			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
+				System.out.println("fallDistance: " + player.getFallDistance());
 				player.setFallingSpeed(0);
 				
 				if( player.isDead()){

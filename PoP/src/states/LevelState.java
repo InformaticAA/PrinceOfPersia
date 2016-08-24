@@ -640,7 +640,6 @@ public class LevelState extends State{
 			
 			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
-				System.out.println("fallDistance: " + player.getFallDistance());
 				player.setFallingSpeed(0);
 				
 				if( player.isDead()){
@@ -674,6 +673,7 @@ public class LevelState extends State{
 				player.setFallCollided(false);
 				player.setStraightFall(false);
 				player.setGrounded(true);
+				player.setLandingFall(true);
 				
 				// resets some climb conditions
 				player.setCanClimb(false);

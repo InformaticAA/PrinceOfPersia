@@ -60,6 +60,7 @@ public class Player extends Character {
 	private boolean pickingSword;
 	private int fallDistance;
 	private boolean screaming;
+	private boolean landingFall;
 	
 	private boolean hasSword;
 	
@@ -118,6 +119,8 @@ public class Player extends Character {
 		this.fallCollided = false;
 		this.fallDistance = 0;
 		this.canDrink = false;
+		this.screaming = false;
+		this.landingFall = false;
 		this.canPickSword = false;
 		
 		this.enemySaw = false;
@@ -463,12 +466,7 @@ public class Player extends Character {
 						this.currentState = PlayerState.IDLE;
 						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 					}
-					if(canWalkCrouched){
-						if(this.getOrientation().equals("left")){
-
-						} else{
-
-						}
+					if(canWalkCrouched && !this.isLandingFall()){
 						canWalkCrouched = false;
 						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
 					} else{
@@ -494,6 +492,8 @@ public class Player extends Character {
 			
 		case "crouching idle_left":
 		case "crouching idle_right":
+			
+			this.setLandingFall(false);
 
 			switch(currentState){
 			case IDLE:
@@ -522,11 +522,6 @@ public class Player extends Character {
 					if(changed_position){
 						changed_position = false;
 					} else{
-						if(this.getOrientation().equals("left")){
-
-						} else{
-
-						}
 						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
 					}
 				}
@@ -3260,6 +3255,20 @@ public class Player extends Character {
 	 */
 	public void setScreaming(boolean screaming) {
 		this.screaming = screaming;
+	}
+
+	/**
+	 * @return the landingFall
+	 */
+	public boolean isLandingFall() {
+		return landingFall;
+	}
+
+	/**
+	 * @param landingFall the landingFall to set
+	 */
+	public void setLandingFall(boolean landingFall) {
+		this.landingFall = landingFall;
 	}
 
 	public boolean isBlocked() {

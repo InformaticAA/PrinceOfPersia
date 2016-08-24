@@ -105,12 +105,12 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 4);
+			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
 
-//			player = new Player(300,110,loader, INITIAL_HEALTH, "left"); // primer piso
-//			player = new Player(260,240,loader, INITIAL_HEALTH, "right"); // segundo piso
-			player = new Player(256,370,loader, INITIAL_HEALTH, "right"); // tercer piso
+//			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
+			player = new Player(140,240,loader, INITIAL_HEALTH, "right"); // segundo piso
+//			player = new Player(400,370,loader, INITIAL_HEALTH, "right"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(6);
@@ -392,6 +392,8 @@ public class LevelState extends State{
 					currentCorner = cornerToClimbDown;
 				}
 				
+				// controlls what the player must do while he is interacting
+				// with the current corner
 				if (currentCorner != null) {
 					
 					if (player.getCurrentAnimation().getId().startsWith("scaling down_") &&
@@ -410,7 +412,7 @@ public class LevelState extends State{
 						
 						if (floorBeneath == null) {
 							player.setCanLandScalingDown(false);
-							System.out.println("Vooooy a caer " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
+							System.out.println("Vooooy a caer scaling down " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
 							player.setStraightFall(true);
 							player.fall();
 						}
@@ -449,6 +451,7 @@ public class LevelState extends State{
 						player.setCornerReached(true);
 					}
 					else if (player.getCurrentAnimation().getId().startsWith("clipping_")) {
+						player.setCornerReached(false);
 						
 						// player is getting up, have to check if there is a closed door
 						if (door != null && door.getCurrentAnimation().getId().contains("closed")) {
@@ -544,7 +547,7 @@ public class LevelState extends State{
 			if (cornerJumping != null) {
 				
 				int[] cornerCenter = cornerJumping.getCenter();
-				int xReachDistance = 40;
+				int xReachDistance = 80;
 				int yReachDistance = -10;
 				
 				// player can reach a corner to hang in mid air
@@ -697,7 +700,7 @@ public class LevelState extends State{
 			if (cornerJumping != null) {
 				
 				int[] cornerCenter = cornerJumping.getCenter();
-				int xReachDistance = 40;
+				int xReachDistance = 80;
 				int yReachDistance = -10;
 				
 				// player can reach a corner to hang in mid air
@@ -760,12 +763,17 @@ public class LevelState extends State{
 			
 			/* Check for corners */
 			corner = checkCorner();
-			
-			//checks if player can take the sword from floor
+
+//			if (player.getCurrentAnimation().getId().contains("crouching")) {
+//				if (floorPanel != null) {
+//					player.setY( (int) floorPanel.getBoundingBox().getMinY());
+//				}
+//			}
 				
 			// checks if player can drink a nearby potion
 			player.setCanDrink(potion != null);
 			
+			//checks if player can take the sword from floor
 			player.setCanPickSword(sword!=null);
 			
 			if (player.isDrinkingPotion() && potion != null) {
@@ -1453,7 +1461,7 @@ public class LevelState extends State{
 	/**
 	 * 
 	 * @return true if there is a corner that the player can reach
-	 * doing a horizontal jump
+	 * falling or doing a horizontal jump
 	 */
 	private Entity checkCornerJumping() {
 		Entity corner = null;
@@ -1507,11 +1515,11 @@ public class LevelState extends State{
 			}
 			
 			/* Checks if there is a corner type object in right square */
-			bgEntities = currentRoom.getSquare(
-					playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
+			bEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1] + 1).getBackground();
 			
 			fEntities = currentRoom.getSquare(
-					playerSquare[0] - 1, playerSquare[1] + 1).getForeground();
+					playerSquare[0], playerSquare[1] + 1).getForeground();
 			
 			bgEntities.addAll(fEntities);
 			
@@ -2038,7 +2046,7 @@ public class LevelState extends State{
 								else {
 									System.out.println("Caso 2 - NO NEED FOR FIX");
 								}
-								player.setY(cornerCenter[1] + cornerYGap);
+//								player.setY(cornerCenter[1] + cornerYGap);
 							} else if(newCorner == null && newCornerRight != null){
 								
 								System.out.println("CASO 3 - NO ESQUINAS PARED DERECHA");
@@ -2074,7 +2082,7 @@ public class LevelState extends State{
 								else {
 									System.out.println("Caso 3 - NO NEED FOR FIX");
 								}
-								player.setY(cornerCenter[1] + cornerYGap);
+//								player.setY(cornerCenter[1] + cornerYGap);
 							}
 							
 							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
@@ -2354,7 +2362,9 @@ public class LevelState extends State{
 							System.out.println("found corner abajo");
 							player.setY(e.getCenter()[1] - yDistanceCorner);
 							player.setCornerToClimb(null);
+							player.setCanClimb(false);
 							player.setCornerToClimbDown(e);
+							player.setCanClimbDown(true);
 						}
 					}
 					currentRoom.deleteCharacter(player);

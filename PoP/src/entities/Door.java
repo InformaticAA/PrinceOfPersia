@@ -188,4 +188,9 @@ public class Door extends Entity{
 			closing_fast.play();
 		}
 	}
+	
+	public boolean isOpenedFinal(){
+		System.out.println(this.getCurrentAnimation().getId());
+		return this.getCurrentAnimation().getId().equals("final_door_opened");
+	}
 }

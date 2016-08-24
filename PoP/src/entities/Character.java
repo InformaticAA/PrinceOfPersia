@@ -41,6 +41,7 @@ public class Character extends Entity {
 	protected int moveSpeed;
 	protected int xSpeed;
 	protected int ySpeed;
+	protected int fallingSpeed;
 	protected String sound;
 	protected boolean leftBlocked;
 	protected boolean rightBlocked;
@@ -397,6 +398,20 @@ public class Character extends Entity {
 	 */
 	public int getFallSpeed() {
 		return fallSpeed;
+	}
+
+	/**
+	 * @return the fallingSpeed
+	 */
+	public int getFallingSpeed() {
+		return fallingSpeed;
+	}
+
+	/**
+	 * @param fallingSpeed the fallingSpeed to set
+	 */
+	public void setFallingSpeed(int fallingSpeed) {
+		this.fallingSpeed = fallingSpeed;
 	}
 
 	/**

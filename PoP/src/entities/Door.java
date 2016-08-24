@@ -53,7 +53,7 @@ public class Door extends Entity{
 	
 	public void updateReal(long elapsedTime){
 		super.update(elapsedTime);
-		System.out.println("ANIMACION " + this.getCurrentAnimation().getId() + " (" + this.getCurrentAnimation().getCurrentFrame() + ")");
+//		System.out.println("ANIMACION " + this.getCurrentAnimation().getId() + " (" + this.getCurrentAnimation().getCurrentFrame() + ")");
 		switch(currentAnimation.getId()){
 		
 		case "door_opened":

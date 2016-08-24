@@ -20,8 +20,8 @@ public class Player extends Character {
 	private final String RUNNING = "running";
 	private final int FRAME_DURATION = 5;
 	private final int MOVE_SPEED = 2;
-	private final int SAFE_FALL_DISTANCE = 150;
-	private final int RISKY_FALL_DISTANCE = 200;
+	private final int SAFE_FALL_DISTANCE = 200;
+	private final int RISKY_FALL_DISTANCE = 250;
 	
 	private boolean up_pressed;
 	private boolean down_pressed;
@@ -2941,8 +2941,11 @@ public class Player extends Character {
 		}
 		
 		/* Applies gravity if falling */
-		if ( isFalling() ) {
-			int newySpeed = fallSpeed + gravity;
+		if ( isFalling() && this.getCurrentAnimation().isLastFrame() ) {
+			fallingSpeed = fallingSpeed + gravity;
+			int newySpeed = fallSpeed + fallingSpeed;
+			
+//			System.out.println("newySpeed: " + newySpeed);
 			
 			if (newySpeed > maxySpeed) {
 				newySpeed = maxySpeed;
@@ -2980,17 +2983,14 @@ public class Player extends Character {
 			/* Character is on the ground */
 			ySpeed = 0;
 			yFrameOffset = 0;
+			fallingSpeed = 0;
 		}
 		
-		/* Moves the character and its bounding box */
+		/* Moves the character and its bounding box if he is not at the edge*/
 		if (!this.isBlocked()) {
 			setX(x + xSpeed + xFrameOffset);
 			setY(y + ySpeed + yFrameOffset);
 			boundingBox.translate(xSpeed + xFrameOffset, ySpeed + yFrameOffset);
-		}
-		else {
-			System.out.println("WE'RE ON THE EDGE, WE CAAANT MOOOVE");
-			System.out.println("xSpeed: " + xSpeed + ", yFrameOffset: " + yFrameOffset);
 		}
 		
 		/* Play music */

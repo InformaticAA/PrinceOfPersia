@@ -105,19 +105,16 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 6);
+			currentRoom = currentLevel.getRoom(2, 4);
 			doors = currentLevel.getDoors();
 
-			player = new Player(100,110,loader, INITIAL_HEALTH, "right"); // primer piso
-//			player = new Player(300,240,loader, INITIAL_HEALTH, "right"); // segundo piso
-//			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
+//			player = new Player(300,110,loader, INITIAL_HEALTH, "left"); // primer piso
+//			player = new Player(260,240,loader, INITIAL_HEALTH, "right"); // segundo piso
+			player = new Player(256,370,loader, INITIAL_HEALTH, "right"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(6);
-			
-			// DEBUG POTIONS
 			player.setHp(3);
-			
 			currentRoom.addCharacter(player);
 		}
 		
@@ -651,6 +648,8 @@ public class LevelState extends State{
 					loader.getSound("landing soft").play();
 					player.safeLand();
 					System.out.println("SAFE LAND");
+					System.out.println(floorPanel.getTypeOfEntity() + ": " + 
+							floorPanel.getCenter()[0] + ", " + floorPanel.getCenter()[1]);
 				}
 				else if ( player.isRiskyFall() ) {
 					
@@ -726,7 +725,7 @@ public class LevelState extends State{
 				if ( player.getOrientation().equals("left") &&
 					 wall.getTypeOfEntity().contains("face") ) {
 					
-					player.setX(wall.getCenter()[0] + 40);
+					player.setX(wall.getCenter()[0] + 30);
 				}
 				else if (player.getOrientation().equals("left")) {
 					
@@ -739,7 +738,7 @@ public class LevelState extends State{
 				}
 				else if (player.getOrientation().equals("right")) {
 					
-					player.setX(wall.getCenter()[0] - 40);
+					player.setX(wall.getCenter()[0]);
 				}
 				player.setFallCollided(true);
 			}
@@ -901,7 +900,7 @@ public class LevelState extends State{
 						int cornerGap = 40;
 						
 						if (cornerFloorEntity.getTypeOfEntity().contains("left")) {
-							player.setX(cornerCenter[0] - cornerGap/3);
+							player.setX(cornerCenter[0] - cornerGap/4);
 							System.out.println("LEFT CORNER FALL FIX");
 						}
 						else if (cornerFloorEntity.getTypeOfEntity().contains("right")) {
@@ -2010,6 +2009,7 @@ public class LevelState extends State{
 								newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
 								roomToOperate.addToBackground(newCorner, roomToOperate.getSquare(loose.getRow(), loose.getCol()+1));
 								
+								
 								/* Comprobar si es en la ultima fila => eliminar base y crear corners en el piso de abajo tambien */
 								if(loose.getRow() == 3){
 									Room newRoom = currentLevel.getRoom(roomToOperate.getRow() + 2, roomToOperate.getCol() + 1);
@@ -2021,6 +2021,24 @@ public class LevelState extends State{
 									newCorner = new Corner(getPX(loose.getCol()+1),getPY(0),0,-6,loader,"normal_left");
 									newRoom.addToBackground(newCorner, newRoom.getSquare(0,loose.getCol()+1));
 								}
+								
+								// Makes the player fall correctly
+								player.setStraightFall(true);
+								player.fall();
+								
+								int[] cornerCenter = newCorner.getCenter();
+								int cornerGap = 0;
+								int cornerYGap = 10;
+								int newPlayerX = cornerCenter[0] - cornerGap;
+								
+								if (player.getX() > newPlayerX) {
+									player.setX(newPlayerX);
+									System.out.println("Caso 2 - FALL FIX");
+								}
+								else {
+									System.out.println("Caso 2 - NO NEED FOR FIX");
+								}
+								player.setY(cornerCenter[1] + cornerYGap);
 							} else if(newCorner == null && newCornerRight != null){
 								
 								System.out.println("CASO 3 - NO ESQUINAS PARED DERECHA");
@@ -2028,6 +2046,7 @@ public class LevelState extends State{
 								//Hay pared en la derecha y no en la izquierda -> crear solo esquina a la izquierda
 								newCorner = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 								roomToOperate.addToBackground(newCorner, roomToOperate.getSquare(loose.getRow(), loose.getCol()));
+								
 								if(loose.getRow() == 3){
 									Room newRoom = currentLevel.getRoom(roomToOperate.getRow() + 2, roomToOperate.getCol() + 1);
 									Square underSquare = newRoom.getSquare(0, loose.getCol());
@@ -2038,6 +2057,24 @@ public class LevelState extends State{
 									newCorner = new Corner(getPX(loose.getCol()),getPY(0),-12,-2,loader,"normal_right");
 									newRoom.addToBackground(newCorner, underSquare);
 								}
+								
+								// Makes the player fall correctly
+								player.setStraightFall(true);
+								player.fall();
+								
+								int[] cornerCenter = newCornerRight.getCenter();
+								int cornerGap = 60;
+								int cornerYGap = 10;
+								int newPlayerX = cornerCenter[0] - cornerGap;
+								
+								if (player.getX() < newPlayerX) {
+									player.setX(newPlayerX);
+									System.out.println("Caso 3 - FALL FIX");
+								}
+								else {
+									System.out.println("Caso 3 - NO NEED FOR FIX");
+								}
+								player.setY(cornerCenter[1] + cornerYGap);
 							}
 							
 							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
@@ -2053,6 +2090,24 @@ public class LevelState extends State{
 								System.out.println("CASO 4 - ESQUINA IZQUIERDA NO PARED DERECHA");
 								newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
 								roomToOperate.addToBackground(newCorner, roomToOperate.getSquare(loose.getRow(), loose.getCol()+1));
+							
+								// Makes the player fall correctly
+								player.setStraightFall(true);
+								player.fall();
+								
+								int[] cornerCenter = newCorner.getCenter();
+								int cornerGap = 0;
+								int cornerYGap = 10;
+								int newPlayerX = cornerCenter[0] - cornerGap;
+								
+								if (player.getX() > newPlayerX) {
+									player.setX(newPlayerX);
+									System.out.println("Caso 4 - FALL FIX");
+								}
+								else {
+									System.out.println("Caso 4 - NO NEED FOR FIX");
+								}
+								player.setY(cornerCenter[1] + cornerYGap);
 							} else{
 								System.out.println("CASO 5 - ESQUINA IZQUIERDA PARED DERECHA");
 								
@@ -2065,6 +2120,18 @@ public class LevelState extends State{
 										newPlayerSquare[1] == looseSquareY) {
 									player.setStraightFall(true);
 									player.fall();
+									
+//									int[] cornerCenter = newCornerRight.getCenter();
+//									int cornerGap = 40;
+//									
+//									if (newCornerRight.getTypeOfEntity().contains("left")) {
+//										player.setX(cornerCenter[0] - cornerGap/4);
+//										System.out.println("LEFT CORNER FALL FIX");
+//									}
+//									else if (newCornerRight.getTypeOfEntity().contains("right")) {
+//										player.setX(cornerCenter[0] + cornerGap);
+//										System.out.println("RIGHT CORNER FALL FIX");
+//									}
 								}
 							}
 							
@@ -2095,6 +2162,24 @@ public class LevelState extends State{
 								System.out.println("CASO 6 - ESQUINA DERECHA NO PARED IZQUIERDA");
 								newCornerRight = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 								roomToOperate.addToBackground(newCornerRight, roomToOperate.getSquare(loose.getRow(), loose.getCol()));
+
+								// Makes the player fall correctly
+								player.setStraightFall(true);
+								player.fall();
+								
+								int[] cornerCenter = newCornerRight.getCenter();
+								int cornerGap = 60;
+								int cornerYGap = 10;
+								int newPlayerX = cornerCenter[0] - cornerGap;
+								
+								if (player.getX() < newPlayerX) {
+									player.setX(newPlayerX);
+									System.out.println("Caso 6 - FALL FIX");
+								}
+								else {
+									System.out.println("Caso 6 - NO NEED FOR FIX");
+								}
+								player.setY(cornerCenter[1] + cornerYGap);
 							} else{
 								System.out.println("CASO 7 - ESQUINA DERECHA PARED IZQUIERDA");
 								

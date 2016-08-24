@@ -124,7 +124,7 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("crouching") ||
+		if (currentAnimation.getId().contains("fall") ||
 				currentAnimation.getId().contains("test") ||
 //				currentAnimation.getId().contains("crouching") ||
 				!firstTime) {
@@ -133,7 +133,7 @@ public class Character extends Entity {
 			if (framesDebug == 0) {
 				System.out.println(currentAnimation.getId() + ": "
 									+ currentAnimation.getCurrentFrame()
-									+ " -> (" + getX() + ", " + getY() + ")");
+  									+ " -> (" + getX() + ", " + getY() + ")");
 			}
 			
 			if (framesDebug == 4) {

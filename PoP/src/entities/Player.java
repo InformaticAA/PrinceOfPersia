@@ -147,10 +147,8 @@ public class Player extends Character {
 		this.finalDoorOpened = false;
 		this.finished = false;
 		
-		
-		
-		//CHANGEEEE
-		this.hasSword = true;
+		// player starts without a sword to fight
+		this.hasSword = false;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");
 		this.life = new Life[this.maxHp];
@@ -2714,12 +2712,14 @@ public class Player extends Character {
 		
 		this.setCurrentAnimation("falling_" + orientation, FRAME_DURATION);
 		int fallOffset = 20;		
-		if (orientation.equals("left")) {
-			this.move(-fallOffset/2, 0);
-		}
-		else if (orientation.equals("right")) {
-			this.move(fallOffset*2/3, 0);
-		}
+//		if (orientation.equals("left")) {
+//			this.move(-fallOffset/2, 0);
+//			System.out.println("Fall offset left applied");
+//		}
+//		else if (orientation.equals("right")) {
+//			this.move(fallOffset*2/3, 0);
+//			System.out.println("Fall offset right applied");
+//		}
 		this.falling = true;
 	}
 	
@@ -2965,7 +2965,7 @@ public class Player extends Character {
 			fallingSpeed = fallingSpeed + gravity;
 			int newySpeed = fallSpeed + fallingSpeed;
 			
-			System.out.println("newySpeed: " + newySpeed);
+//			System.out.println("newySpeed: " + newySpeed);
 			
 			if (newySpeed > maxySpeed) {
 				newySpeed = maxySpeed;
@@ -2973,7 +2973,7 @@ public class Player extends Character {
 			ySpeed = newySpeed;
 			
 			// Applies horizontal speed to the fall
-			if ( !isStraightFall() && (!isFallCollided() || !isDeadlyFall()) ) {
+			if ( !isStraightFall() && (!isFallCollided() && !isDeadlyFall()) ) {
 				
 				if ( isSafeFall() ) {
 					

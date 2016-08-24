@@ -147,7 +147,7 @@ public class Player extends Character {
 		
 		
 		//CHANGEEEE
-		this.hasSword = false;
+		this.hasSword = true;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");
 		this.life = new Life[this.maxHp];

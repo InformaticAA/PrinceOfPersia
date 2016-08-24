@@ -200,4 +200,8 @@ public class LooseFloor extends Entity {
 			this.setCurrentAnimation("just shaking", FRAME_DURATION*3);
 		}
 	}
+	
+	public int getLifes(){
+		return this.lifes;
+	}
 }

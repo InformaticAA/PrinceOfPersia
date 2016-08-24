@@ -258,6 +258,7 @@ public class LevelState extends State{
 		Entity looseFloor = null;
 		Entity floorBeneath = null;
 		Entity cornerFloor = null;
+		Entity cornerFloorEntity = null;
 		Entity corner = null;
 		Entity cornerJumping = null;
 		Entity wall = null;
@@ -363,11 +364,9 @@ public class LevelState extends State{
 				
 				if (cornerToClimb != null) {
 					currentCorner = cornerToClimb;
-					System.out.println("CLIMB UP");
 				}
 				else if (cornerToClimbDown != null) {
 					currentCorner = cornerToClimbDown;
-					System.out.println("CLIMB DOWN");
 				}
 				
 				if (currentCorner != null) {
@@ -602,6 +601,8 @@ public class LevelState extends State{
 			
 			if ( (floorPanel != null/*|| looseFloor*/) ) {
 				
+				player.setFallingSpeed(0);
+				
 				if( player.isDead()){
 					// player is dead D:
 				}
@@ -703,23 +704,6 @@ public class LevelState extends State{
 				player.setFallCollided(true);
 			}
 		}
-//		else if (player.wasJumping()) {
-//			
-//			/* Checks if the player can stand on the floor */
-//			floorPanel = checkFloorPanel();
-//			looseFloor = checkLooseFloor();
-//			cornerFloor = checkCornerFloor();
-//			wall = checkWall();
-//			
-//			/* Check for corners */
-//			corner = checkCorner();
-//			
-//			if ( (floorPanel == null) && looseFloor == null && !checkFloorSides()) {
-//				System.out.println("Vooooy a caer 3 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
-//
-//				player.fall();
-//			}
-//		}
 		else { /* Player is grounded */
 			
 //			System.out.println("GROUNDED");
@@ -729,6 +713,7 @@ public class LevelState extends State{
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
 			cornerFloor = checkCornerFloor();
+			cornerFloorEntity = checkCornerFloorEntity();
 			wall = checkWall();
 			potion = checkPotion();
 			sword = checkSword();
@@ -869,6 +854,22 @@ public class LevelState extends State{
 					System.out.println("Vooooy a caer 4 " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
 					player.setStraightFall(true);
 					player.fall();
+					
+					// corrects player position before fall
+					if (cornerFloorEntity != null) {
+						int[] cornerCenter = cornerFloorEntity.getCenter();
+						int cornerGap = 40;
+						
+						if (cornerFloorEntity.getTypeOfEntity().contains("left")) {
+							player.setX(cornerCenter[0] - cornerGap/3);
+							System.out.println("LEFT CORNER FALL FIX");
+						}
+						else if (cornerFloorEntity.getTypeOfEntity().contains("right")) {
+							player.setX(cornerCenter[0] + cornerGap);
+							System.out.println("RIGHT CORNER FALL FIX");
+						}
+					}
+					
 				}
 			}
 			else {
@@ -1175,6 +1176,51 @@ public class LevelState extends State{
 							// player falls
 							corner = null;
 						}
+					}
+				}
+			}
+		}
+		return corner;
+	}
+	
+	/**
+	 * 
+	 * @return a corner located near the player on the floor
+	 * beneath him
+	 */
+	private Entity checkCornerFloorEntity() {
+		Entity corner = new Corner();
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			/* Checks if there is a panel floor type object in current square */
+			List<Entity> bEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getBackground();
+			
+			List<Entity> fEntities = currentRoom.getSquare(
+					playerSquare[0], playerSquare[1]).getForeground();
+			
+			List<Entity> bgEntities = new LinkedList<Entity>();
+			
+			bgEntities.addAll(bEntities);
+			bgEntities.addAll(fEntities);
+				
+			for (Entity bgE : bgEntities) {
+	
+				String name = bgE.getTypeOfEntity();
+				if ( name.startsWith("Corner_") ) {
+					int[] ec = bgE.getCenter();
+
+					if (ec[1] > playerCenter[1]) {
+						
+						// the corner is beneath the player
+						corner = bgE;
 					}
 				}
 			}

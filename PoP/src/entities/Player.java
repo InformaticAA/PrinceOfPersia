@@ -2710,6 +2710,7 @@ public class Player extends Character {
 		this.setOnTheEdge(false);
 		this.setCornerToClimb(null);
 		this.setCornerToClimbDown(null);
+		this.setFallingSpeed(0);
 		
 		// lands variables resets
 		this.setCanLongLand(false);

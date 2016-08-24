@@ -98,7 +98,7 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 4);
+			currentRoom = currentLevel.getRoom(2, 9);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(100,110,loader, INITIAL_HEALTH, "right"); // primer piso
@@ -174,6 +174,9 @@ public class LevelState extends State{
 			death_song.play(false);
 			String message = "Press space to restart";
 			texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , Game.HEIGHT - 16));
+		} if(!over && player.hasFinished()){
+			over = true;
+			death_song.play(false);
 		}
 		if(!over){
 			checkPlayerCollisions(elapsedTime);
@@ -181,6 +184,7 @@ public class LevelState extends State{
 		updateFallingFloor(elapsedTime);
 		updateDoors(elapsedTime);
 		checkPlayerSquare();
+		checkPlayerFinnish();
 	}
 
 	@Override
@@ -2641,5 +2645,25 @@ public class LevelState extends State{
 			}
 		}
 		return potion;
+	}
+	
+	public void checkPlayerFinnish(){
+		
+		/* Obtains the square where the center point of the player is placed */
+		int[] playerCenter = player.getCenter();
+		int[] playerSquare = player.getSquare(playerCenter[0], playerCenter[1]);
+		
+		// Checks that the square is within the room
+		if (playerSquare[0] >= 0 && playerSquare[1] >= 0 &&
+				playerSquare[0] <= 3 && playerSquare[1] <= 9) {
+			
+			/* Checks if there is a panel floor type object beneath the player */
+			Entity door = currentRoom.returnNamedEntityBackground("Door_final", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
+			if(door != null && ((Door)door).isOpenedFinal()){
+				player.finalDoorOpened(true, door.getXCentre() - 29, door.getY() + 30);
+			} else{
+				player.finalDoorOpened(false, 0,0);
+			}
+		}
 	}
 }

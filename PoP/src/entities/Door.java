@@ -53,7 +53,6 @@ public class Door extends Entity{
 	
 	public void updateReal(long elapsedTime){
 		super.update(elapsedTime);
-		System.out.println("ANIMACION " + this.getCurrentAnimation().getId() + " (" + this.getCurrentAnimation().getCurrentFrame() + ")");
 		switch(currentAnimation.getId()){
 		
 		case "door_opened":
@@ -187,5 +186,10 @@ public class Door extends Entity{
 			this.setCurrentAnimation("door_closed", FRAME_DURATION);
 			closing_fast.play();
 		}
+	}
+	
+	public boolean isOpenedFinal(){
+		System.out.println(this.getCurrentAnimation().getId());
+		return this.getCurrentAnimation().getId().equals("final_door_opened");
 	}
 }

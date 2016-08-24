@@ -123,7 +123,7 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("running jump") ||
+		if (currentAnimation.getId().contains("stairs") ||
 				currentAnimation.getId().contains("test") ||
 //				currentAnimation.getId().contains("crouching") ||
 				!firstTime) {
@@ -163,7 +163,7 @@ public class Character extends Entity {
 			}
 			ySpeed = newySpeed;
 		}
-		else if (grounded) {
+		else if (grounded || !this.getCurrentAnimation().getId().equals("stairs")) {
 
 			/* Character is on the ground */
 			ySpeed = 0;

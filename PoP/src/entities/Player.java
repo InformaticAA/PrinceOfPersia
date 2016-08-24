@@ -80,6 +80,11 @@ public class Player extends Character {
 	
 	private Music drinking_song;
 	
+	private int doorx;
+	private int doory;
+	private boolean finalDoorOpened;
+	private boolean finished;
+	
 	public Player(int x, int y, Loader loader, int hp, String orientation) {
 		super(x, y, loader, orientation);
 		animations = loader.getAnimations("Dastan");
@@ -134,10 +139,15 @@ public class Player extends Character {
 		this.goingToAttack = false;
 		this.goingToCounter = false;
 		
+		this.doorx = 0;
+		this.doory = 0;
+		this.finalDoorOpened = false;
+		this.finished = false;
+		
 		
 		
 		//CHANGEEEE
-		this.hasSword = true;
+		this.hasSword = false;
 		
 		this.splash = new Splash(0,0,0,0,loader,"red");
 		this.life = new Life[this.maxHp];
@@ -943,7 +953,13 @@ public class Player extends Character {
 				this.setOnTheEdge(false);
 				
 				if(!enemySaw || !wantCombat){
-					if(right_pressed || left_pressed){
+					if(finalDoorOpened){
+						this.cleanYSpeed();
+						this.setX(this.doorx);
+						this.setY(this.doory);
+						this.setCurrentAnimation("stairs", FRAME_DURATION);
+					}
+					else if(right_pressed || left_pressed){
 						if(right_pressed && this.currentAnimation.equals("right")){
 							this.setCurrentAnimation("simple jump_" + orientation, FRAME_DURATION);
 						} else if(left_pressed && this.currentAnimation.equals("left")){
@@ -1919,6 +1935,13 @@ public class Player extends Character {
 			default:
 				
 				break;
+			}
+			break;
+			
+		case "stairs":
+			if(this.getCurrentAnimation().isOver(false)){
+				finished = true;
+				this.setCurrentAnimation("empty", FRAME_DURATION);
 			}
 			break;
 			
@@ -2975,7 +2998,7 @@ public class Player extends Character {
 				xFrameOffset = 0;
 			}
 		}
-		else if ( isGrounded() ) {
+		else if ( isGrounded() && !this.getCurrentAnimation().getId().equals("stairs")) {
 
 			/* Character is on the ground */
 			ySpeed = 0;
@@ -3316,6 +3339,16 @@ public class Player extends Character {
 	
 	public boolean hasSword(){
 		return this.hasSword;
+	}
+	
+	public void finalDoorOpened(boolean state, int posx, int posy){
+		this.doorx = posx;
+		this.doory = posy;
+		this.finalDoorOpened = state;
+	}
+	
+	public boolean hasFinished(){
+		return this.finished;
 	}
 	
 	@Override

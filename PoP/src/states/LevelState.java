@@ -1103,18 +1103,6 @@ public class LevelState extends State{
 								
 								bgRight = (int) bgE.getBoundingBox().getMaxX();
 								bgTop = (int) bgE.getBoundingBox().getMaxY();
-								if(player.getY() > bgTop){
-									player.setY(bgTop - 16);
-									player.setSpiked();
-									if(player.getOrientation().equals("right")){
-										player.setX(bgRight - 12);
-									} else{
-										player.setX(bgRight - 30);
-									}
-								}
-							}
-						} else{
-							if(player.getY() > bgTop - 20){
 								player.setY(bgTop - 16);
 								player.setSpiked();
 								if(player.getOrientation().equals("right")){

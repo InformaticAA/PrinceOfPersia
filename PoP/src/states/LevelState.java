@@ -105,11 +105,11 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(2, 1);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(100,110,loader, INITIAL_HEALTH, "right"); // primer piso
-			player = new Player(100,240,loader, INITIAL_HEALTH, "right"); // segundo piso
+			player = new Player(400,240,loader, INITIAL_HEALTH, "right"); // segundo piso
 //			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
 			player.setCurrentAnimation("idle_right", 5);
 //			player.setCurrentAnimation("falling_left", 5);
@@ -311,18 +311,12 @@ public class LevelState extends State{
 		}
 		else if ( player.isClimbing() ) {
 			
-			Entity debugCorner = player.getCornerToClimb();
-			
-			if (debugCorner != null) {
-				System.out.println("debugCorner: " + debugCorner.getTypeOfEntity() + ": " +
-						debugCorner.getCenter()[0] + ", " + debugCorner.getCenter()[1]);
-			}
-			
 //			System.out.println("CLIMBING");
 			
 			/* Checks if */
 			corner = checkCorner();
 			cornerFloor = checkCornerFloor();
+			cornerFloorEntity = checkCornerFloorEntity();
 			floorPanel = checkFloorPanel();
 			looseFloor = checkLooseFloor();
 			floorBeneath = checkFloorBeneath();
@@ -338,6 +332,8 @@ public class LevelState extends State{
 				int[] cornerCenter = corner.getCenter();
 				player.setCornerToClimb(corner);
 				player.setCanClimbDown(false);
+				
+				System.out.println("LO INTENTA: " + Math.abs(cornerCenter[0] - playerCenter[0]));
 				
 				if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*4) &&
 						corner.getTypeOfEntity().contains("right") &&
@@ -357,7 +353,7 @@ public class LevelState extends State{
 					player.setCornerPositionFixed(true);
 					player.setCanClimb(true);
 				}
-				else if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*4) &&
+				else if ( (Math.abs(cornerCenter[0] - playerCenter[0]) < climbGap*8) &&
 						corner.getTypeOfEntity().contains("left") &&
 						player.getOrientation().equals("right") ) {
 					
@@ -415,7 +411,6 @@ public class LevelState extends State{
 						}
 						player.setCornerReached(false);
 						
-						// checks if there is floor panels beneath the player to scale down or fall
 						if (floorBeneath == null) {
 							player.setCanLandScalingDown(false);
 							System.out.println("Vooooy a caer " + player.getCenter()[0] + " - " + player.getCenter()[1] + "    -    " + player.getSquare()[0] + " - " + player.getSquare()[1]);
@@ -424,6 +419,20 @@ public class LevelState extends State{
 						}
 						else {
 							player.setCanLandScalingDown(true);
+							
+							// checks if there is floor panels beneath the player to scale down or fall
+							if (cornerFloorEntity != null &&
+									cornerFloorEntity.getTypeOfEntity()!= null) {
+
+								if (currentCorner.getTypeOfEntity().contains("right")) {
+									player.setX(cc[0]);
+									player.setY(cc[1] + 125);
+								}
+								else if (currentCorner.getTypeOfEntity().contains("left")) {
+									player.setX(cc[0] + 10);
+									player.setY(cc[1] + 126);
+								}
+							}
 						}
 					}
 					else if (player.getCurrentAnimation().getId().startsWith("hanging idle_") &&
@@ -1402,13 +1411,20 @@ public class LevelState extends State{
 			}
 			
 			/* Checks if there is a corner type object in upright square */
-			bgEntities = currentRoom.getSquare(
+			bEntities = currentRoom.getSquare(
 					playerSquare[0] - 1, playerSquare[1] + 1).getBackground();
 			
 			fEntities = currentRoom.getSquare(
 					playerSquare[0] - 1, playerSquare[1] + 1).getForeground();
 			
+			/* Checks if there is a corner type object in top square */
+			topBgEntities = currentRoom.getSquare(
+					playerSquare[0] - 1, playerSquare[1]).getBackground();
+			
+			bgEntities = new LinkedList<Entity>();
+			bgEntities.addAll(bEntities);
 			bgEntities.addAll(fEntities);
+			bgEntities.addAll(topBgEntities);
 			
 			for (Entity bgE : bgEntities) {
 

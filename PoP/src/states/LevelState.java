@@ -55,8 +55,12 @@ public class LevelState extends State{
 	
 	private Music win_song;
 	private Music death_song;
+	private Music credits_song;
+	private Music end_song;
 	
 	private boolean over;
+	private boolean credits;
+	private long counter;
 	
 	private List<Text> texts;
 	
@@ -67,6 +71,8 @@ public class LevelState extends State{
 		this.start = start;
 		win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
 		death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
+		end_song = TinySound.loadMusic(new File("resources/Music/killed_Jaffar.ogg"));
+		credits_song = TinySound.loadMusic(new File("resources/Music/won.ogg"));
 	}
 
 	@Override
@@ -75,7 +81,9 @@ public class LevelState extends State{
 		falling_floor = new LinkedList<LooseFloor>();
 		interfaz = new Interface(640, 400, 0, 0, loader);
 		over = false;
+		credits = false;
 		texts = new LinkedList<Text>();
+		counter = 0;
 		
 //		// TESTING ENEMY
 //		currentLevel = loader.loadLevel(INITIAL_LEVEL);
@@ -175,10 +183,22 @@ public class LevelState extends State{
 			texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , Game.HEIGHT - 16));
 		} if(!over && player.hasFinished()){
 			over = true;
-			death_song.play(false);
+			end_song.play(false);
 		}
 		if(!over){
 			checkPlayerCollisions(elapsedTime);
+		}
+		if(!credits && over && player.hasFinished() && end_song.done() && counter < 1000){
+			counter = counter + elapsedTime;
+		}
+		if(!credits && over && player.hasFinished() && end_song.done() && counter > 1000){
+			credits_song.play(false);
+			credits = true;
+			currentRoom = currentLevel.getRoom(1, 8);
+			String message = "To be continued";
+			texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , (Game.HEIGHT/2) - 20));
+			message = "Press space to return to menu";
+			texts.add(Writter.createText(message, (Game.WIDTH/2) - (16* message.length()/2) , (Game.HEIGHT) - 16));
 		}
 		updateFallingFloor(elapsedTime);
 		updateDoors(elapsedTime);
@@ -190,7 +210,9 @@ public class LevelState extends State{
 	public void draw(Graphics2D g) {
 		currentRoom.draw(g);
 		interfaz.drawSelf(g);
-		player.drawLife(g);
+		if(!credits){
+			player.drawLife(g);
+		}
 		if(enemy!=null){
 			enemy.drawLife(g);
 		}
@@ -215,9 +237,17 @@ public class LevelState extends State{
 					if(key_pressed == keys_mapped.get(Key.ESCAPE)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.SPACE)){
-						win_song.stop();
-						death_song.stop();
-						gsm.setState(GameStateManager.MAINGAMESTATE);
+						if(over && player.isDead()){
+							win_song.stop();
+							death_song.stop();
+							gsm.setState(GameStateManager.MAINGAMESTATE);
+						} else if(over || credits){
+							win_song.stop();
+							death_song.stop();
+							credits_song.stop();
+							end_song.stop();
+							gsm.setState(GameStateManager.MENUSTATE);
+						}
 					} else{
 						player.manageKeyPressed(key_pressed, keys_mapped);
 					}

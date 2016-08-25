@@ -1307,7 +1307,7 @@ public class LevelState extends State{
 					if(!loose.isFalling() && !loose.isActivated()){
 						System.out.println(playerSquare[0] + " - " + playerSquare[1]);
 						leftFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_left", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
-						rightFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_right", currentRoom.getSquare(playerSquare[0], playerSquare[1]));
+						rightFloor = currentRoom.returnNamedEntityBackground("FloorPanel_normal_right", currentRoom.getSquare(playerSquare[0], playerSquare[1] + 1));
 						loose.setActivated(true);
 						loose.setRoom1(currentRoom.getRow() + 1);
 						loose.setRoom2(currentRoom.getCol() + 1);
@@ -1325,7 +1325,7 @@ public class LevelState extends State{
 			
 			if(toBeDeleted != null){
 				currentRoom.deleteEntityBackground(leftFloor, currentRoom.getSquare(playerSquare[0], playerSquare[1]));
-				currentRoom.deleteEntityBackground(rightFloor, currentRoom.getSquare(playerSquare[0], playerSquare[1]));
+				currentRoom.deleteEntityBackground(rightFloor, currentRoom.getSquare(playerSquare[0], playerSquare[1] + 1));
 				//currentRoom.deleteEntityBackground(toBeDeleted);
 				toBeDeleted = null;
 			}
@@ -1958,11 +1958,11 @@ public class LevelState extends State{
 					System.out.println("SE VA A ROMPEEEER " + looseSquare[0] + " - " + looseSquare[1]);
 					int px = 64 + looseSquare[1] * 64;
 					int py = (int)(6 + looseSquare[0] * 126);
-					newEntities.add(new FloorPanel(px,py,0,-6,loader,"broken_left"));
+					newEntities.add(new FloorPanel(px,py,0,-6,loader,"broken_left",false));
 					px = 64 + (looseSquare[1]+1) * 64;
 					py = (int)(6 + looseSquare[0] * 126);
 					System.out.println("ROTIIIISIMA " + px + " - " + py);
-					newEntities.add(new FloorPanel(px,py,-12,-2,loader,"broken_right"));
+					newEntities.add(new FloorPanel(px,py,-12,-2,loader,"broken_right",false));
 					currentLevel.getRoom(loose.getRoom1(), loose.getRoom2()).addBackground(newEntities);
 					
 				} else{

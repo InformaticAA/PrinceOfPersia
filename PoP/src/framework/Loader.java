@@ -493,29 +493,35 @@ public class Loader {
 			// CORNER TYPES END
 			
 			else if(entity.equals("lf")){
-				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
+				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left",false);
 				background.add(newEntity);
 			} else if(entity.equals("rf")){
-				newEntity = new FloorPanel(px,py,-12,-2,this,"normal_right");
+				newEntity = new FloorPanel(px,py,-12,-2,this,"normal_right",false);
 				background.add(newEntity);
-			} else if(entity.equals("bl")){
-				newEntity = new FloorPanel(px,py,0,-6,this,"broken_left");
+			} else if(entity.equals("lfi")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left",true);
+				background.add(newEntity);
+			} else if(entity.equals("rfi")){
+				newEntity = new FloorPanel(px,py,-12,-2,this,"normal_right",true);
+				background.add(newEntity);
+			}  else if(entity.equals("bl")){
+				newEntity = new FloorPanel(px,py,0,-6,this,"broken_left",false);
 				background.add(newEntity);
 			} else if(entity.equals("br")){
-				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right");
+				newEntity = new FloorPanel(px,py,-12,-2,this,"broken_right",false);
 				background.add(newEntity);
 			} else if(entity.equals("sl")){
-				newEntity = new FloorPanel(px,py,0,-6,this,"skeleton_left");
+				newEntity = new FloorPanel(px,py,0,-6,this,"skeleton_left",false);
 				background.add(newEntity);
 			} else if(entity.equals("sr")){
-				newEntity = new FloorPanel(px,py,-12,-2,this,"skeleton_right");
+				newEntity = new FloorPanel(px,py,-12,-2,this,"skeleton_right",false);
 				background.add(newEntity);
 			} else if(entity.equals("loose")){
-				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
-				background.add(newEntity);
-				int px2 = 64 + (y+1) * 64;
-				newEntity = new FloorPanel(px2,py,-12,-2,this,"normal_right");
-				background.add(newEntity);
+//				newEntity = new FloorPanel(px,py,0,-6,this,"normal_left");
+//				background.add(newEntity);
+//				int px2 = 64 + (y+1) * 64;
+//				newEntity = new FloorPanel(px2,py,-12,-2,this,"normal_right");
+//				background.add(newEntity);
 				newEntity = new LooseFloor(px,py,52,0,this,"idle");
 				background.add(newEntity);
 			} else if(entity.equals("spike")){

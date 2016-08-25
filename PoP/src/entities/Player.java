@@ -61,6 +61,10 @@ public class Player extends Character {
 	private int fallDistance;
 	private boolean screaming;
 	private boolean landingFall;
+	private boolean riskyLand;
+	private boolean recovered;
+	private boolean canPotionSplash;
+	private boolean canSwordSplash;
 	
 	private boolean hasSword;
 	
@@ -121,7 +125,10 @@ public class Player extends Character {
 		this.canDrink = false;
 		this.screaming = false;
 		this.landingFall = false;
+		this.riskyLand = false;
 		this.canPickSword = false;
+		this.canPotionSplash = false;
+		this.canSwordSplash = false;
 		
 		this.enemySaw = false;
 		
@@ -437,48 +444,69 @@ public class Player extends Character {
 			switch(currentState){
 			case IDLE:
 				if(currentAnimation.isOver(false)){
-					if (this.isDrinkingPotion()) {
-						loader.getSound("drinking").play();
-						this.setCurrentAnimation("drinking_" + orientation, FRAME_DURATION);
-					} else if(this.isPickingSword()){
-						this.hasSword = true;
-						this.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION);
-						this.manageSword("got sword", 0, true);
+					if (this.isRiskyLand()) {
+						
+						// player has to recover from risky fall
+						this.setCurrentAnimation("crouching recovery_" + orientation, FRAME_DURATION);
+						this.setRiskyLand(false);
 					}
 					else {
-						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+						
+						// player lands correctly
+						if (this.isDrinkingPotion()) {
+							loader.getSound("drinking").play();
+							this.setCurrentAnimation("drinking_" + orientation, FRAME_DURATION);
+						} else if(this.isPickingSword()){
+							this.hasSword = true;
+							this.setCurrentAnimation("got sword splash_" + orientation, FRAME_DURATION);
+							this.manageSword("got sword", 0, true);
+						}
+						else {
+							this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+						}
 					}
 				}
 				break;
 				
 			case JUMP:
 				if(currentAnimation.isOver(false)){
+					if (this.isRiskyLand()) {
+						
+						// player has to recover from risky fall
+						this.setCurrentAnimation("crouching recovery_" + orientation, FRAME_DURATION);
+						this.setRiskyLand(false);
+					}
+					else {
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
 				}
 				break;
 				
 			case MOVE:
 				if(currentAnimation.isOver(false)){
-					if(changed_position){
-						changed_position = false;
-						this.currentState = PlayerState.IDLE;
-						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					if (this.isRiskyLand()) {
+						
+						// player has to recover from risky fall
+						this.setCurrentAnimation("crouching recovery_" + orientation, FRAME_DURATION);
+						this.setRiskyLand(false);
 					}
-					if(canWalkCrouched && !this.isLandingFall()){
-						canWalkCrouched = false;
-						this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
-					} else{
-						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					else {
+						if(changed_position){
+							changed_position = false;
+							this.currentState = PlayerState.IDLE;
+							this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+						}
+						if(canWalkCrouched && !this.isLandingFall()){
+							canWalkCrouched = false;
+							this.setCurrentAnimation("crouching walk_" + orientation, FRAME_DURATION);
+						} else{
+							this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+						}
 					}
 				}
 				break;
 				
 			case COLLIDED:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -502,8 +530,8 @@ public class Player extends Character {
 				} else if(this.isCanPickSword() && shift_pressed){
 					this.hasSword = true;
 					this.setPickingSword(true);
-					this.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION);
-					manageSword("got sword",0,true);
+					this.setCurrentAnimation("got sword splash_" + orientation, FRAME_DURATION);
+					manageSword("got sword",7,true);
 				}
 				else if(!down_pressed){
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
@@ -583,11 +611,6 @@ public class Player extends Character {
 
 			switch(currentState){
 			case IDLE:
-				if(this.getOrientation().equals("left")){
-				
-				} else{
-
-				}
 				if(currentAnimation.isOver(false)){
 					if(!down_pressed){
 						this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
@@ -598,33 +621,18 @@ public class Player extends Character {
 				break;
 				
 			case JUMP:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case MOVE:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				if(currentAnimation.isOver(false)){
 					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
 				}
 				break;
 				
 			case COLLIDED:
-				if(this.getOrientation().equals("left")){
-
-				} else{
-
-				}
 				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
 				break;
 				
@@ -634,39 +642,79 @@ public class Player extends Character {
 			}
 			break;
 			
-			case "dead spiked_left":
-			case "dead spiked_right":
-
-				switch(currentState){
-				case IDLE:
-					
-					break;
-					
-				case JUMP:
-					
-					break;
-					
-				case MOVE:
-					
-					break;
-					
-				case COLLIDED:
-					System.out.println("COLLIDED EN ANIMATION TO RARA");
-					break;
-					
-					
-				case COMBAT:
-					break;
-					
-				case DIED:
-					//this.setmovespeed(0);
-					
-					break;
-				default:
-					
-					break;
+		case "crouching recovery_left":
+		case "crouching recovery_right":
+			
+			if (currentAnimation.isOver(false)) {
+				this.setRecovered(false);
+			}
+			
+			switch(currentState){
+			case IDLE:
+				if(currentAnimation.isOver(false)){
+					if(!down_pressed){
+						this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+					} else{
+						this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+					}
 				}
 				break;
+				
+			case JUMP:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("crouching up_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case MOVE:
+				if(currentAnimation.isOver(false)){
+					this.setCurrentAnimation("crouching idle_" + orientation, FRAME_DURATION);
+				}
+				break;
+				
+			case COLLIDED:
+				this.setCurrentAnimation("running collided_" + orientation, FRAME_DURATION);
+				break;
+				
+			default:
+				
+				break;
+			}
+			break;
+			
+		case "dead spiked_left":
+		case "dead spiked_right":
+
+			switch(currentState){
+			case IDLE:
+				
+				break;
+				
+			case JUMP:
+				
+				break;
+				
+			case MOVE:
+				
+				break;
+				
+			case COLLIDED:
+				System.out.println("COLLIDED EN ANIMATION TO RARA");
+				break;
+				
+				
+			case COMBAT:
+				break;
+				
+			case DIED:
+				//this.setmovespeed(0);
+				
+				break;
+			default:
+				
+				break;
+			}
+			break;
 			
 		case "dieing_left":
 		case "dieing_right":
@@ -726,10 +774,19 @@ public class Player extends Character {
 					currentHealth = currentHealth + 1;
 					this.setHp(currentHealth);
 				}
-				this.setDrinkingPotion(false);
-				this.setCurrentAnimation("drinking to idle_" + orientation, FRAME_DURATION);
-				
+				this.setDrinkingPotion(false);				
+				this.setCurrentAnimation("drinking splash_" + orientation, FRAME_DURATION);
 				drinking_song.play(false);
+			}
+			
+			break;
+			
+		case "drinking splash_left":
+		case "drinking splash_right":
+			
+			if (this.getCurrentAnimation().isOver(false)) {
+				this.setCurrentAnimation("drinking to idle_" + orientation, FRAME_DURATION);
+				this.setCanPotionSplash(false);
 			}
 			
 			break;
@@ -769,6 +826,17 @@ public class Player extends Character {
 			}
 			break;
 			
+		case "got sword splash_left":
+		case "got sword splash_right":
+			
+			manageSword("got sword",0,false);
+			if(this.getCurrentAnimation().isOver(false)){
+				this.setCurrentAnimation("got sword_" + orientation, FRAME_DURATION);
+				manageSword("got sword",0,false);
+				this.setCanSwordSplash(false);
+			}
+			break;	
+
 		case "got sword_left":
 		case "got sword_right":
 			
@@ -779,6 +847,7 @@ public class Player extends Character {
 				this.sword = null;
 			}
 			break;
+			
 			
 		case "hanging backwards mini_left":
 		case "hanging backwards mini_right":
@@ -2739,6 +2808,7 @@ public class Player extends Character {
 	}
 	
 	public void riskyLand() {
+		this.setRiskyLand(true);
 		this.setCurrentAnimation("crouching down_" + orientation, FRAME_DURATION);
 		this.enableBoundingBox();
 		
@@ -3269,6 +3339,62 @@ public class Player extends Character {
 	 */
 	public void setLandingFall(boolean landingFall) {
 		this.landingFall = landingFall;
+	}
+
+	/**
+	 * @return the riskyLand
+	 */
+	public boolean isRiskyLand() {
+		return riskyLand;
+	}
+
+	/**
+	 * @param riskyLand the riskyLand to set
+	 */
+	public void setRiskyLand(boolean riskyLand) {
+		this.riskyLand = riskyLand;
+	}
+
+	/**
+	 * @return the recovered
+	 */
+	public boolean isRecovered() {
+		return recovered;
+	}
+
+	/**
+	 * @param recovered the recovered to set
+	 */
+	public void setRecovered(boolean recovered) {
+		this.recovered = recovered;
+	}
+
+	/**
+	 * @return the canPotionSplash
+	 */
+	public boolean isCanPotionSplash() {
+		return canPotionSplash;
+	}
+
+	/**
+	 * @param canPotionSplash the canPotionSplash to set
+	 */
+	public void setCanPotionSplash(boolean canPotionSplash) {
+		this.canPotionSplash = canPotionSplash;
+	}
+
+	/**
+	 * @return the canSwordSplash
+	 */
+	public boolean isCanSwordSplash() {
+		return canSwordSplash;
+	}
+
+	/**
+	 * @param canSwordSplash the canSwordSplash to set
+	 */
+	public void setCanSwordSplash(boolean canSwordSplash) {
+		this.canSwordSplash = canSwordSplash;
 	}
 
 	public boolean isBlocked() {

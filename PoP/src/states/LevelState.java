@@ -1,5 +1,6 @@
 package states;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +45,7 @@ public class LevelState extends State{
 	private float remainingTime;
 	private Level currentLevel;
 	private Room currentRoom;
+	private Color backgroundColor;
 	
 	private Interface interfaz;
 	
@@ -69,6 +71,7 @@ public class LevelState extends State{
 		super(gsm, keys, keys_mapped, loader, writter);
 
 		this.start = start;
+		backgroundColor = Color.BLACK;
 		win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
 		death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
 		end_song = TinySound.loadMusic(new File("resources/Music/killed_Jaffar.ogg"));
@@ -105,13 +108,13 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(1, 7);
+			currentRoom = currentLevel.getRoom(2, 1);
 			doors = currentLevel.getDoors();
 
 //			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
-			player = new Player(140,240,loader, INITIAL_HEALTH, "right"); // segundo piso
-//			player = new Player(400,370,loader, INITIAL_HEALTH, "right"); // tercer piso
-			player.setCurrentAnimation("idle_right", 5);
+//			player = new Player(140,240,loader, INITIAL_HEALTH, "left"); // segundo piso
+			player = new Player(300,370,loader, INITIAL_HEALTH, "left"); // tercer piso
+			player.setCurrentAnimation("idle_left", 5);
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(6);
 			player.setHp(3);
@@ -205,6 +208,10 @@ public class LevelState extends State{
 
 	@Override
 	public void draw(Graphics2D g) {
+		
+		// sets the background with the desired color
+		g.setBackground(backgroundColor);
+		
 		currentRoom.draw(g);
 		interfaz.drawSelf(g);
 		if(!credits){
@@ -764,11 +771,57 @@ public class LevelState extends State{
 			/* Check for corners */
 			corner = checkCorner();
 
-//			if (player.getCurrentAnimation().getId().contains("crouching")) {
-//				if (floorPanel != null) {
-//					player.setY( (int) floorPanel.getBoundingBox().getMinY());
-//				}
-//			}
+			if (player.getCurrentAnimation().getId().contains("recovery") &&
+					!player.isRecovered() && player.getCurrentAnimation().isLastFrame()) {
+				
+				// creates a red background splash
+				Color newColor = Color.RED;
+				setBackgroundColor(newColor);
+				player.setRecovered(true);
+			}
+			else if (player.getCurrentAnimation().getId().contains("recovery") &&
+					player.isRecovered() && player.getCurrentAnimation().isLastFrame()){
+				
+				Color newColor = Color.BLACK;
+				setBackgroundColor(newColor);
+			}
+			
+			// creates an intermitent red background while drinking potion
+			if (player.getCurrentAnimation().getId().contains("drinking splash") &&
+					!player.isCanPotionSplash() && player.getCurrentAnimation().isLastFrame()) {
+				
+				// creates a red background splash
+				Color newColor = Color.RED;
+				setBackgroundColor(newColor);
+				player.setCanPotionSplash(true);
+			}
+			else if (player.getCurrentAnimation().getId().contains("drinking splash") &&
+					player.isCanPotionSplash() && player.getCurrentAnimation().isLastFrame()) {
+				
+				// creates a red background splash
+				Color newColor = Color.BLACK;
+				setBackgroundColor(newColor);
+				player.setCanPotionSplash(false);
+			}
+			
+			// creates an intermitent yellow background while taking sword for
+			// the first time
+			if (player.getCurrentAnimation().getId().contains("got sword splash") &&
+					!player.isCanSwordSplash() && player.getCurrentAnimation().isLastFrame()) {
+				
+				// creates a red background splash
+				Color newColor = Color.YELLOW;
+				setBackgroundColor(newColor);
+				player.setCanSwordSplash(true);
+			}
+			else if (player.getCurrentAnimation().getId().contains("got sword splash") &&
+					player.isCanSwordSplash() && player.getCurrentAnimation().isLastFrame()) {
+				
+				// creates a red background splash
+				Color newColor = Color.BLACK;
+				setBackgroundColor(newColor);
+				player.setCanSwordSplash(false);
+			}
 				
 			// checks if player can drink a nearby potion
 			player.setCanDrink(potion != null);
@@ -2856,5 +2909,13 @@ public class LevelState extends State{
 				player.finalDoorOpened(false, 0,0);
 			}
 		}
+	}
+	
+	/**
+	 * sets the level's background color to 
+	 * @param color
+	 */
+	public void setBackgroundColor(Color color) {
+		this.backgroundColor = color;
 	}
 }

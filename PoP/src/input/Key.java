@@ -16,6 +16,7 @@ public class Key {
 	public static final String D = "D";
 	public static final String M = "M";
 	public static final String C = "C";
+	public static final String R = "R";
 	public static final String SPACE = "SPACE";
 	
 	private boolean pressed;

@@ -32,6 +32,7 @@ public class KeyMapper {
 		key_map.put(Key.D, KeyEvent.VK_D);
 		key_map.put(Key.M, KeyEvent.VK_M);
 		key_map.put(Key.C, KeyEvent.VK_C);
+		key_map.put(Key.R, KeyEvent.VK_R);
 		key_map.put(Key.SPACE, KeyEvent.VK_SPACE);
 	}
 }

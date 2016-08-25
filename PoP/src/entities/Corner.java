@@ -94,7 +94,7 @@ public class Corner extends Entity{
 //		g.drawImage(img, x - currentAnimation.getImage().getWidth(),
 //				y - currentAnimation.getImage().getHeight(), null);
 		
-		/* Draws the entity's bounding box */
+//		/* Draws the entity's bounding box */
 //		if (boundingBox != null) {
 //			g.setColor(boundingBoxColor);
 //			g.drawRect((int) boundingBox.getX(),

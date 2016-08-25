@@ -71,7 +71,7 @@ public class VersusState extends State{
 		currentRoom = currentLevel.getRoom(1, room);
 			
 		//RIGHT
-		prince = new MPPrince(200,240,loader,3,"right",player1);
+		prince = new MPPrince(232,240,loader,3,"right",player1);
 		enemy = new MPEnemy(460,260,loader,3,"left","red",player2,prince);
 		
 		
@@ -104,11 +104,11 @@ public class VersusState extends State{
 				over = true;
 				String message;
 				if(prince.getHp() == 0 && player1 == 0){
-					message = "P2 WINS (ESPACIO PARA SALIR)"; 
+					message = "P2 WINS (SPACE TO EXIT OR R TO RESTART)"; 
 //					main_theme.stop();
 					guard_wins.play(false);
 				} else{
-					message = "P1 WINS (ESPACIO PARA SALIR)";
+					message = "P1 WINS (SPACE TO EXIT OR R TO RESTART)";
 //					main_theme.stop();
 					prince_wins.play(false);
 					
@@ -153,7 +153,15 @@ public class VersusState extends State{
 						} else{
 							paused = !paused;
 						}
-					}else if(key_pressed == keys_mapped.get(Key.CONTROL)){
+					} else if(key_pressed == keys_mapped.get(Key.R)){
+						if(over){
+							guard_wins.stop();
+							prince_wins.stop();
+							gsm.setState(GameStateManager.SCENARYMENUSTATE);
+						} else{
+							paused = !paused;
+						}
+					} else if(key_pressed == keys_mapped.get(Key.CONTROL)){
 						
 					} else if(key_pressed == keys_mapped.get(Key.W)||
 							key_pressed == keys_mapped.get(Key.A)||

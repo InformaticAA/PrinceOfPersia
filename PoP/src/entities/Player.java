@@ -177,7 +177,6 @@ public class Player extends Character {
 	@Override
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
-		
 		if(!right_pressed && !left_pressed && !up_pressed && currentState != PlayerState.COLLIDED
 				&& currentState != PlayerState.COMBAT && currentState != PlayerState.DIED){
 			currentState = PlayerState.IDLE;

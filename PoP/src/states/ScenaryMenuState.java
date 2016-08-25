@@ -53,7 +53,7 @@ public class ScenaryMenuState extends State{
 	public void init() {
 		menu.play(true);
 		characters = new Character[2];
-		characters[0] = new Player(200,240,loader,3,"right");
+		characters[0] = new Player(232,240,loader,3,"right");
 		characters[1] = new Enemy(460,260,loader,"left", "red", 3, 3);
 		characters[0].setCurrentAnimation("sword idle_right", 7);
 		characters[0].manageSword("idle", 0, true);
@@ -62,8 +62,6 @@ public class ScenaryMenuState extends State{
 		bg = new MobileBackground("resources/Sprites_400/Menu/Scenaries/test1.png",0,0);
 		bg.setDrawArrows(true);
 		bg.addImage("resources/Sprites_400/Menu/Scenaries/test2.png");
-		bg.addImage("resources/Sprites_400/Menu/Scenaries/test3.png");
-		bg.addImage("resources/Sprites_400/Menu/Scenaries/test4.png");
 		options = new BufferedImage[2];
 		fights = new BufferedImage[2];
 		try {

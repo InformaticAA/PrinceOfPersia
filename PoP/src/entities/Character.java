@@ -124,7 +124,7 @@ public class Character extends Entity {
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		if (currentAnimation.getId().contains("fall") ||
+		if (currentAnimation.getId().contains("sword") ||
 				currentAnimation.getId().contains("test") ||
 //				currentAnimation.getId().contains("crouching") ||
 				!firstTime) {

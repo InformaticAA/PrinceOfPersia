@@ -18,6 +18,7 @@ import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 import map.Background;
+import game.Game3D;
 
 public class MenuState extends State{
 	
@@ -33,6 +34,8 @@ public class MenuState extends State{
 	private Music menu;
 	
 	private Torch t1,t2;
+	
+	private boolean ddd;
 	
 	public MenuState(GameStateManager gsm, ConcurrentLinkedQueue<Key> keys, Hashtable<String,Integer> keys_mapped, Loader loader, Writter writter){
 		super(gsm, keys, keys_mapped, loader, writter);
@@ -54,6 +57,7 @@ public class MenuState extends State{
 				menu = TinySound.loadMusic(loader.getFile("Music/intro_theme.ogg"));
 				t1 = new Torch(232,265,loader,true);
 				t2 = new Torch(468,265,loader,true);
+				ddd = false;
 			}
 			else {
 				bg = new Background("resources/Sprites_400/Menu/room_won.png");
@@ -69,6 +73,7 @@ public class MenuState extends State{
 				menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
 				t1 = new Torch(232,265,loader,true);
 				t2 = new Torch(468,265,loader,true);
+				ddd = false;
 			}
 			
 		} catch(Exception e){
@@ -83,9 +88,11 @@ public class MenuState extends State{
 
 	@Override
 	public void update(long elapsedTime) {
-		manageKeys();
-		t1.update(elapsedTime);
-		t2.update(elapsedTime);
+		if(!ddd){
+			manageKeys();
+			t1.update(elapsedTime);
+			t2.update(elapsedTime);
+		}
 	}
 
 	@Override
@@ -122,12 +129,23 @@ public class MenuState extends State{
 		}
 		else if(currentChoice == 2){
 			choosing.play();
+			this.set3d(true);
+			Game3D.main(this, (LevelState)(gsm.getGameStates().get(gsm.MAINGAMESTATE)));
 			//start settings
 		}
 		else{
 			choosing.play();
 			System.exit(0);
 		}
+	}
+	
+	public void set3d(boolean state){
+		if(!state){
+			menu.play(true);
+		} else{
+			menu.stop();
+		}
+		this.ddd = state;
 	}
 
 	@Override

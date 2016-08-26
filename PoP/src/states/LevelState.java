@@ -2937,4 +2937,12 @@ public class LevelState extends State{
 	public void setBackgroundColor(Color color) {
 		this.backgroundColor = color;
 	}
+	
+	public void setKeyList(ConcurrentLinkedQueue<Key> keys){
+		this.keys = keys;
+	}
+	
+	public Room getCurrentRoom(){
+		return this.currentRoom;
+	}
 }

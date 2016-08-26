@@ -15,6 +15,7 @@ package game;
  * limitations under the License.
  ******************************************************************************/
 
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -45,6 +46,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
 import entities.Entity;
 import input.Key;
+import input.Listener;
 import states.LevelState;
 import states.MenuState;
 
@@ -155,46 +157,48 @@ public class Game3D implements ApplicationListener {
 	private void manageKeys() {
 		
 		// up
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)
-				&& !up) {
-			keys.add(new Key(true, Input.Keys.UP));
-			up = true;
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+				|| !right) {
+			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+				keys.add(new Key(true, KeyEvent.VK_RIGHT));
+				right = true;
+				System.out.println("Right pressed");
+			}
 			
-			System.out.println("UP pressed");
-		} else if (up) {
-			keys.add(new Key(false, Input.Keys.UP));
-			up = false;
+		} else if (right) {
+			keys.add(new Key(false, KeyEvent.VK_RIGHT));
+			right = false;
 
-			System.out.println("UP released");
+			System.out.println("Right released");
 		}
 		
-		//down
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			keys.add(new Key(true, Input.Keys.DOWN));
-		} else {
-			keys.add(new Key(false, Input.Keys.DOWN));
-		}
-		
-		// left
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			keys.add(new Key(true, Input.Keys.LEFT));
-		} else {
-			keys.add(new Key(false, Input.Keys.LEFT));
-		}
-		
-		//right
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			keys.add(new Key(true, Input.Keys.RIGHT));
-		} else {
-			keys.add(new Key(false, Input.Keys.RIGHT));
-		}
-		
-		// shift
-		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-			keys.add(new Key(true, Input.Keys.SHIFT_LEFT));
-		} else {
-			keys.add(new Key(false, Input.Keys.SHIFT_LEFT));
-		}
+//		//down
+//		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+//			keys.add(new Key(true, Input.Keys.DOWN));
+//		} else {
+//			keys.add(new Key(false, Input.Keys.DOWN));
+//		}
+//		
+//		// left
+//		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+//			keys.add(new Key(true, Input.Keys.LEFT));
+//		} else {
+//			keys.add(new Key(false, Input.Keys.LEFT));
+//		}
+//		
+//		//right
+//		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+//			keys.add(new Key(true, KeyEvent.VK_RIGHT));
+//		} else {
+//			keys.add(new Key(false, KeyEvent.VK_RIGHT));
+//		}
+//		
+//		// shift
+//		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+//			keys.add(new Key(true, Input.Keys.SHIFT_LEFT));
+//		} else {
+//			keys.add(new Key(false, Input.Keys.SHIFT_LEFT));
+//		}
 	}
 	
 	@Override

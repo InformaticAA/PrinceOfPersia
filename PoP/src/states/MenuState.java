@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import entities.Torch;
 import framework.Loader;
+import framework.RunningFromJar;
 import framework.Writter;
 import game.Game;
 import input.Key;
@@ -37,19 +38,38 @@ public class MenuState extends State{
 		super(gsm, keys, keys_mapped, loader, writter);
 		
 		try{
-			bg = new Background("resources/Sprites_400/Menu/room_won.png");
-			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
-			options = new BufferedImage[4];
-			options[0] = ImageIO.read(new File("resources/Sprites_400/Menu/campaign.png"));
-			options[1] = ImageIO.read(new File("resources/Sprites_400/Menu/versus.png"));
-			options[2] = ImageIO.read(new File("resources/Sprites_400/Menu/settings.png"));
-			options[3] = ImageIO.read(new File("resources/Sprites_400/Menu/exit.png"));
-			sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
-			moving = loader.getSound("sword moving");
-			choosing = loader.getSound("sword vs sword");
-			menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
-			t1 = new Torch(232,265,loader,true);
-			t2 = new Torch(468,265,loader,true);
+			
+			if (RunningFromJar.isRunningFromJar()) {
+				
+				bg = new Background("/Sprites_400/Menu/room_won.png");
+				title = ImageIO.read(getClass().getResourceAsStream(("/Sprites_400/Title/main titles/game name.png")));
+				options = new BufferedImage[4];
+				options[0] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/campaign.png"));
+				options[1] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/versus.png"));
+				options[2] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/settings.png"));
+				options[3] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/exit.png"));
+				sword = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/sword.png"));
+				moving = loader.getSound("sword moving");
+				choosing = loader.getSound("sword vs sword");
+				menu = TinySound.loadMusic(loader.getFile("Music/intro_theme.ogg"));
+				t1 = new Torch(232,265,loader,true);
+				t2 = new Torch(468,265,loader,true);
+			}
+			else {
+				bg = new Background("resources/Sprites_400/Menu/room_won.png");
+				title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
+				options = new BufferedImage[4];
+				options[0] = ImageIO.read(new File("resources/Sprites_400/Menu/campaign.png"));
+				options[1] = ImageIO.read(new File("resources/Sprites_400/Menu/versus.png"));
+				options[2] = ImageIO.read(new File("resources/Sprites_400/Menu/settings.png"));
+				options[3] = ImageIO.read(new File("resources/Sprites_400/Menu/exit.png"));
+				sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
+				moving = loader.getSound("sword moving");
+				choosing = loader.getSound("sword vs sword");
+				menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
+				t1 = new Torch(232,265,loader,true);
+				t2 = new Torch(468,265,loader,true);
+			}
 			
 		} catch(Exception e){
 			e.printStackTrace();
@@ -66,8 +86,6 @@ public class MenuState extends State{
 		manageKeys();
 		t1.update(elapsedTime);
 		t2.update(elapsedTime);
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Random;
 
 import framework.Loader;
+import framework.RunningFromJar;
 import game.Game;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.TinySound;
@@ -89,7 +90,12 @@ public class Enemy extends Character {
 		}
 		this.typeOfEntity = "Enemy";
 		
-		princeWins = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+		if(RunningFromJar.isRunningFromJar()) {
+			princeWins = TinySound.loadMusic(loader.getFile("Music/guard_death_and_obtaining_the_sword.ogg"));
+		}
+		else {
+			princeWins = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+		}
 	}
 	
 	@Override

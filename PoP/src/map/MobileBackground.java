@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import framework.RunningFromJar;
 import game.Game;
 
 public class MobileBackground extends Background{
@@ -29,8 +30,14 @@ public class MobileBackground extends Background{
 		posAuxY = 0;
 		currentBackground = 0;
 		try {
-			arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
-			arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_right.png"));
+			if(RunningFromJar.isRunningFromJar()) {
+				arrow_left = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				arrow_right = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_right.png"));
+			}
+			else {
+				arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_right.png"));
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,19 +52,28 @@ public class MobileBackground extends Background{
 		posAuxY = 0;
 		currentBackground = 0;
 		try {
-			arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
-			arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_right.png"));
+			if(RunningFromJar.isRunningFromJar()) {
+				arrow_left = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				arrow_right = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_right.png"));
+			}
+			else {
+				arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_right.png"));
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	public void addImage(String s){
 		try {
-			backgrounds.add(ImageIO.read(new File(s)));
+			if (RunningFromJar.isRunningFromJar()) {
+				backgrounds.add(ImageIO.read(getClass().getResourceAsStream(s)));
+			}
+			else {
+				backgrounds.add(ImageIO.read(new File(s)));
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -67,9 +83,19 @@ public class MobileBackground extends Background{
 		super.setVel(dx, dy);
 		try {
 			if(dx < 0){
-				arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrows_right.png"));
+				if(RunningFromJar.isRunningFromJar()) {
+					arrow_right = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_right.png"));
+				}
+				else {
+					arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_right.png"));
+				}
 			} else{
-				arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrows_left.png"));
+				if(RunningFromJar.isRunningFromJar()) {
+					arrow_left = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				}
+				else {
+					arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				}
 			} 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -101,8 +127,8 @@ public class MobileBackground extends Background{
 			this.dx = 0;
 			this.dy = 0;
 			try {
-				arrow_right = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_right.png"));
-				arrow_left = ImageIO.read(new File("resources/Sprites_400/Menu/Scenaries/arrow_left.png"));
+				arrow_right = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_right.png"));
+				arrow_left = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/Scenaries/arrow_left.png"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

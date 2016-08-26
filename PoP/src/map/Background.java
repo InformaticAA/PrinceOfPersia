@@ -6,6 +6,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import framework.RunningFromJar;
 import game.Game;
 
 public class Background {
@@ -17,7 +18,12 @@ public class Background {
 	public Background(String s){
 		
 		try{
-			image = ImageIO.read(new File(s));
+			if (RunningFromJar.isRunningFromJar()) {
+				image = ImageIO.read(getClass().getResourceAsStream(s));
+			}
+			else {
+				image = ImageIO.read(new File(s));
+			}
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -26,7 +32,12 @@ public class Background {
 	
 	public Background (String s, int x, int y){
 		try{
-			image = ImageIO.read(new File(s));
+			if (RunningFromJar.isRunningFromJar()) {
+				image = ImageIO.read(getClass().getResourceAsStream(s));
+			}
+			else {
+				image = ImageIO.read(new File(s));
+			}
 			this.x = x;
 			this.y = y;
 		}

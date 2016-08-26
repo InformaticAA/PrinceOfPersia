@@ -16,6 +16,7 @@ import entities.Entity;
 import entities.MPEnemy;
 import entities.MPPrince;
 import framework.Loader;
+import framework.RunningFromJar;
 import framework.Writter;
 import game.Game;
 import input.Key;
@@ -84,8 +85,14 @@ public class VersusState extends State{
 		over = false;
 		paused = false;
 		
-		prince_wins = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
-		guard_wins = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
+		if (RunningFromJar.isRunningFromJar()) {
+			prince_wins = TinySound.loadMusic(loader.getFile("Music/guard_death_and_obtaining_the_sword.ogg"));
+			guard_wins = TinySound.loadMusic(loader.getFile("Music/fight_death.ogg"));
+		}
+		else {
+			prince_wins = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+			guard_wins = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
+		}
 //		enemy.setPlayer(true,prince);
 		
 		texts = new ArrayList<Text>();

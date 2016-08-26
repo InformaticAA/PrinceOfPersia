@@ -27,6 +27,7 @@ import entities.Opener;
 import entities.Player;
 import entities.SpikeFloor;
 import framework.Loader;
+import framework.RunningFromJar;
 import framework.Writter;
 import game.Game;
 import input.Key;
@@ -72,10 +73,19 @@ public class LevelState extends State{
 
 		this.start = start;
 		backgroundColor = Color.BLACK;
-		win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
-		death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
-		end_song = TinySound.loadMusic(new File("resources/Music/killed_Jaffar.ogg"));
-		credits_song = TinySound.loadMusic(new File("resources/Music/won.ogg"));
+		
+		if (RunningFromJar.isRunningFromJar()) {
+			win_song = TinySound.loadMusic(loader.getFile("Music/guard_death_and_obtaining_the_sword.ogg"));
+			death_song = TinySound.loadMusic(loader.getFile("Music/fight_death.ogg"));
+			end_song = TinySound.loadMusic(loader.getFile("Music/killed_Jaffar.ogg"));
+			credits_song = TinySound.loadMusic(loader.getFile("Music/won.ogg"));
+		}
+		else {
+			win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+			death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
+			end_song = TinySound.loadMusic(new File("resources/Music/killed_Jaffar.ogg"));
+			credits_song = TinySound.loadMusic(new File("resources/Music/won.ogg"));
+		}
 	}
 
 	@Override

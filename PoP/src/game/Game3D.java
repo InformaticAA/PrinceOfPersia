@@ -248,8 +248,8 @@ public class Game3D implements ApplicationListener {
         
         // Crear modelos para cada entidad y asociarlos
         
-        // pillar
-        Model player = modelBuilder.createCylinder(DEPTH/2,80f/SCALE, DEPTH/2,20,
+        // player
+        Model player = modelBuilder.createCylinder(DEPTH/2,80f,DEPTH/2,20,
     			new Material(ColorAttribute.createDiffuse(Color.CYAN)), Usage.Position | Usage.Normal);
         entityModels.put("player", player);
         
@@ -385,7 +385,7 @@ public class Game3D implements ApplicationListener {
         		int sy = entity.getSquare()[1];
         		float x = (float) entity.getCenter()[0]/ SCALE;
         		float y = (Game.HEIGHT - (float) entity.getCenter()[0]) / SCALE;
-
+        		
         		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
 	    		
         		playerInstance.transform.translate(x,y,0);

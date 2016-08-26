@@ -128,6 +128,10 @@ public class Game3D implements ApplicationListener {
 		Map<Entity, int[]> lastPos = new HashMap<>();
 		for (Entity e : entities.keySet()) {
 			lastPos.put(e, e.getCenter());
+			
+			if (e.getTypeOfEntity().contains("Player")) {
+				System.out.println("Player: " + e.getCenter()[0] + ", " + e.getCenter()[1]);
+			}
 		}
 		
 		// gestiona la entrada de teclas del usuario
@@ -147,9 +151,9 @@ public class Game3D implements ApplicationListener {
 				
 //				System.out.println("Ha entrado: " + key.getTypeOfEntity());
 				
-				value.transform.translate(key.getCenter()[0] - last[0],
-										  key.getCenter()[1] - last[1],
-										  0);
+				float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
+				float y = (float) (key.getCenter()[1] - last[1]) / SCALE;
+				value.transform.translate(x,y,0);
 			}
 		}
 	}
@@ -157,48 +161,65 @@ public class Game3D implements ApplicationListener {
 	private void manageKeys() {
 		
 		// up
+		if (Gdx.input.isKeyPressed(Input.Keys.UP)
+				|| !up) {
+			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+				keys.add(new Key(true, KeyEvent.VK_UP));
+				up = true;
+			}
+		} else if (up) {
+			keys.add(new Key(false, KeyEvent.VK_UP));
+			up = false;
+		}
+		
+		// down
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)
+				|| !down) {
+			if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+				keys.add(new Key(true, KeyEvent.VK_DOWN));
+				down = true;
+			}
+		} else if (down) {
+			keys.add(new Key(false, KeyEvent.VK_DOWN));
+			down = false;
+		}
+		
+		// left
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
+				|| !left) {
+			if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+				keys.add(new Key(true, KeyEvent.VK_LEFT));
+				left = true;
+			}
+		} else if (left) {
+			keys.add(new Key(false, KeyEvent.VK_LEFT));
+			left = false;
+		}
+		
+		// right
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
 				|| !right) {
 			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 				keys.add(new Key(true, KeyEvent.VK_RIGHT));
 				right = true;
-				System.out.println("Right pressed");
 			}
 			
 		} else if (right) {
 			keys.add(new Key(false, KeyEvent.VK_RIGHT));
 			right = false;
-
-			System.out.println("Right released");
 		}
 		
-//		//down
-//		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-//			keys.add(new Key(true, Input.Keys.DOWN));
-//		} else {
-//			keys.add(new Key(false, Input.Keys.DOWN));
-//		}
-//		
-//		// left
-//		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-//			keys.add(new Key(true, Input.Keys.LEFT));
-//		} else {
-//			keys.add(new Key(false, Input.Keys.LEFT));
-//		}
-//		
-//		//right
-//		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-//			keys.add(new Key(true, KeyEvent.VK_RIGHT));
-//		} else {
-//			keys.add(new Key(false, KeyEvent.VK_RIGHT));
-//		}
-//		
-//		// shift
-//		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-//			keys.add(new Key(true, Input.Keys.SHIFT_LEFT));
-//		} else {
-//			keys.add(new Key(false, Input.Keys.SHIFT_LEFT));
-//		}
+		// shift
+		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+				|| !shift) {
+			if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)){
+				keys.add(new Key(true, KeyEvent.VK_SHIFT));
+				shift = true;
+			}
+		} else if (shift) {
+			keys.add(new Key(false, KeyEvent.VK_SHIFT));
+			shift = false;
+		}
 	}
 	
 	@Override
@@ -253,7 +274,7 @@ public class Game3D implements ApplicationListener {
         // Crear modelos para cada entidad y asociarlos
         
         // player
-        Model player = modelBuilder.createCylinder(DEPTH/2,80f,DEPTH/2,20,
+        Model player = modelBuilder.createCylinder(DEPTH/2,80f/SCALE,DEPTH/2,20,
     			new Material(ColorAttribute.createDiffuse(Color.CYAN)), Usage.Position | Usage.Normal);
         entityModels.put("player", player);
         

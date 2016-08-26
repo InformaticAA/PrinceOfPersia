@@ -152,7 +152,7 @@ public class Game3D implements ApplicationListener {
 //				System.out.println("Ha entrado: " + key.getTypeOfEntity());
 				
 				float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
-				float y = (float) (key.getCenter()[1] - last[1]) / SCALE;
+				float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
 				value.transform.translate(x,y,0);
 			}
 		}

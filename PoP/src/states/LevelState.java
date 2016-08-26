@@ -118,13 +118,13 @@ public class LevelState extends State{
 			/* Start game */
 			remainingTime = INIT_TIME;
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
-			currentRoom = currentLevel.getRoom(2, 1);
+			currentRoom = currentLevel.getRoom(2, 2);
 			doors = currentLevel.getDoors();
 
-//			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
+			player = new Player(50,110,loader, INITIAL_HEALTH, "right"); // primer piso
 //			player = new Player(140,240,loader, INITIAL_HEALTH, "left"); // segundo piso
-			player = new Player(300,370,loader, INITIAL_HEALTH, "left"); // tercer piso
-			player.setCurrentAnimation("idle_left", 5);
+//			player = new Player(200,370,loader, INITIAL_HEALTH, "left"); // tercer piso
+			player.setCurrentAnimation("idle_right", 5);
 //			player.setCurrentAnimation("falling_left", 5);
 			player.setySpeed(6);
 			player.setHp(3);
@@ -2130,12 +2130,13 @@ public class LevelState extends State{
 								}
 								
 								// Makes the player fall correctly
-								player.setStraightFall(true);
-								player.fall();
-								
 								int[] cornerCenter = newCornerRight.getCenter();
 								int cornerGap = 60;
 								int cornerYGap = 10;
+
+								player.setStraightFall(true);
+								player.fall();
+								
 								int newPlayerX = cornerCenter[0] - cornerGap;
 								
 								if (player.getX() < newPlayerX) {
@@ -2145,7 +2146,6 @@ public class LevelState extends State{
 								else {
 									System.out.println("Caso 3 - NO NEED FOR FIX");
 								}
-//								player.setY(cornerCenter[1] + cornerYGap);
 							}
 							
 							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
@@ -2162,23 +2162,27 @@ public class LevelState extends State{
 								newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
 								roomToOperate.addToBackground(newCorner, roomToOperate.getSquare(loose.getRow(), loose.getCol()+1));
 							
-								// Makes the player fall correctly
-								player.setStraightFall(true);
-								player.fall();
-								
 								int[] cornerCenter = newCorner.getCenter();
 								int cornerGap = 0;
 								int cornerYGap = 10;
-								int newPlayerX = cornerCenter[0] - cornerGap;
+								int[] playerCenter = player.getCenter();
 								
-								if (player.getX() > newPlayerX) {
-									player.setX(newPlayerX);
-									System.out.println("Caso 4 - FALL FIX");
+								if ( (playerCenter[0] < cornerCenter[0]) ) {
+									
+									// Makes the player fall correctly
+									player.setStraightFall(true);
+									player.fall();
+									int newPlayerX = cornerCenter[0] - cornerGap;
+									
+									if (player.getX() > newPlayerX) {
+										player.setX(newPlayerX);
+										System.out.println("Caso 4 - FALL FIX");
+									}
+									else {
+										System.out.println("Caso 4 - NO NEED FOR FIX");
+									}
+									player.setY(cornerCenter[1] + cornerYGap);
 								}
-								else {
-									System.out.println("Caso 4 - NO NEED FOR FIX");
-								}
-								player.setY(cornerCenter[1] + cornerYGap);
 							} else{
 								System.out.println("CASO 5 - ESQUINA IZQUIERDA PARED DERECHA");
 								
@@ -2234,23 +2238,28 @@ public class LevelState extends State{
 								newCornerRight = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 								roomToOperate.addToBackground(newCornerRight, roomToOperate.getSquare(loose.getRow(), loose.getCol()));
 
-								// Makes the player fall correctly
-								player.setStraightFall(true);
-								player.fall();
-								
 								int[] cornerCenter = newCornerRight.getCenter();
 								int cornerGap = 60;
 								int cornerYGap = 10;
-								int newPlayerX = cornerCenter[0] - cornerGap;
+								int[] playerCenter = player.getCenter();
 								
-								if (player.getX() < newPlayerX) {
-									player.setX(newPlayerX);
-									System.out.println("Caso 6 - FALL FIX");
+								if ( (playerCenter[0] > cornerCenter[0]) ) {
+									
+									// Makes the player fall correctly
+									player.setStraightFall(true);
+									player.fall();
+									
+									int newPlayerX = cornerCenter[0] - cornerGap;
+									
+									if (player.getX() < newPlayerX) {
+										player.setX(newPlayerX);
+										System.out.println("Caso 6 - FALL FIX");
+									}
+									else {
+										System.out.println("Caso 6 - NO NEED FOR FIX");
+									}
+									player.setY(cornerCenter[1] + cornerYGap);
 								}
-								else {
-									System.out.println("Caso 6 - NO NEED FOR FIX");
-								}
-								player.setY(cornerCenter[1] + cornerYGap);
 							} else{
 								System.out.println("CASO 7 - ESQUINA DERECHA PARED IZQUIERDA");
 								

@@ -27,6 +27,7 @@ import entities.Opener;
 import entities.Player;
 import entities.SpikeFloor;
 import framework.Loader;
+import framework.RunningFromJar;
 import framework.Writter;
 import game.Game;
 import input.Key;
@@ -72,10 +73,19 @@ public class LevelState extends State{
 
 		this.start = start;
 		backgroundColor = Color.BLACK;
-		win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
-		death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
-		end_song = TinySound.loadMusic(new File("resources/Music/killed_Jaffar.ogg"));
-		credits_song = TinySound.loadMusic(new File("resources/Music/won.ogg"));
+		
+		if (RunningFromJar.isRunningFromJar()) {
+			win_song = TinySound.loadMusic(loader.getFile("Music/guard_death_and_obtaining_the_sword.ogg"));
+			death_song = TinySound.loadMusic(loader.getFile("Music/fight_death.ogg"));
+			end_song = TinySound.loadMusic(loader.getFile("Music/killed_Jaffar.ogg"));
+			credits_song = TinySound.loadMusic(loader.getFile("Music/won.ogg"));
+		}
+		else {
+			win_song = TinySound.loadMusic(new File("resources/Music/guard_death_and_obtaining_the_sword.ogg"));
+			death_song = TinySound.loadMusic(new File("resources/Music/fight_death.ogg"));
+			end_song = TinySound.loadMusic(new File("resources/Music/killed_Jaffar.ogg"));
+			credits_song = TinySound.loadMusic(new File("resources/Music/won.ogg"));
+		}
 	}
 
 	@Override
@@ -2120,12 +2130,13 @@ public class LevelState extends State{
 								}
 								
 								// Makes the player fall correctly
-								player.setStraightFall(true);
-								player.fall();
-								
 								int[] cornerCenter = newCornerRight.getCenter();
 								int cornerGap = 60;
 								int cornerYGap = 10;
+
+								player.setStraightFall(true);
+								player.fall();
+								
 								int newPlayerX = cornerCenter[0] - cornerGap;
 								
 								if (player.getX() < newPlayerX) {
@@ -2135,7 +2146,6 @@ public class LevelState extends State{
 								else {
 									System.out.println("Caso 3 - NO NEED FOR FIX");
 								}
-//								player.setY(cornerCenter[1] + cornerYGap);
 							}
 							
 							//Si no hay ninguna esquina -> se añade una derecha en la casilla actual y una izquierda en la casilla de la derecha
@@ -2152,23 +2162,27 @@ public class LevelState extends State{
 								newCorner = new Corner(getPX(loose.getCol()+1),getPY(loose.getRow()),0,-6,loader,"normal_left");
 								roomToOperate.addToBackground(newCorner, roomToOperate.getSquare(loose.getRow(), loose.getCol()+1));
 							
-								// Makes the player fall correctly
-								player.setStraightFall(true);
-								player.fall();
-								
 								int[] cornerCenter = newCorner.getCenter();
 								int cornerGap = 0;
 								int cornerYGap = 10;
-								int newPlayerX = cornerCenter[0] - cornerGap;
+								int[] playerCenter = player.getCenter();
 								
-								if (player.getX() > newPlayerX) {
-									player.setX(newPlayerX);
-									System.out.println("Caso 4 - FALL FIX");
+								if ( (playerCenter[0] < cornerCenter[0]) ) {
+									
+									// Makes the player fall correctly
+									player.setStraightFall(true);
+									player.fall();
+									int newPlayerX = cornerCenter[0] - cornerGap;
+									
+									if (player.getX() > newPlayerX) {
+										player.setX(newPlayerX);
+										System.out.println("Caso 4 - FALL FIX");
+									}
+									else {
+										System.out.println("Caso 4 - NO NEED FOR FIX");
+									}
+									player.setY(cornerCenter[1] + cornerYGap);
 								}
-								else {
-									System.out.println("Caso 4 - NO NEED FOR FIX");
-								}
-								player.setY(cornerCenter[1] + cornerYGap);
 							} else{
 								System.out.println("CASO 5 - ESQUINA IZQUIERDA PARED DERECHA");
 								
@@ -2224,23 +2238,28 @@ public class LevelState extends State{
 								newCornerRight = new Corner(getPX(loose.getCol()),getPY(loose.getRow()),-12,-2,loader,"normal_right");
 								roomToOperate.addToBackground(newCornerRight, roomToOperate.getSquare(loose.getRow(), loose.getCol()));
 
-								// Makes the player fall correctly
-								player.setStraightFall(true);
-								player.fall();
-								
 								int[] cornerCenter = newCornerRight.getCenter();
 								int cornerGap = 60;
 								int cornerYGap = 10;
-								int newPlayerX = cornerCenter[0] - cornerGap;
+								int[] playerCenter = player.getCenter();
 								
-								if (player.getX() < newPlayerX) {
-									player.setX(newPlayerX);
-									System.out.println("Caso 6 - FALL FIX");
+								if ( (playerCenter[0] > cornerCenter[0]) ) {
+									
+									// Makes the player fall correctly
+									player.setStraightFall(true);
+									player.fall();
+									
+									int newPlayerX = cornerCenter[0] - cornerGap;
+									
+									if (player.getX() < newPlayerX) {
+										player.setX(newPlayerX);
+										System.out.println("Caso 6 - FALL FIX");
+									}
+									else {
+										System.out.println("Caso 6 - NO NEED FOR FIX");
+									}
+									player.setY(cornerCenter[1] + cornerYGap);
 								}
-								else {
-									System.out.println("Caso 6 - NO NEED FOR FIX");
-								}
-								player.setY(cornerCenter[1] + cornerYGap);
 							} else{
 								System.out.println("CASO 7 - ESQUINA DERECHA PARED IZQUIERDA");
 								

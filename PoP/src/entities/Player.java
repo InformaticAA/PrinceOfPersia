@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Hashtable;
 
 import framework.Loader;
+import framework.RunningFromJar;
 import game.Game;
 import input.Key;
 import kuusisto.tinysound.Music;
@@ -171,7 +172,12 @@ public class Player extends Character {
 		
 		this.typeOfEntity = "Player";
 		
-		drinking_song = TinySound.loadMusic(new File("resources/Music/potion.ogg"));
+		if (RunningFromJar.isRunningFromJar()) {
+			drinking_song = TinySound.loadMusic(loader.getFile("Music/potion.ogg"));
+		}
+		else {
+			drinking_song = TinySound.loadMusic(new File("resources/Music/potion.ogg"));
+		}
 	}
 	
 	@Override

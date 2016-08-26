@@ -3,9 +3,16 @@ package framework;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -37,6 +44,10 @@ import kuusisto.tinysound.TinySound;
 
 public class Loader {
 	
+	private static final String JAR = "jar";
+	private static final String RSRC = "rsrc";
+	private static final String FILE = "file";
+	
 	private final String frameInfoFile = "info.txt";
 
 	private long frameTime;
@@ -59,10 +70,27 @@ public class Loader {
 	 * Loads every sprite needed in the game
 	 */
 	public void loadAllSprites() {
-		loadAnimations("resources/Sprites_400/Dungeon/");
-		loadAnimations("resources/Sprites_400/Objects/");
-		loadAnimations("resources/Sprites_400/Characters/");
-		loadSounds("resources/Sounds/");
+		
+		if (isRunningFromJar()) {
+			
+			loadSounds("Sounds/");
+			System.out.println("Sounds loaded.");
+			
+			loadAnimations("Sprites_400/Dungeon/");
+			System.out.println("Dungeon resources added.");
+			
+			loadAnimations("Sprites_400/Objects/");
+			System.out.println("Objects resources added.");
+			
+			loadAnimations("Sprites_400/Characters/");
+			System.out.println("Characters resources added.");
+		}
+		else {
+			loadSounds("resources/Sounds/");
+			loadAnimations("resources/Sprites_400/Dungeon/");
+			loadAnimations("resources/Sprites_400/Objects/");
+			loadAnimations("resources/Sprites_400/Characters/");
+		}
 	}
 	
 	/**
@@ -71,49 +99,149 @@ public class Loader {
 	 */
 	public void loadAnimations(String path) {
 		Hashtable<String, FrameList> entityAnimations = null;
-		
-		/* Loads the animations in each folder */
-		File dir = new File(path);
-		if (dir.isDirectory()) {
-			File[] files = dir.listFiles();
+
+		if (isRunningFromJar()) {
 			
-			if (files != null) {
-				for(File f : files) {
+			try {
+				
+				CodeSource src = Loader.class.getProtectionDomain().getCodeSource();
+				if (src != null) {
+					URL jar = src.getLocation();
+					ZipInputStream zip = new ZipInputStream(jar.openStream());
 					
-					entityAnimations = null;
-					
-					if (f.isDirectory()) {
+					String prevEntityName = "init";
+					String entityName = "start";
+					while(true) {
+						entityAnimations = null;
+						ZipEntry e = zip.getNextEntry();
+						if (e == null) {
+							break;
+						}
 						
-						/* Folder f contains the animations of entity f */
-						entityAnimations = loadEntityAnimations(path + f.getName());
-						if (entityAnimations != null) {
-							totalAnimations.addEntityFrameLists(f.getName(), entityAnimations);
-//							System.out.println("ENTITY: " + f.getName());
-//							for (String key : entityAnimations.keySet()) {
-//								System.out.println(" -Key: " + key + " - Animations: " + entityAnimations.get(key).getId());
-//							}
+						String name = e.getName();
+						String[] nameBroken = name.split("/");
+						if (nameBroken.length > 2) {
+							prevEntityName = entityName;
+							entityName = nameBroken[2];
+						}
+						
+						if (name.startsWith(path) &&
+								!prevEntityName.equals(entityName)) {
+							
+							if (!entityName.equals("start")) {
+								System.out.println("Nombre entidad: " + entityName);
+								
+								/* Folder f contains the animations of entity f */
+								entityAnimations = loadEntityAnimations(path + entityName + "/");
+								if (entityAnimations != null) {
+									totalAnimations.addEntityFrameLists(entityName, entityAnimations);
+								}
+							}
+						}
+					}
+				} 
+				else {
+					
+					/* Fail... */
+					System.out.println("OOPS");
+				}
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			
+			// running in eclipse
+			/* Loads the animations in each folder */
+			File dir = new File(path);
+			if (dir.isDirectory()) {
+				File[] files = dir.listFiles();
+				
+				if (files != null) {
+					for(File f : files) {
+						entityAnimations = null;
+						
+						if (f.isDirectory()) {
+							
+							/* Folder f contains the animations of entity f */
+							entityAnimations = loadEntityAnimations(path + f.getName());
+							if (entityAnimations != null) {
+								totalAnimations.addEntityFrameLists(f.getName(), entityAnimations);
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	
 
 	/**
 	 * Loads every sound in the folder path
 	 */
 	public void loadSounds(String path){
 		TinySound.init();
-		/* Loads the animations in each folder */
-		File dir = new File(path);
-		if (dir.isDirectory()) {
-			File[] files = dir.listFiles();
+
+		if (isRunningFromJar()) {
 			
-			if (files != null) {
-				for(File f : files) {
-					if (f.isFile()) {
-						totalSounds.put(getFileName(f), TinySound.loadSound(f));
+			try {
+				
+				CodeSource src = Loader.class.getProtectionDomain().getCodeSource();
+				if (src != null) {
+					URL jar = src.getLocation();
+					ZipInputStream zip = new ZipInputStream(jar.openStream());
+					
+					String soundName = "start";
+					while(true) {
+						ZipEntry e = zip.getNextEntry();
+						if (e == null)
+							break;
+						String name = e.getName();
+						String[] nameBroken = name.split("/");
+						if (nameBroken.length > 1) {
+							soundName = nameBroken[1];
+						}
+						else {
+							soundName = "";
+						}
+						if (name.startsWith(path) && 
+								!soundName.equals("") &&
+								!soundName.equals("start") ) {
+							
+				    	
+							/* Do something with this entry. */
+							File f = getFile(name);
+							if (f != null) {
+								System.out.println("SOUND NAME: " + soundName.substring(0,soundName.length()-4));
+								totalSounds.put(soundName.substring(0,soundName.length()-4), TinySound.loadSound(f));
+							}
+						}
+					}
+				} 
+				else {
+					
+					/* Fail... */
+					System.out.println("OOPS");
+				}
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			
+			// running from eclipse
+			
+			/* Loads every sound in the game */
+			File dir = new File(path);
+			if (dir.isDirectory()) {
+				File[] files = dir.listFiles();
+				
+				if (files != null) {
+					for(File f : files) {
+						if (f.isFile()) {
+							totalSounds.put(getFileName(f), TinySound.loadSound(f));
+						}
 					}
 				}
 			}
@@ -132,23 +260,74 @@ public class Loader {
 	 */
 	public Hashtable<String, FrameList> loadEntityAnimations(String entityPath) {
 		Hashtable<String, FrameList> animations = new Hashtable<String, FrameList>();
-		
+
 		/* Searches for .png files for each folder of characterPath */
-		File dir = new File(entityPath);
-		if (dir.isDirectory()) {
-			File[] files = dir.listFiles();
+		if (isRunningFromJar()) {
 			
-			if (files != null) {
-				for(File f : files) {
-					if (f.isDirectory()) {
+			try {
+				
+				CodeSource src = Loader.class.getProtectionDomain().getCodeSource();
+				if (src != null) {
+					URL jar = src.getLocation();
+					ZipInputStream zip = new ZipInputStream(jar.openStream());
+					
+					String prevEntityAnimation = "init";
+					String entityAnimation = "start";
+					while(true) {
+						ZipEntry e = zip.getNextEntry();
+						if (e == null)
+							break;
 						
-						/* folder f contains .png files */
-						FrameList anim = loadFrameList(f);
-						animations.put(anim.getId(), anim);
+						String name = e.getName();
+						String[] nameBroken = name.split("/");
+						if (nameBroken.length > 3) {
+							prevEntityAnimation = entityAnimation;
+							entityAnimation = nameBroken[3];
+						}
+	
+						if (name.startsWith(entityPath) &&
+								!prevEntityAnimation.equals(entityAnimation)) {
+							
+							if (!entityAnimation.equals("start")) {
+	//							System.out.println("Nombre Animacion: " + entityAnimation);
+								
+								/* folder f contains .png files */
+								FrameList anim = loadFrameListJar(entityPath + entityAnimation + "/", entityAnimation);
+								animations.put(anim.getId(), anim);
+							}
+						}
 					}
+				} 
+				else {
+					
+					/* Fail... */
+					System.out.println("OOPS EntityAnimations");
 				}
 			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			// running from eclipse
 			
+			/* Searches for .png files for each folder of characterPath */
+			File dir = new File(entityPath);
+			if (dir.isDirectory()) {
+				File[] files = dir.listFiles();
+				
+				if (files != null) {
+					for(File f : files) {
+						if (f.isDirectory()) {
+							
+							/* folder f contains .png files */
+							FrameList anim = loadFrameList(f);
+							animations.put(anim.getId(), anim);
+						}
+					}
+				}
+				
+			}
 		}
 		
 		return animations;
@@ -239,6 +418,121 @@ public class Loader {
 	
 	/**
 	 * 
+	 * @param f directory containing all frames of
+	 * one animation
+	 * @return new animation loaded
+	 */
+	public FrameList loadFrameListJar(String filePath, String fileName) {
+		FrameList animation = new FrameList(fileName);
+		
+		/* Reads additional info about the animation (speed and offsets) */
+		boolean info = false;
+		ArrayList<Integer> xSpeeds = new ArrayList<Integer>();
+		ArrayList<Integer> ySpeeds = new ArrayList<Integer>();
+		ArrayList<Integer> xOffsets = new ArrayList<Integer>();
+		ArrayList<Integer> yOffsets = new ArrayList<Integer>();
+		ArrayList<String> sounds = new ArrayList<String>();
+		boolean infinite = false;
+		
+		String infoPath = filePath + frameInfoFile;
+		File infoFile = getFile(infoPath);
+		
+		if (infoFile != null) {
+			try {
+				Scanner readInfo = new Scanner(infoFile);
+				
+				while (readInfo.hasNextLine()) {
+					
+					if (!readInfo.hasNextInt()) {
+						String linea = readInfo.nextLine();
+						infinite = linea.equals("infinite");
+					}
+					
+					xSpeeds.add(readInfo.nextInt());
+					ySpeeds.add(readInfo.nextInt());
+					xOffsets.add(readInfo.nextInt());
+					yOffsets.add(readInfo.nextInt());
+					if(readInfo.hasNext()){
+						String newSound = readInfo.nextLine();
+						if(!newSound.equals("")){
+							newSound = newSound.substring(1);
+						}
+						sounds.add(newSound);
+					} else{
+						sounds.add("");
+						readInfo.nextLine();
+					}
+					
+				}
+				
+				info = true;
+				readInfo.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			
+			int img = 0;
+			CodeSource src = Loader.class.getProtectionDomain().getCodeSource();
+			if (src != null) {
+				URL jar = src.getLocation();
+				ZipInputStream zip = new ZipInputStream(jar.openStream());
+				
+				String imageName = "";
+				while(true) {
+					ZipEntry e = zip.getNextEntry();
+					if (e == null)
+						break;
+					String name = e.getName();
+					
+					String[] nameBroken = name.split("/");
+					if (nameBroken.length > 4) {
+						imageName = nameBroken[4];
+					}
+					else {
+						imageName = "";
+					}
+					
+					if (name.startsWith(filePath) && 
+							!imageName.equals("info.txt") &&
+							!imageName.equals("") ) {
+			    	
+						if (imageName.substring(imageName.length() - 4, imageName.length()).equals(".png")) {
+							
+							Frame frame = loadFrameJar(filePath + imageName);
+							
+							if (info) {
+								frame.setInfinite(infinite);
+								frame.setxSpeed(xSpeeds.get(img));
+								frame.setySpeed(ySpeeds.get(img));
+								frame.setxOffset(xOffsets.get(img));
+								frame.setyOffset(yOffsets.get(img));
+								frame.setSound(sounds.get(img));
+							}
+							
+							animation.addFrame(frame);
+						}
+						img++;
+					}
+				}
+			} 
+			else {
+				
+				/* Fail... */
+				System.out.println("OOPS");
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		return animation;
+	}
+	
+	/**
+	 * 
 	 * @param image
 	 * @return a new frame loaded from file image
 	 */
@@ -259,17 +553,54 @@ public class Loader {
 	
 	/**
 	 * 
+	 * @param image
+	 * @return a new frame loaded from file image
+	 */
+	public Frame loadFrameJar(String imageName) {
+		Frame frame = null;
+		BufferedImage img = null;
+		
+//		System.out.println("LOAD FRAME: " + imageName);
+		
+		try{
+			img = ImageIO.read(Loader.class.getClassLoader().
+					getResourceAsStream(imageName));
+//			img = ImageIO.read(Loader.class.getResource("/" + imageName));
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		frame = new Frame(img, frameTime);
+		return frame;
+	}
+	
+	/**
+	 * 
 	 * @return a new level with its content loaded
 	 */
 	public Level loadLevel(int numLevel) {
 		Level level = null;
-		String levelPath = "resources/Levels/level" + numLevel + ".txt";
+		String levelPath = "";
 		String roomContent = "";
 		int row = 0;
 		int col = 0;
 		
+		if (isRunningFromJar()) {
+			levelPath = "Levels/level" + numLevel + ".txt";
+		}
+		else {
+			levelPath = "resources/Levels/level" + numLevel + ".txt";
+		}
+		
 		/* Reads the files that describes the level */
-		File levelFile = new File(levelPath);
+		File levelFile;
+		if (isRunningFromJar()) {
+			levelFile = getFile(levelPath);
+		}
+		else {
+			levelFile = new File(levelPath);
+		}
 		Scanner readLevel;
 		
 		try {
@@ -734,5 +1065,47 @@ public class Loader {
 	
 	private String getFileName(File f){
 		return f.getName().substring(0,f.getName().length()-4);
+	}
+	
+	public File getFile(String file) {
+		try {
+			InputStream in = getClass().getResourceAsStream("/" + file);
+			
+			if (in == null) {
+				return null;
+			}
+
+			// creating temp file
+			File tempFile = File.createTempFile(String.valueOf(in.hashCode()),
+					".tmp");
+			tempFile.deleteOnExit();
+
+			// write to temp file
+			try (FileOutputStream out = new FileOutputStream(tempFile)) {
+				byte[] buffer = new byte[1024];
+				int bytesRead;
+				while ((bytesRead = in.read(buffer)) != -1) {
+					out.write(buffer, 0, bytesRead);
+				}
+			}
+			return tempFile;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static boolean isRunningFromJar() {
+		URL url = Loader.class.getResource("Loader.class");
+		String protocol = url.getProtocol();
+
+		if (protocol.equalsIgnoreCase(FILE)) {
+			return false;
+		} else if (protocol.equalsIgnoreCase(JAR)
+				|| protocol.equalsIgnoreCase(RSRC)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

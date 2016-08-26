@@ -30,7 +30,12 @@ public class Writter {
 		equivalences.add("(");
 		equivalences.add(")");
 		try {
-			font = ImageIO.read(new File("resources/font.png"));
+			if (RunningFromJar.isRunningFromJar()) {
+				font = ImageIO.read(getClass().getResourceAsStream("/fonts/font.png"));
+			}
+			else {
+				font = ImageIO.read(new File("resources/fonts/font.png"));
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

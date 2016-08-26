@@ -14,6 +14,7 @@ import entities.Enemy;
 import entities.Player;
 import entities.Torch;
 import framework.Loader;
+import framework.RunningFromJar;
 import framework.Writter;
 import game.Game;
 import input.Key;
@@ -51,16 +52,30 @@ public class MultiplayerMenuState extends State{
 		super(gsm, keys, keys_mapped, loader, writter);
 		
 		try{
-			bg = new MobileBackground("resources/Sprites_400/Menu/room_won.png");
-			bg.addImage("resources/Sprites_400/Menu/walls_base.png");
-			bg.addImage("resources/Sprites_400/Menu/walls.png");
-			bg.addImage("resources/Sprites_400/Menu/walls.png");
-			bg.addImage("resources/Sprites_400/Menu/walls.png");
-			bg.addImage("resources/Sprites_400/Menu/wall_dungeon.png");
-			bg.addImage("resources/Sprites_400/Menu/Scenaries/test1.png");
-			title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
-			menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
-//			menu = TinySound.loadMusic(new File("resources/Music/Batman.ogg"));
+			if(RunningFromJar.isRunningFromJar()) {
+				
+				bg = new MobileBackground("/Sprites_400/Menu/room_won.png");
+				bg.addImage("/Sprites_400/Menu/walls_base.png");
+				bg.addImage("/Sprites_400/Menu/walls.png");
+				bg.addImage("/Sprites_400/Menu/walls.png");
+				bg.addImage("/Sprites_400/Menu/walls.png");
+				bg.addImage("/Sprites_400/Menu/wall_dungeon.png");
+				bg.addImage("/Sprites_400/Menu/Scenaries/test1.png");
+				title = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Title/main titles/game name.png"));
+				menu = TinySound.loadMusic(loader.getFile("Music/cutscene_before_8_9.ogg"));
+			}
+			else {
+				bg = new MobileBackground("resources/Sprites_400/Menu/room_won.png");
+				bg.addImage("resources/Sprites_400/Menu/walls_base.png");
+				bg.addImage("resources/Sprites_400/Menu/walls.png");
+				bg.addImage("resources/Sprites_400/Menu/walls.png");
+				bg.addImage("resources/Sprites_400/Menu/walls.png");
+				bg.addImage("resources/Sprites_400/Menu/wall_dungeon.png");
+				bg.addImage("resources/Sprites_400/Menu/Scenaries/test1.png");
+				title = ImageIO.read(new File("resources/Sprites_400/Title/main titles/game name.png"));
+				menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+//				menu = TinySound.loadMusic(new File("resources/Music/Batman.ogg"));
+			}
 			
 			
 		} catch(Exception e){
@@ -73,7 +88,14 @@ public class MultiplayerMenuState extends State{
 		offset = 0;
 		t1 = new Torch(232,265,loader,true);
 		t2 = new Torch(468,265,loader,true);
-		menu = TinySound.loadMusic(new File("resources/Music/find_mirror_and_find_shadow.ogg"));
+		
+		if (RunningFromJar.isRunningFromJar()) {
+			menu = TinySound.loadMusic(loader.getFile("Music/find_mirror_and_find_shadow.ogg"));
+		}
+		else {
+			menu = TinySound.loadMusic(new File("resources/Music/find_mirror_and_find_shadow.ogg"));
+		}
+		
 		menu.play(false);
 		bg.setCurrentBackground(0);
 		bg.setDrawArrows(false);
@@ -122,28 +144,35 @@ public class MultiplayerMenuState extends State{
 				bg.setVel(0, 0);
 				menuOptions = new BufferedImage[2];
 				try {
-					menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/no_next.png"));
-					menuOptions[1] = ImageIO.read(new File("resources/Sprites_400/Menu/back.png"));
-					p1 = ImageIO.read(new File("resources/Sprites_400/Menu/p1.png")); 
-					p2 = ImageIO.read(new File("resources/Sprites_400/Menu/p2.png")); 
-					sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
-					menu.stop();
-					menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
-					//menu = TinySound.loadMusic(new File("resources/Music/Batman.ogg"));
+					
+					if (RunningFromJar.isRunningFromJar()) {
+						menuOptions[0] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/no_next.png"));
+						menuOptions[1] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/back.png"));
+						p1 = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/p1.png")); 
+						p2 = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/p2.png")); 
+						sword = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/sword.png"));
+						menu.stop();
+						menu = TinySound.loadMusic(loader.getFile("Music/cutscene_before_8_9.ogg"));
+					}
+					else {
+						menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/no_next.png"));
+						menuOptions[1] = ImageIO.read(new File("resources/Sprites_400/Menu/back.png"));
+						p1 = ImageIO.read(new File("resources/Sprites_400/Menu/p1.png")); 
+						p2 = ImageIO.read(new File("resources/Sprites_400/Menu/p2.png")); 
+						sword = ImageIO.read(new File("resources/Sprites_400/Menu/sword.png"));
+						menu.stop();
+						menu = TinySound.loadMusic(new File("resources/Music/cutscene_before_8_9.ogg"));
+						//menu = TinySound.loadMusic(new File("resources/Music/Batman.ogg"));
+					}
 					menu.play(true);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		} else{
 			options[0].update(elapsedTime);
 		}
-		
 		manageKeys();
-		
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -217,9 +246,13 @@ public class MultiplayerMenuState extends State{
 				if(guard == 1){
 					currentChoiceP1 = 2;
 					try {
-						menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						if(RunningFromJar.isRunningFromJar()) {
+							menuOptions[0] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/next.png"));
+						}
+						else {
+							menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						}
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -236,7 +269,12 @@ public class MultiplayerMenuState extends State{
 				if(prince == 1){
 					currentChoiceP1 = 2;
 					try {
-						menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						if (RunningFromJar.isRunningFromJar()) {
+							menuOptions[0] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/next.png"));
+						}
+						else {
+							menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						}
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -276,9 +314,13 @@ public class MultiplayerMenuState extends State{
 				if(guard == 0){
 					currentChoiceP1 = 2;
 					try {
-						menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						if (RunningFromJar.isRunningFromJar()) {
+							menuOptions[0] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/next.png"));
+						}
+						else {
+							menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						}
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -295,9 +337,13 @@ public class MultiplayerMenuState extends State{
 				if(prince == 0){
 					currentChoiceP1 = 2;
 					try {
-						menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						if (RunningFromJar.isRunningFromJar()) {
+							menuOptions[0] = ImageIO.read(getClass().getResourceAsStream("/Sprites_400/Menu/next.png"));
+						}
+						else {
+							menuOptions[0] = ImageIO.read(new File("resources/Sprites_400/Menu/next.png"));
+						}
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

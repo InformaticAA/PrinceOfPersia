@@ -44,9 +44,9 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
+import data.Room;
 import entities.Entity;
 import input.Key;
-import input.Listener;
 import states.LevelState;
 import states.MenuState;
 
@@ -60,6 +60,9 @@ public class Game3D implements ApplicationListener {
 	private final long TARGET_TIME = 1000/60;
 	private final float DEPTH = 10f;
 	
+	private final int NUM_ROWS = 3;
+	private final int NUM_COLS = 9;
+	
 	// variables keys
 	private boolean up = true;
 	private boolean down = true;
@@ -67,6 +70,10 @@ public class Game3D implements ApplicationListener {
 	private boolean right = true;
 	private boolean shift = true;
 	
+	// room variables
+	private int currRow = 1;
+	private int currCol = 7;
+
 	public Environment lights;
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
@@ -77,7 +84,7 @@ public class Game3D implements ApplicationListener {
 	public static MenuState menu;
 	public static LevelState level;
 	public static ConcurrentLinkedQueue<Key> keys;
-	public Hashtable<Entity,ModelInstance> entities;
+	public List<List<Hashtable<Entity,ModelInstance>>> entities;
 	public Hashtable<String,Model> entityModels;
 	
 	
@@ -111,7 +118,7 @@ public class Game3D implements ApplicationListener {
 	public void render() {
 		update();
 		
-		Collection<ModelInstance> objects = entities.values();
+		Collection<ModelInstance> objects = entities.get(currRow).get(currCol).values();
 		
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -126,7 +133,7 @@ public class Game3D implements ApplicationListener {
 		
 		// asigna una ultima posicion a cada objeto
 		Map<Entity, int[]> lastPos = new HashMap<>();
-		for (Entity e : entities.keySet()) {
+		for (Entity e : entities.get(currRow).get(currCol).keySet()) {
 			lastPos.put(e, e.getCenter());
 			
 			if (e.getTypeOfEntity().contains("Player")) {
@@ -139,10 +146,12 @@ public class Game3D implements ApplicationListener {
 
 		// actualiza la logica del juego 2D
 		level.update(TARGET_TIME);
+		currRow = level.getCurrentRoom().getRow() + 1;
+		currCol = level.getCurrentRoom().getCol() + 1;
 		
 		// actualiza cada objeto en funcion de su movimiento
 		// (diferencia con la posicion anterior)
-		for (Map.Entry<Entity, ModelInstance> entry : entities.entrySet()) {
+		for (Map.Entry<Entity, ModelInstance> entry : entities.get(currRow).get(currCol).entrySet()) {
 			Entity key = entry.getKey();
 			ModelInstance value = entry.getValue();
 
@@ -269,7 +278,17 @@ public class Game3D implements ApplicationListener {
 		modelBatch = new ModelBatch();
         ModelBuilder modelBuilder = new ModelBuilder();
         entityModels = new Hashtable<String, Model>();
-        entities = new Hashtable<Entity, ModelInstance>();
+        entities = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();
+        
+        // inicializa el array de entidades
+        for (int i = 0; i < NUM_ROWS; i++) {
+        	
+        	entities.add(i, new LinkedList<Hashtable<Entity, ModelInstance>>());
+        	
+        	for (int j = 0; j < NUM_COLS; j++) {
+        		entities.get(i).add(j, new Hashtable<Entity, ModelInstance>());
+        	}
+    	}
         
         // Crear modelos para cada entidad y asociarlos
         
@@ -306,117 +325,126 @@ public class Game3D implements ApplicationListener {
         // TODO: Definir modelos 3D para el resto de entidades
         // ...
 		
-        // Crea instancias 3D de cada entidad
-        List<Entity> roomEntities = new LinkedList<Entity>();
-        roomEntities.addAll(level.getCurrentRoom().getBackground());
-        roomEntities.addAll(level.getCurrentRoom().getForeground());
-        roomEntities.addAll(level.getCurrentRoom().getCharacters());
-        
-        for(Entity entity : roomEntities){
-        	String entityName = entity.getTypeOfEntity();
-        	
-        	// Asocia cada suelo con su modelo 3D
-        	if(entityName.contains("Floor") && entityName.contains("left")){
+        // Crea instancias 3D de cada entidad en cada habitacion
+        for (int i = 1; i <= NUM_ROWS; i++) {
+        	for (int j = 1; j <= NUM_COLS; j++) {
         		
-        		// crea instancia y la coloca en su posicion
-        		ModelInstance floorInstance = new ModelInstance(entityModels.get("leftFloor"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (64 + sy * 64) / SCALE;
-        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-        		
-        		floorInstance.transform.translate(x,y,0);
-        		
-        		// asocia la nueva instancia 3D a su entidad
-        		entities.put(entity, floorInstance);
+        		Room room = level.getCurrentLevel().getRoom(NUM_ROWS, NUM_COLS);
+				
+//        		if (room != null) {
+        			
+        			System.out.println("Room: " + i + ", " + j);
+        			
+			        List<Entity> roomEntities = new LinkedList<Entity>();
+			        roomEntities.addAll(room.getBackground());
+			        roomEntities.addAll(room.getForeground());
+			        roomEntities.addAll(room.getCharacters());
+			        
+			        for(Entity entity : roomEntities){
+			        	String entityName = entity.getTypeOfEntity();
+			        	
+			        	// Asocia cada suelo con su modelo 3D
+			        	if(entityName.contains("Floor") && entityName.contains("left")){
+			        		
+			        		// crea instancia y la coloca en su posicion
+			        		ModelInstance floorInstance = new ModelInstance(entityModels.get("leftFloor"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			        		
+			        		floorInstance.transform.translate(x,y,0);
+			        		
+			        		// asocia la nueva instancia 3D a su entidad
+			        		entities.get(i).get(j).put(entity, floorInstance);
+			        	}
+			        	else if(entityName.contains("Floor") && entityName.contains("right")){
+			        		
+			        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (96 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			        		
+			        		floorInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, floorInstance);
+			        	}
+			        	else if(entityName.contains("stack_main") && !entityName.contains("face")){
+			        		
+			        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		
+			        		stackMainInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, stackMainInstance);
+			        	}
+			        	else if(entityName.contains("face_stack_main")){
+			        		
+			        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		if (sy == 0) {
+				        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+				        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+				        		
+				        		stackMainInstance.transform.translate(x,y,0);
+				        		entities.get(i).get(j).put(entity, stackMainInstance);
+			        		}
+			        	}
+			        	else if(entityName.contains("Base")){
+			        		
+			        		ModelInstance stackBaseInstance = new ModelInstance(entityModels.get("stackBase"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			
+			        		if (sx != 0) {
+			        			y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		}
+				    		stackBaseInstance.transform.translate(x,y,0);
+				    		entities.get(i).get(j).put(entity, stackBaseInstance);
+			        	}
+			        	else if(entityName.contains("Pillar_pillar_left")){
+			        		
+			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			
+			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
+			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        	}
+			        	else if(entityName.contains("Pillar_pillar_right")){
+			        		
+			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			
+			        		pillarInstance.transform.translate(x,y,DEPTH/3);
+			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        	}
+			        	else if (entityName.contains("Player")){
+			        		
+			        		ModelInstance playerInstance = new ModelInstance(entityModels.get("player"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (entity.getCenter()[0] + 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
+			        		
+			//        		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
+			        		
+			        		playerInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, playerInstance);
+			        	}
+			        }
+	        	}
         	}
-        	else if(entityName.contains("Floor") && entityName.contains("right")){
-        		
-        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (96 + sy * 64) / SCALE;
-        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-        		
-        		floorInstance.transform.translate(x,y,0);
-        		entities.put(entity, floorInstance);
-        	}
-        	else if(entityName.contains("stack_main") && !entityName.contains("face")){
-        		
-        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-        		
-        		stackMainInstance.transform.translate(x,y,0);
-        		entities.put(entity, stackMainInstance);
-        	}
-        	else if(entityName.contains("face_stack_main")){
-        		
-        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		if (sy == 0) {
-	        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-	        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-	        		
-	        		stackMainInstance.transform.translate(x,y,0);
-	        		entities.put(entity, stackMainInstance);
-        		}
-        	}
-        	else if(entityName.contains("Base")){
-        		
-        		ModelInstance stackBaseInstance = new ModelInstance(entityModels.get("stackBase"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-
-        		if (sx != 0) {
-        			y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
-        		}
-	    		stackBaseInstance.transform.translate(x,y,0);
-	    		entities.put(entity, stackBaseInstance);
-        	}
-        	else if(entityName.contains("Pillar_pillar_left")){
-        		
-        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-
-        		pillarInstance.transform.translate(x,y,-DEPTH/3);
-	    		entities.put(entity, pillarInstance);
-        	}
-        	else if(entityName.contains("Pillar_pillar_right")){
-        		
-        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-
-        		pillarInstance.transform.translate(x,y,DEPTH/3);
-	    		entities.put(entity, pillarInstance);
-        	}
-        	else if (entityName.contains("Player")){
-        		
-        		ModelInstance playerInstance = new ModelInstance(entityModels.get("player"));
-        		int sx = entity.getSquare()[0];
-        		int sy = entity.getSquare()[1];
-        		float x = (float) (entity.getCenter()[0] + 64) / SCALE;
-        		float y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
-        		
-        		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
-	    		System.out.println(entity.getCenter()[0]);
-	    		System.out.println(entity.getCenter()[1]);
-        		
-        		playerInstance.transform.translate(x,y,0);
-	    		entities.put(entity, playerInstance);
-        	}
-        	
         }
 	}
-}
+//}

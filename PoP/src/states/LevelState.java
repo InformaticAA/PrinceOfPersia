@@ -2945,4 +2945,8 @@ public class LevelState extends State{
 	public Room getCurrentRoom(){
 		return this.currentRoom;
 	}
+	
+	public Level getCurrentLevel(){
+		return currentLevel;
+	}
 }

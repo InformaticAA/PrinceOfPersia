@@ -58,7 +58,7 @@ import states.MenuState;
 public class Game3D implements ApplicationListener {
 	
 	// TODO: todavia en test (pero mola :D)
-	private final boolean FULL_LEVEL = true;
+	private final boolean FULL_LEVEL = false;
 	
 	private final int SCALE = 10;
 	private final long TARGET_TIME = 1000/60;

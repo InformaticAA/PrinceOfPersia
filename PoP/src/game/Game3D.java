@@ -60,8 +60,8 @@ public class Game3D implements ApplicationListener {
 	private final long TARGET_TIME = 1000/60;
 	private final float DEPTH = 10f;
 	
-	private final int NUM_ROWS = 3;
-	private final int NUM_COLS = 9;
+	private final int NUM_ROWS = 4;
+	private final int NUM_COLS = 10;
 	
 	// variables keys
 	private boolean up = true;
@@ -326,14 +326,14 @@ public class Game3D implements ApplicationListener {
         // ...
 		
         // Crea instancias 3D de cada entidad en cada habitacion
-        for (int i = 1; i <= NUM_ROWS; i++) {
-        	for (int j = 1; j <= NUM_COLS; j++) {
+        Room[][] rooms = level.getCurrentLevel().getRooms();
+        for (int i = 1; i <= NUM_ROWS - 1; i++) {
+        	for (int j = 1; j <= NUM_COLS - 1; j++) {
+        		Room room = rooms[i-1][j-1];
         		
-        		Room room = level.getCurrentLevel().getRoom(NUM_ROWS, NUM_COLS);
+//        		System.out.println("Room: " + room + " -> " + i + ", " + j);
 				
-//        		if (room != null) {
-        			
-        			System.out.println("Room: " + i + ", " + j);
+        		if (room != null) {
         			
 			        List<Entity> roomEntities = new LinkedList<Entity>();
 			        roomEntities.addAll(room.getBackground());
@@ -407,18 +407,7 @@ public class Game3D implements ApplicationListener {
 				    		stackBaseInstance.transform.translate(x,y,0);
 				    		entities.get(i).get(j).put(entity, stackBaseInstance);
 			        	}
-			        	else if(entityName.contains("Pillar_pillar_left")){
-			        		
-			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			
-			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
-			        		entities.get(i).get(j).put(entity, pillarInstance);
-			        	}
-			        	else if(entityName.contains("Pillar_pillar_right")){
+			        	else if(entityName.equals("Pillar_pillar_left")){
 			        		
 			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
 			        		int sx = entity.getSquare()[0];
@@ -427,6 +416,17 @@ public class Game3D implements ApplicationListener {
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
 			        		pillarInstance.transform.translate(x,y,DEPTH/3);
+			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        	}
+			        	else if(entityName.equals("Pillar_pillar_right_main")){
+			        		
+			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			
+			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
 			        		entities.get(i).get(j).put(entity, pillarInstance);
 			        	}
 			        	else if (entityName.contains("Player")){
@@ -447,4 +447,4 @@ public class Game3D implements ApplicationListener {
         	}
         }
 	}
-//}
+}

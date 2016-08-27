@@ -531,7 +531,7 @@ public class Game3D implements ApplicationListener {
 			        		ModelInstance torchInstance = new ModelInstance(entityModels.get("torch"));
 			        		int sx = entity.getSquare()[0];
 			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + sy * 64) / SCALE;
+			        		float x = (float) (32 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
 			        		torchInstance.transform.translate(x,y,-DEPTH/3);

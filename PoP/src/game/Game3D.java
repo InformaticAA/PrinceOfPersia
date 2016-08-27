@@ -58,7 +58,7 @@ import states.MenuState;
 public class Game3D implements ApplicationListener {
 	
 	// TODO: todavia en test (pero mola :D)
-	private final boolean FULL_LEVEL = true;
+	private final boolean FULL_LEVEL = false;
 	
 	private final int SCALE = 10;
 	private final long TARGET_TIME = 1000/60;
@@ -423,6 +423,11 @@ public class Game3D implements ApplicationListener {
     			new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("normalDoor", normalDoor);
         
+        // final door
+        Model finalDoor = modelBuilder.createBox(2*64f/(SCALE), 120f/SCALE, DEPTH/8,
+    			new Material(ColorAttribute.createDiffuse(Color.GOLD)), Usage.Position | Usage.Normal);
+        entityModels.put("finalDoor", finalDoor);
+        
         // torch
         Model torch = modelBuilder.createBox(64f/(6*SCALE), 40f/SCALE, DEPTH/8,
     			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
@@ -561,6 +566,13 @@ public class Game3D implements ApplicationListener {
 			        		x = (float) (128 - 32 + sy * 64) / SCALE;
 			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			        		entityInstance = normalDoorInstance;
+			        	}
+			        	else if(entityName.equals("Door_final")){
+			        		ModelInstance finalDoorInstance = new ModelInstance(entityModels.get("finalDoor"));
+			        		x = (float) (64 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = -DEPTH/3;
+			        		entityInstance = finalDoorInstance;
 			        	}
 			        	else if(entityName.equals("Torch")){
 			        		ModelInstance torchInstance = new ModelInstance(entityModels.get("torch"));

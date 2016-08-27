@@ -75,7 +75,9 @@ public class Game3D implements ApplicationListener {
 	// room variables
 	private int currRow = 1;
 	private int currCol = 7;
-
+	private int prevRow = currRow;
+	private int prevCol = currCol;
+	
 	public Environment lights;
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
@@ -138,18 +140,34 @@ public class Game3D implements ApplicationListener {
 		for (Entity e : entities.get(currRow).get(currCol).keySet()) {
 			lastPos.put(e, e.getCenter());
 			
-			if (e.getTypeOfEntity().contains("Player")) {
-				System.out.println("Player: " + e.getCenter()[0] + ", " + e.getCenter()[1]);
-			}
+//			if (e.getTypeOfEntity().contains("Player")) {
+//				System.out.println("Player: " + e.getCenter()[0] + ", " + e.getCenter()[1]);
+//			}
 		}
+		
 		
 		// gestiona la entrada de teclas del usuario
 		manageKeys();
+
+		// prev room
+		prevRow = currRow;
+		prevCol = currCol;
 
 		// actualiza la logica del juego 2D
 		level.update(TARGET_TIME);
 		currRow = level.getCurrentRoom().getRow() + 1;
 		currCol = level.getCurrentRoom().getCol() + 1;
+		
+		// comprueba si se ha cambiado de habitacion
+		if (currRow != prevRow || currCol != prevCol) {
+			// se ha cambiado de habitacion
+			
+			// cambia de habitacion al player
+			System.out.println("3D: CAMBIO DE ROOM:" +
+								prevRow + ", " + prevCol +
+								" -> " + currRow + ", " + currCol);
+			changeEntityRoom("Player");
+		}
 		
 		// actualiza cada objeto en funcion de su movimiento
 		// (diferencia con la posicion anterior)
@@ -520,5 +538,61 @@ public class Game3D implements ApplicationListener {
 	        	}
         	}
         }
+	}
+	
+	/**
+	 * Cambia la habitacion de una entidad
+	 */
+	private void changeEntityRoom(String entityName) {
+		
+		// obtiene las entidades de la habitacion anterior
+		Room[][] rooms = level.getCurrentLevel().getRooms();
+		Room room = rooms[currRow - 1][currCol - 1];
+		
+		List<Entity> roomEntities = new LinkedList<Entity>();
+        roomEntities.addAll(room.getBackground());
+        roomEntities.addAll(room.getForeground());
+        roomEntities.addAll(room.getCharacters());
+		
+        for(Entity entity : roomEntities){
+        	String entName = entity.getTypeOfEntity();
+        	
+        	if (entName.contains(entityName)) {
+        		
+        		ModelInstance entityInstance = 
+        				entities.get(prevRow).get(prevCol).get(entity);
+        		
+//        		System.out.println("GETTING 3D MODEL (" + prevRow +  ", " + prevCol
+//        				+ ") Modelo3D: " + entityInstance);
+        		
+        		// elimina la entidad de la habitacion anterior
+        		// y la incluye en su nueva habitacion
+        		
+//        		System.out.println("TO BE ADDED: " + entName + " - " + entity);
+        		
+        		addEntityToRoom(entity, entityInstance, currRow, currCol);
+        		
+//        		System.out.println("TO BE DELETED: " + entName + " - " + entity);
+        		
+        		deleteEntityFromRoom(entity, prevRow, prevCol);
+        		
+//        		System.out.println("DELETED: " + entName + " - " + entity);
+        		
+        	}
+        }
+	}
+	
+	private void deleteEntityFromRoom(Entity entity, int row, int col) {
+//		System.out.println("DELETING ENTITY (" + row +  ", " + col + ")" 
+//				+ " -> Entity: " + entity);
+		
+		entities.get(row).get(col).remove(entity);
+	}
+	
+	private void addEntityToRoom(Entity entity, ModelInstance entityInstance, int row, int col) {
+//		System.out.println("ADDING ENTITY (" + row +  ", " + col + ")"
+//				+ " -> Entity: " + entity + ", Modelo3D: " + entityInstance);
+
+		entities.get(row).get(col).put(entity, entityInstance);
 	}
 }

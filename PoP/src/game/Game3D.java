@@ -339,6 +339,11 @@ public class Game3D implements ApplicationListener {
     			new Material(ColorAttribute.createDiffuse(Color.YELLOW)), Usage.Position | Usage.Normal);
         entityModels.put("rightFloor", rightFloorModel);
         
+        // loose floor
+ 		Model looseFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
+     			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+         entityModels.put("looseFloor", looseFloorModel);
+        
         // wall stack
         Model stackMain = modelBuilder.createBox(64f/SCALE,120f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position | Usage.Normal);
@@ -416,6 +421,17 @@ public class Game3D implements ApplicationListener {
 			        		
 			        		floorInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, floorInstance);
+			        	}
+			        	else if(entityName.startsWith("LooseFloor")){
+			        		
+			        		ModelInstance looseInstance = new ModelInstance(entityModels.get("looseFloor"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			        		
+			        		looseInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, looseInstance);
 			        	}
 			        	else if(entityName.contains("stack_main") && !entityName.contains("face")){
 			        		
@@ -515,7 +531,7 @@ public class Game3D implements ApplicationListener {
 			        		ModelInstance torchInstance = new ModelInstance(entityModels.get("torch"));
 			        		int sx = entity.getSquare()[0];
 			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float x = (float) (64 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
 			        		torchInstance.transform.translate(x,y,-DEPTH/3);

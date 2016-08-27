@@ -363,6 +363,11 @@ public class Game3D implements ApplicationListener {
     			new Material(ColorAttribute.createDiffuse(Color.CYAN)), Usage.Position | Usage.Normal);
         entityModels.put("player", player);
         
+        // enemy
+        Model enemy = modelBuilder.createCylinder(DEPTH/2,80f/SCALE,DEPTH/2,20,
+    			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+        entityModels.put("enemy", enemy);
+        
         // left floor
 		Model leftFloorModel = modelBuilder.createBox(32f/SCALE,6f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.YELLOW)), Usage.Position | Usage.Normal);
@@ -383,11 +388,16 @@ public class Game3D implements ApplicationListener {
       			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
           entityModels.put("opener", openerModel);
           
-       // closer
+        // closer
 		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
         entityModels.put("closer", closerModel);
         
+        // closer
+ 		Model spikeFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
+     			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
+         entityModels.put("spike", spikeFloorModel);
+    
         // wall stack
         Model stackMain = modelBuilder.createBox(64f/SCALE,120f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position | Usage.Normal);
@@ -412,6 +422,11 @@ public class Game3D implements ApplicationListener {
         Model normalDoor = modelBuilder.createBox(64f/(12*SCALE), 120f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("normalDoor", normalDoor);
+        
+        // final door
+        Model finalDoor = modelBuilder.createBox(2*64f/(SCALE), 120f/SCALE, DEPTH/8,
+    			new Material(ColorAttribute.createDiffuse(Color.GOLD)), Usage.Position | Usage.Normal);
+        entityModels.put("finalDoor", finalDoor);
         
         // torch
         Model torch = modelBuilder.createBox(64f/(6*SCALE), 40f/SCALE, DEPTH/8,
@@ -467,7 +482,11 @@ public class Game3D implements ApplicationListener {
 			        	else if(entityName.startsWith("LooseFloor")){
 			        		ModelInstance looseInstance = new ModelInstance(entityModels.get("looseFloor"));
 			        		x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		if(sx == 0){
+			        			y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			        		} else{
+			        			y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		}
 			        		if (sy == 0) {
 				        		y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
 			        		}
@@ -484,6 +503,12 @@ public class Game3D implements ApplicationListener {
 			        		x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		y = (Game.HEIGHT - (float)(6 - 126 -(1f/2) + sx * 126)) / SCALE;
 			        		entityInstance = closerInstance;
+			        	}
+			        	else if(entityName.startsWith("SpikeFloor")){
+			        		ModelInstance spikeInstance = new ModelInstance(entityModels.get("spike"));
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		entityInstance = spikeInstance;
 			        	}
 			        	else if(entityName.contains("stack_main") && !entityName.contains("face")){
 			        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
@@ -542,6 +567,13 @@ public class Game3D implements ApplicationListener {
 			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			        		entityInstance = normalDoorInstance;
 			        	}
+			        	else if(entityName.equals("Door_final")){
+			        		ModelInstance finalDoorInstance = new ModelInstance(entityModels.get("finalDoor"));
+			        		x = (float) (64 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = -DEPTH/3;
+			        		entityInstance = finalDoorInstance;
+			        	}
 			        	else if(entityName.equals("Torch")){
 			        		ModelInstance torchInstance = new ModelInstance(entityModels.get("torch"));
 			        		x = (float) (32 + sy * 64) / SCALE;
@@ -554,6 +586,12 @@ public class Game3D implements ApplicationListener {
 			        		x = (float) (entity.getCenter()[0] + 64) / SCALE;
 			        		y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
 			        		entityInstance = playerInstance;
+			        	}
+			        	else if (entityName.contains("Enemy")){
+			        		ModelInstance enemyInstance = new ModelInstance(entityModels.get("enemy"));
+			        		x = (float) (entity.getCenter()[0] + 64) / SCALE;
+			        		y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
+			        		entityInstance = enemyInstance;
 			        	}
 			        	
 			        	// asocia la nueva instancia 3D a su entidad

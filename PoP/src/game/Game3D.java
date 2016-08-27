@@ -350,7 +350,7 @@ public class Game3D implements ApplicationListener {
           entityModels.put("opener", openerModel);
           
        // closer
-		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
+		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
         entityModels.put("closer", closerModel);
         
@@ -463,7 +463,7 @@ public class Game3D implements ApplicationListener {
 			        		int sx = entity.getSquare()[0];
 			        		int sy = entity.getSquare()[1];
 			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 126 -(1f/2) + sx * 126)) / SCALE;
 			        		
 			        		closerInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, closerInstance);

@@ -41,6 +41,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.SpotLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
@@ -69,6 +70,7 @@ public class Game3D implements ApplicationListener {
 	private boolean left = true;
 	private boolean right = true;
 	private boolean shift = true;
+	private boolean space = true;
 	
 	// room variables
 	private int currRow = 1;
@@ -229,6 +231,18 @@ public class Game3D implements ApplicationListener {
 			keys.add(new Key(false, KeyEvent.VK_SHIFT));
 			shift = false;
 		}
+		
+		// space
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
+				|| !space) {
+			if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
+				keys.add(new Key(true, KeyEvent.VK_SPACE));
+				space = true;
+			}
+		} else if (space) {
+			keys.add(new Key(false, KeyEvent.VK_SPACE));
+			space = false;
+		}
 	}
 	
 	@Override
@@ -318,9 +332,25 @@ public class Game3D implements ApplicationListener {
         entityModels.put("stackBase", stackBase);
         
         // pillar
-        Model pillar = modelBuilder.createCylinder(DEPTH/5,120f/SCALE, DEPTH/5,20,
+        Model pillar = modelBuilder.createBox(64f/(3*SCALE), 120f/SCALE, DEPTH/5,
     			new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("pillar", pillar);
+        
+        // doorFrame
+        Model doorFrame = modelBuilder.createCylinder(DEPTH/5,120f/SCALE, DEPTH/5,20,
+    			new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), Usage.Position | Usage.Normal);
+        entityModels.put("doorFrame", doorFrame);
+        
+        // door
+        Model normalDoor = modelBuilder.createBox(64f/(12*SCALE), 120f/SCALE, DEPTH,
+    			new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), Usage.Position | Usage.Normal);
+        entityModels.put("normalDoor", normalDoor);
+        
+        // torch
+        Model torch = modelBuilder.createBox(64f/(6*SCALE), 40f/SCALE, DEPTH/8,
+    			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
+        entityModels.put("torch", torch);
+        
         
         // TODO: Definir modelos 3D para el resto de entidades
         // ...
@@ -428,6 +458,50 @@ public class Game3D implements ApplicationListener {
 			
 			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
 			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        	} 
+			        	else if(entityName.equals("DoorFrame_door_frame_right")){
+			        		
+			        		ModelInstance doorFrameInstance = new ModelInstance(entityModels.get("doorFrame"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			
+			        		doorFrameInstance.transform.translate(x,y,-DEPTH/2);
+			        		entities.get(i).get(j).put(entity, doorFrameInstance);
+			        	} 
+			        	else if(entityName.equals("DoorFrame_door_frame_left")){
+			        		
+//			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("doorFrame"));
+//			        		int sx = entity.getSquare()[0];
+//			        		int sy = entity.getSquare()[1];
+//			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
+//			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+//			
+//			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
+//			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        	} 
+			        	else if(entityName.equals("Door_normal")){
+			        		
+			        		ModelInstance normalDoorInstance = new ModelInstance(entityModels.get("normalDoor"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			
+			        		normalDoorInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, normalDoorInstance);
+			        	}
+			        	else if(entityName.equals("Torch")){
+			        		
+			        		ModelInstance torchInstance = new ModelInstance(entityModels.get("torch"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			
+			        		torchInstance.transform.translate(x,y,-DEPTH/3);
+			        		entities.get(i).get(j).put(entity, torchInstance);
 			        	}
 			        	else if (entityName.contains("Player")){
 			        		

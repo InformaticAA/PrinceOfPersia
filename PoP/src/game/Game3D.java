@@ -57,6 +57,9 @@ import states.MenuState;
  */
 public class Game3D implements ApplicationListener {
 	
+	// todavia en test (pero mola :D)
+	private final boolean FULL_LEVEL = false;
+	
 	private final int SCALE = 10;
 	private final long TARGET_TIME = 1000/60;
 	private final float DEPTH = 10f;
@@ -120,8 +123,24 @@ public class Game3D implements ApplicationListener {
 	public void render() {
 		update();
 		
-		Collection<ModelInstance> objects = entities.get(currRow).get(currCol).values();
+		Collection<ModelInstance> objects;
 		
+		if (FULL_LEVEL) {
+			
+			// Obtain all entities from all rooms so it can render them all at once
+			objects  = new LinkedList<ModelInstance>();
+			for (int i = 0; i < NUM_ROWS; i++) {
+				for (int j = 0; j < NUM_COLS; j++) {
+					if (entities.get(i).get(j) != null) {
+						objects.addAll(entities.get(i).get(j).values());
+					}
+				}
+			}
+		}
+		else {
+			objects = entities.get(currRow).get(currCol).values();
+		}
+
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
  
@@ -407,7 +426,6 @@ public class Game3D implements ApplicationListener {
 			        	
 			        	// Asocia cada suelo con su modelo 3D
 			        	if(entityName.contains("Floor") && entityName.contains("left")){
-			        		
 			        		if(!((FloorPanel) entity).isInvisible()){
 			        			// crea instancia y la coloca en su posicion
 				        		ModelInstance floorInstance = new ModelInstance(entityModels.get("leftFloor"));
@@ -423,7 +441,6 @@ public class Game3D implements ApplicationListener {
 			        		}
 			        	}
 			        	else if(entityName.contains("Floor") && entityName.contains("right")){
-			        		
 			        		if(!((FloorPanel) entity).isInvisible()){
 				        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
 				        		int sx = entity.getSquare()[0];
@@ -442,6 +459,12 @@ public class Game3D implements ApplicationListener {
 			        		int sy = entity.getSquare()[1];
 			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
 			        		
 			        		looseInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, looseInstance);
@@ -476,6 +499,12 @@ public class Game3D implements ApplicationListener {
 			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			        		
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 			        		stackMainInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, stackMainInstance);
 			        	}
@@ -487,6 +516,12 @@ public class Game3D implements ApplicationListener {
 			        		if (sy == 0) {
 				        		float x = (float) (64 + 16 + sy * 64) / SCALE;
 				        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+				        		
+				        		// when drawing complete level
+				        		if (FULL_LEVEL) {
+				        			x = x + (Game.WIDTH/SCALE * j);
+				        			y = y + (Game.HEIGHT/SCALE * i);
+				        		}
 				        		
 				        		stackMainInstance.transform.translate(x,y,0);
 				        		entities.get(i).get(j).put(entity, stackMainInstance);
@@ -503,6 +538,13 @@ public class Game3D implements ApplicationListener {
 			        		if (sx != 0) {
 			        			y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
 			        		}
+			        		
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 				    		stackBaseInstance.transform.translate(x,y,0);
 				    		entities.get(i).get(j).put(entity, stackBaseInstance);
 			        	}
@@ -514,6 +556,12 @@ public class Game3D implements ApplicationListener {
 			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 			        		pillarInstance.transform.translate(x,y,DEPTH/3);
 			        		entities.get(i).get(j).put(entity, pillarInstance);
 			        	}
@@ -525,6 +573,12 @@ public class Game3D implements ApplicationListener {
 			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
 			        		entities.get(i).get(j).put(entity, pillarInstance);
 			        	} 
@@ -536,6 +590,12 @@ public class Game3D implements ApplicationListener {
 			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 			        		doorFrameInstance.transform.translate(x,y,-DEPTH/2);
 			        		entities.get(i).get(j).put(entity, doorFrameInstance);
 			        	} 
@@ -558,6 +618,12 @@ public class Game3D implements ApplicationListener {
 			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 			        		normalDoorInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, normalDoorInstance);
 			        	}
@@ -569,6 +635,12 @@ public class Game3D implements ApplicationListener {
 			        		float x = (float) (32 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
+			        		
 			        		torchInstance.transform.translate(x,y,-DEPTH/3);
 			        		entities.get(i).get(j).put(entity, torchInstance);
 			        	}
@@ -581,6 +653,12 @@ public class Game3D implements ApplicationListener {
 			        		float y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
 			        		
 			//        		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
+			        		
+			        		// when drawing complete level
+			        		if (FULL_LEVEL) {
+			        			x = x + (Game.WIDTH/SCALE * j);
+			        			y = y + (Game.HEIGHT/SCALE * i);
+			        		}
 			        		
 			        		playerInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, playerInstance);

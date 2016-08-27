@@ -423,246 +423,133 @@ public class Game3D implements ApplicationListener {
 			        
 			        for(Entity entity : roomEntities){
 			        	String entityName = entity.getTypeOfEntity();
+			        	ModelInstance entityInstance = null;
+			        	int sx = entity.getSquare()[0];
+		        		int sy = entity.getSquare()[1];
+			        	float x = 0f;
+			        	float y = 0f;
+			        	float z = 0f;
 			        	
 			        	// Asocia cada suelo con su modelo 3D
 			        	if(entityName.contains("Floor") && entityName.contains("left")){
 			        		if(!((FloorPanel) entity).isInvisible()){
+
 			        			// crea instancia y la coloca en su posicion
 				        		ModelInstance floorInstance = new ModelInstance(entityModels.get("leftFloor"));
-				        		int sx = entity.getSquare()[0];
-				        		int sy = entity.getSquare()[1];
-				        		float x = (float) (64 + sy * 64) / SCALE;
-				        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-				        		
-				        		floorInstance.transform.translate(x,y,0);
-				        		
-				        		// asocia la nueva instancia 3D a su entidad
-				        		entities.get(i).get(j).put(entity, floorInstance);
+				        		x = (float) (64 + sy * 64) / SCALE;
+				        		y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+				        		entityInstance = floorInstance;
 			        		}
 			        	}
 			        	else if(entityName.contains("Floor") && entityName.contains("right")){
 			        		if(!((FloorPanel) entity).isInvisible()){
 				        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
-				        		int sx = entity.getSquare()[0];
-				        		int sy = entity.getSquare()[1];
-				        		float x = (float) (64 + 32 + sy * 64) / SCALE;
-				        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-				        		
-				        		floorInstance.transform.translate(x,y,0);
-				        		entities.get(i).get(j).put(entity, floorInstance);
+				        		x = (float) (64 + 32 + sy * 64) / SCALE;
+				        		y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+				        		entityInstance = floorInstance;
 			        		}
 			        	}
 			        	else if(entityName.startsWith("LooseFloor")){
-			        		
 			        		ModelInstance looseInstance = new ModelInstance(entityModels.get("looseFloor"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
-			        		
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		looseInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, looseInstance);
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		entityInstance = looseInstance;
 			        	} 
 			        	else if(entityName.startsWith("Opener")){
-			        		
 			        		ModelInstance openerInstance = new ModelInstance(entityModels.get("opener"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(5 - 126 + sx * 126)) / SCALE;
-			        		
-			        		openerInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, openerInstance);
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(5 - 126 + sx * 126)) / SCALE;
+			        		entityInstance = openerInstance;
 			        	} 
 			        	else if(entityName.startsWith("Closer")){
-			        		
 			        		ModelInstance closerInstance = new ModelInstance(entityModels.get("closer"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
-			        		
-			        		closerInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, closerInstance);
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		entityInstance = closerInstance;
 			        	}
 			        	else if(entityName.contains("stack_main") && !entityName.contains("face")){
-			        		
 			        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			        		
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		stackMainInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, stackMainInstance);
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		entityInstance = stackMainInstance;
 			        	}
 			        	else if(entityName.contains("face_stack_main")){
-			        		
 			        		ModelInstance stackMainInstance = new ModelInstance(entityModels.get("stackMain"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
 			        		if (sy == 0) {
-				        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-				        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-				        		
-				        		// when drawing complete level
-				        		if (FULL_LEVEL) {
-				        			x = x + (Game.WIDTH/SCALE * j);
-				        			y = y + (Game.HEIGHT/SCALE * i);
-				        		}
-				        		
-				        		stackMainInstance.transform.translate(x,y,0);
-				        		entities.get(i).get(j).put(entity, stackMainInstance);
+				        		x = (float) (64 + 16 + sy * 64) / SCALE;
+				        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+				        		entityInstance = stackMainInstance;
 			        		}
 			        	}
 			        	else if(entityName.contains("Base")){
-			        		
 			        		ModelInstance stackBaseInstance = new ModelInstance(entityModels.get("stackBase"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-			
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
 			        		if (sx != 0) {
 			        			y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
 			        		}
-			        		
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-				    		stackBaseInstance.transform.translate(x,y,0);
-				    		entities.get(i).get(j).put(entity, stackBaseInstance);
+				    		entityInstance = stackBaseInstance;
 			        	}
 			        	else if(entityName.equals("Pillar_pillar_left")){
-			        		
 			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		pillarInstance.transform.translate(x,y,DEPTH/3);
-			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = DEPTH/3;
+			        		entityInstance = pillarInstance;
 			        	}
 			        	else if(entityName.equals("Pillar_pillar_right_main")){
-			        		
 			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("pillar"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
-			        		entities.get(i).get(j).put(entity, pillarInstance);
+			        		x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = -DEPTH/3;
+			        		entityInstance = pillarInstance;
 			        	} 
 			        	else if(entityName.equals("DoorFrame_door_frame_right")){
-			        		
 			        		ModelInstance doorFrameInstance = new ModelInstance(entityModels.get("doorFrame"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		doorFrameInstance.transform.translate(x,y,-DEPTH/2);
-			        		entities.get(i).get(j).put(entity, doorFrameInstance);
+			        		x = (float) (128 - 32 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = -DEPTH/2;
+			        		entityInstance = doorFrameInstance;
 			        	} 
 			        	else if(entityName.equals("DoorFrame_door_frame_left")){
-			        		
 //			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("doorFrame"));
-//			        		int sx = entity.getSquare()[0];
-//			        		int sy = entity.getSquare()[1];
-//			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
-//			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-//			
-//			        		pillarInstance.transform.translate(x,y,-DEPTH/3);
-//			        		entities.get(i).get(j).put(entity, pillarInstance);
+//			        		x = (float) (128 - 32 + sy * 64) / SCALE;
+//			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+//			        		z = -DEPTH/3;
+//			        		entityInstance = pillarInstance;
 			        	} 
 			        	else if(entityName.equals("Door_normal")){
-			        		
 			        		ModelInstance normalDoorInstance = new ModelInstance(entityModels.get("normalDoor"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (128 - 32 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		normalDoorInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, normalDoorInstance);
+			        		x = (float) (128 - 32 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		entityInstance = normalDoorInstance;
 			        	}
 			        	else if(entityName.equals("Torch")){
-			        		
 			        		ModelInstance torchInstance = new ModelInstance(entityModels.get("torch"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (32 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-			
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		torchInstance.transform.translate(x,y,-DEPTH/3);
-			        		entities.get(i).get(j).put(entity, torchInstance);
+			        		x = (float) (32 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = -DEPTH/3;
+			        		entityInstance = torchInstance;
 			        	}
 			        	else if (entityName.contains("Player")){
-			        		
 			        		ModelInstance playerInstance = new ModelInstance(entityModels.get("player"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (entity.getCenter()[0] + 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
-			        		
-			//        		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
-			        		
-			        		// when drawing complete level
-			        		if (FULL_LEVEL) {
-			        			x = x + (Game.WIDTH/SCALE * j);
-			        			y = y + (Game.HEIGHT/SCALE * i);
-			        		}
-			        		
-			        		playerInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, playerInstance);
+			        		x = (float) (entity.getCenter()[0] + 64) / SCALE;
+			        		y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
+			        		entityInstance = playerInstance;
 			        	}
+			        	
+			        	// asocia la nueva instancia 3D a su entidad
+		        		if (entityInstance != null) {
+
+		        			// when drawing complete level
+		        			if (FULL_LEVEL) {
+		        				x = x + (Game.WIDTH/SCALE * j);
+		        				y = y + (Game.HEIGHT/SCALE * i);
+		        			}
+		        			
+		        			entityInstance.transform.translate(x,y,z);
+		        			entities.get(i).get(j).put(entity, entityInstance);
+		        		}
 			        }
 	        	}
         	}
@@ -691,37 +578,19 @@ public class Game3D implements ApplicationListener {
         		ModelInstance entityInstance = 
         				entities.get(prevRow).get(prevCol).get(entity);
         		
-//        		System.out.println("GETTING 3D MODEL (" + prevRow +  ", " + prevCol
-//        				+ ") Modelo3D: " + entityInstance);
-        		
-        		// elimina la entidad de la habitacion anterior
-        		// y la incluye en su nueva habitacion
-        		
-//        		System.out.println("TO BE ADDED: " + entName + " - " + entity);
-        		
+        		// incluye la entidad en la nueva habitacion
+        		// y la elimina de la anterior habitacion
         		addEntityToRoom(entity, entityInstance, currRow, currCol);
-        		
-//        		System.out.println("TO BE DELETED: " + entName + " - " + entity);
-        		
         		deleteEntityFromRoom(entity, prevRow, prevCol);
-        		
-//        		System.out.println("DELETED: " + entName + " - " + entity);
-        		
         	}
         }
 	}
 	
 	private void deleteEntityFromRoom(Entity entity, int row, int col) {
-//		System.out.println("DELETING ENTITY (" + row +  ", " + col + ")" 
-//				+ " -> Entity: " + entity);
-		
 		entities.get(row).get(col).remove(entity);
 	}
 	
 	private void addEntityToRoom(Entity entity, ModelInstance entityInstance, int row, int col) {
-//		System.out.println("ADDING ENTITY (" + row +  ", " + col + ")"
-//				+ " -> Entity: " + entity + ", Modelo3D: " + entityInstance);
-
 		entities.get(row).get(col).put(entity, entityInstance);
 	}
 }

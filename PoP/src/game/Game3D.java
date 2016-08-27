@@ -383,9 +383,8 @@ public class Game3D implements ApplicationListener {
         for (int i = 1; i <= NUM_ROWS - 1; i++) {
         	for (int j = 1; j <= NUM_COLS - 1; j++) {
         		Room room = rooms[i-1][j-1];
-        		
 //        		System.out.println("Room: " + room + " -> " + i + ", " + j);
-				
+
         		if (room != null) {
         			
 			        List<Entity> roomEntities = new LinkedList<Entity>();
@@ -416,7 +415,7 @@ public class Game3D implements ApplicationListener {
 			        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
 			        		int sx = entity.getSquare()[0];
 			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (96 + sy * 64) / SCALE;
+			        		float x = (float) (64 + 32 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
 			        		
 			        		floorInstance.transform.translate(x,y,0);
@@ -427,8 +426,8 @@ public class Game3D implements ApplicationListener {
 			        		ModelInstance looseInstance = new ModelInstance(entityModels.get("looseFloor"));
 			        		int sx = entity.getSquare()[0];
 			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			        		float x = (float) (64 + 32 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
 			        		
 			        		looseInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, looseInstance);

@@ -45,5 +45,9 @@ public class FloorPanel extends Entity{
 	public Entity copy() {
 		return null;
 	}
+	
+	public boolean isInvisible(){
+		return this.invisible;
+	}
 
 }

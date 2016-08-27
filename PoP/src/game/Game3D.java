@@ -41,12 +41,12 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.environment.SpotLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
 import data.Room;
 import entities.Entity;
+import entities.FloorPanel;
 import input.Key;
 import states.LevelState;
 import states.MenuState;
@@ -82,8 +82,6 @@ public class Game3D implements ApplicationListener {
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
 	public ModelBatch modelBatch;
-	public Model model;
-	public ModelInstance instance;
 	public Texture texture;
 	public static MenuState menu;
 	public static LevelState level;
@@ -266,7 +264,9 @@ public class Game3D implements ApplicationListener {
 	@Override
 	public void dispose() {
 		modelBatch.dispose();
-		model.dispose();
+		for(String m : entityModels.keySet()){
+			entityModels.get(m).dispose();
+		}
 		menu.set3d(false);
 	}
 
@@ -343,6 +343,16 @@ public class Game3D implements ApplicationListener {
  		Model looseFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
      			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
          entityModels.put("looseFloor", looseFloorModel);
+         
+        // opener
+  		Model openerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
+      			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
+          entityModels.put("opener", openerModel);
+          
+       // closer
+		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
+    			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
+        entityModels.put("closer", closerModel);
         
         // wall stack
         Model stackMain = modelBuilder.createBox(64f/SCALE,120f/SCALE, DEPTH,
@@ -398,39 +408,65 @@ public class Game3D implements ApplicationListener {
 			        	// Asocia cada suelo con su modelo 3D
 			        	if(entityName.contains("Floor") && entityName.contains("left")){
 			        		
-			        		// crea instancia y la coloca en su posicion
-			        		ModelInstance floorInstance = new ModelInstance(entityModels.get("leftFloor"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-			        		
-			        		floorInstance.transform.translate(x,y,0);
-			        		
-			        		// asocia la nueva instancia 3D a su entidad
-			        		entities.get(i).get(j).put(entity, floorInstance);
+			        		if(!((FloorPanel) entity).isInvisible()){
+			        			// crea instancia y la coloca en su posicion
+				        		ModelInstance floorInstance = new ModelInstance(entityModels.get("leftFloor"));
+				        		int sx = entity.getSquare()[0];
+				        		int sy = entity.getSquare()[1];
+				        		float x = (float) (64 + sy * 64) / SCALE;
+				        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+				        		
+				        		floorInstance.transform.translate(x,y,0);
+				        		
+				        		// asocia la nueva instancia 3D a su entidad
+				        		entities.get(i).get(j).put(entity, floorInstance);
+			        		}
 			        	}
 			        	else if(entityName.contains("Floor") && entityName.contains("right")){
 			        		
-			        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
-			        		int sx = entity.getSquare()[0];
-			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 32 + sy * 64) / SCALE;
-			        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
-			        		
-			        		floorInstance.transform.translate(x,y,0);
-			        		entities.get(i).get(j).put(entity, floorInstance);
+			        		if(!((FloorPanel) entity).isInvisible()){
+				        		ModelInstance floorInstance = new ModelInstance(entityModels.get("rightFloor"));
+				        		int sx = entity.getSquare()[0];
+				        		int sy = entity.getSquare()[1];
+				        		float x = (float) (64 + 32 + sy * 64) / SCALE;
+				        		float y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+				        		
+				        		floorInstance.transform.translate(x,y,0);
+				        		entities.get(i).get(j).put(entity, floorInstance);
+			        		}
 			        	}
 			        	else if(entityName.startsWith("LooseFloor")){
 			        		
 			        		ModelInstance looseInstance = new ModelInstance(entityModels.get("looseFloor"));
 			        		int sx = entity.getSquare()[0];
 			        		int sy = entity.getSquare()[1];
-			        		float x = (float) (64 + 32 + sy * 64) / SCALE;
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
 			        		
 			        		looseInstance.transform.translate(x,y,0);
 			        		entities.get(i).get(j).put(entity, looseInstance);
+			        	} 
+			        	else if(entityName.startsWith("Opener")){
+			        		
+			        		ModelInstance openerInstance = new ModelInstance(entityModels.get("opener"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(5 - 126 + sx * 126)) / SCALE;
+			        		
+			        		openerInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, openerInstance);
+			        	} 
+			        	else if(entityName.startsWith("Closer")){
+			        		
+			        		ModelInstance closerInstance = new ModelInstance(entityModels.get("closer"));
+			        		int sx = entity.getSquare()[0];
+			        		int sy = entity.getSquare()[1];
+			        		float x = (float) (64 + 16 + sy * 64) / SCALE;
+			        		float y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		
+			        		closerInstance.transform.translate(x,y,0);
+			        		entities.get(i).get(j).put(entity, closerInstance);
 			        	}
 			        	else if(entityName.contains("stack_main") && !entityName.contains("face")){
 			        		

@@ -398,8 +398,6 @@ public class Game3D implements ApplicationListener {
         		float x = (float) (64 + 16 + sy * 64) / SCALE;
         		float y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 
-        		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
-	    		
         		pillarInstance.transform.translate(x,y,DEPTH/3);
 	    		entities.put(entity, pillarInstance);
         	}
@@ -408,11 +406,13 @@ public class Game3D implements ApplicationListener {
         		ModelInstance playerInstance = new ModelInstance(entityModels.get("player"));
         		int sx = entity.getSquare()[0];
         		int sy = entity.getSquare()[1];
-        		float x = (float) entity.getCenter()[0]/ SCALE;
-        		float y = (Game.HEIGHT - (float) entity.getCenter()[0]) / SCALE;
+        		float x = (float) (entity.getCenter()[0] + 64) / SCALE;
+        		float y = (Game.HEIGHT - (float) entity.getCenter()[1]) / SCALE;
         		
         		System.out.println(entityName + " -> " + sx + ", " + sy + " -> " + x + ", " + y);
-	    		
+	    		System.out.println(entity.getCenter()[0]);
+	    		System.out.println(entity.getCenter()[1]);
+        		
         		playerInstance.transform.translate(x,y,0);
 	    		entities.put(entity, playerInstance);
         	}

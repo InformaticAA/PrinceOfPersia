@@ -57,8 +57,8 @@ import states.MenuState;
  */
 public class Game3D implements ApplicationListener {
 	
-	// todavia en test (pero mola :D)
-	private final boolean FULL_LEVEL = false;
+	// TODO: todavia en test (pero mola :D)
+	private final boolean FULL_LEVEL = true;
 	
 	private final int SCALE = 10;
 	private final long TARGET_TIME = 1000/60;
@@ -180,10 +180,15 @@ public class Game3D implements ApplicationListener {
 			// se ha cambiado de habitacion
 			
 			// cambia de habitacion al player
-			System.out.println("3D: CAMBIO DE ROOM:" +
-								prevRow + ", " + prevCol +
-								" -> " + currRow + ", " + currCol);
+//			System.out.println("3D: CAMBIO DE ROOM:" +
+//								prevRow + ", " + prevCol +
+//								" -> " + currRow + ", " + currCol);
+
 			changeEntityRoom("Player");
+			
+			// TODO: cambiar habitacion de loosFloor solo cuando
+			// se necesite
+//			changeEntityRoom("looseFloor");
 		}
 		
 		// actualiza cada objeto en funcion de su movimiento
@@ -316,10 +321,20 @@ public class Game3D implements ApplicationListener {
 	
 	public void initCam(){
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
-		cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
+		
+		if (FULL_LEVEL) {
+			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+							  (Game.HEIGHT * (currRow - 1) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
+			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+				    	(Game.HEIGHT * (currRow - 1) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+		}
+		else {
+			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
+			cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
+		}
+
 		cam.near = 1f;
-		cam.far = 300f;
+		cam.far = 500f;
 		cam.update();
 		camController = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(camController);
@@ -453,6 +468,9 @@ public class Game3D implements ApplicationListener {
 			        		ModelInstance looseInstance = new ModelInstance(entityModels.get("looseFloor"));
 			        		x = (float) (64 + 16 + sy * 64) / SCALE;
 			        		y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		if (sy == 0) {
+				        		y = (Game.HEIGHT - (float)(6 + sx * 126)) / SCALE;
+			        		}
 			        		entityInstance = looseInstance;
 			        	} 
 			        	else if(entityName.startsWith("Opener")){
@@ -543,8 +561,8 @@ public class Game3D implements ApplicationListener {
 
 		        			// when drawing complete level
 		        			if (FULL_LEVEL) {
-		        				x = x + (Game.WIDTH/SCALE * j);
-		        				y = y + (Game.HEIGHT/SCALE * i);
+		        				x = x + (Game.WIDTH/SCALE * (j - 1) );
+		        				y = y + (Game.HEIGHT / SCALE) - (Game.HEIGHT / SCALE * (i - 1) );
 		        			}
 		        			
 		        			entityInstance.transform.translate(x,y,z);

@@ -369,7 +369,7 @@ public class Game3D implements ApplicationListener {
           entityModels.put("opener", openerModel);
           
        // closer
-		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
+		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
     			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
         entityModels.put("closer", closerModel);
         
@@ -464,7 +464,7 @@ public class Game3D implements ApplicationListener {
 			        	else if(entityName.startsWith("Closer")){
 			        		ModelInstance closerInstance = new ModelInstance(entityModels.get("closer"));
 			        		x = (float) (64 + 16 + sy * 64) / SCALE;
-			        		y = (Game.HEIGHT - (float)(6 - 126 + sx * 126)) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 126 -(1f/2) + sx * 126)) / SCALE;
 			        		entityInstance = closerInstance;
 			        	}
 			        	else if(entityName.contains("stack_main") && !entityName.contains("face")){

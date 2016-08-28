@@ -55,6 +55,7 @@ public class LevelState extends State{
 	
 	private List<LooseFloor> falling_floor;
 	private List<Door> doors;
+	private List<Entity> entitiesToDelete3D;
 	
 	private Music win_song;
 	private Music death_song;
@@ -92,6 +93,7 @@ public class LevelState extends State{
 	public void init() {
 		
 		falling_floor = new LinkedList<LooseFloor>();
+		entitiesToDelete3D = new LinkedList<Entity>();
 		interfaz = new Interface(640, 400, 0, 0, loader);
 		over = false;
 		credits = false;
@@ -2011,6 +2013,7 @@ public class LevelState extends State{
 
 					loose.setBroken();
 					toBeDeleted.add(loose);
+					this.entitiesToDelete3D.add(loose);
 					Room looseRoom = currentLevel.getRoom(loose.getRoom1(), loose.getRoom2());
 					looseRoom.deleteEntityBackground(loose);
 					List<Entity> newEntities = new LinkedList<Entity>();
@@ -2064,6 +2067,7 @@ public class LevelState extends State{
 									Room newRoom = currentLevel.getRoom(loose.getRoom1() + 1, loose.getRoom2());
 									Square underSquare = newRoom.getSquare(0, loose.getCol());
 									Entity looseUnder = newRoom.returnNamedEntityBackground("LooseFloor", underSquare);
+									this.entitiesToDelete3D.add(looseUnder);
 									newRoom.deleteEntityBackground(looseUnder, underSquare);
 									looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
 									newRoom.deleteEntityBackground(looseUnder, underSquare);
@@ -2086,6 +2090,7 @@ public class LevelState extends State{
 									Room newRoom = currentLevel.getRoom(roomToOperate.getRow() + 2, roomToOperate.getCol() + 1);
 									Square underSquare = newRoom.getSquare(0, loose.getCol());
 									Entity looseUnder = newRoom.returnNamedEntityBackground("LooseFloor", underSquare);
+									this.entitiesToDelete3D.add(looseUnder);
 									newRoom.deleteEntityBackground(looseUnder, underSquare);
 									looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
 									newRoom.deleteEntityBackground(looseUnder, underSquare);
@@ -2122,6 +2127,7 @@ public class LevelState extends State{
 									Room newRoom = currentLevel.getRoom(roomToOperate.getRow() + 2, roomToOperate.getCol() + 1);
 									Square underSquare = newRoom.getSquare(0, loose.getCol());
 									Entity looseUnder = newRoom.returnNamedEntityBackground("LooseFloor", underSquare);
+									this.entitiesToDelete3D.add(looseUnder);
 									newRoom.deleteEntityBackground(looseUnder, underSquare);
 									looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
 									newRoom.deleteEntityBackground(looseUnder, underSquare);
@@ -2215,6 +2221,7 @@ public class LevelState extends State{
 								Room newRoom = currentLevel.getRoom(roomToOperate.getRow() + 2, roomToOperate.getCol() + 1);
 								Square underSquare = newRoom.getSquare(0, loose.getCol());
 								Entity looseUnder = newRoom.returnNamedEntityBackground("Loose", underSquare);
+								this.entitiesToDelete3D.add(looseUnder);
 								newRoom.deleteEntityBackground(looseUnder, underSquare);
 								looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
 								newRoom.deleteEntityBackground(looseUnder, underSquare);
@@ -2280,6 +2287,7 @@ public class LevelState extends State{
 								Room newRoom = currentLevel.getRoom(roomToOperate.getRow() + 2, roomToOperate.getCol() + 1);
 								Square underSquare = newRoom.getSquare(0, loose.getCol());
 								Entity looseUnder = newRoom.returnNamedEntityBackground("Loose", underSquare);
+								this.entitiesToDelete3D.add(looseUnder);
 								newRoom.deleteEntityBackground(looseUnder, underSquare);
 								looseUnder = newRoom.returnNamedEntityBackground("FloorPanel_normal_left", underSquare);
 								newRoom.deleteEntityBackground(looseUnder, underSquare);
@@ -2695,6 +2703,7 @@ public class LevelState extends State{
 					if ( name.startsWith("SwordFloor")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(bgE, currentSquare);
 					}
 				}
@@ -2706,6 +2715,7 @@ public class LevelState extends State{
 					if ( name.startsWith("SwordFloor")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(bgE, currentSquareLeft);
 					}
 				}
@@ -2719,6 +2729,7 @@ public class LevelState extends State{
 					if ( name.startsWith("SwordFloor")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(sword, currentSquare);
 					}
 				}
@@ -2730,6 +2741,7 @@ public class LevelState extends State{
 					if ( name.startsWith("SwordFloor")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(sword, currentSquareRight);
 					}
 				}
@@ -2867,6 +2879,7 @@ public class LevelState extends State{
 					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(bgE, currentSquare);
 					}
 				}
@@ -2878,6 +2891,7 @@ public class LevelState extends State{
 					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(bgE, currentSquareLeft);
 					}
 				}
@@ -2891,6 +2905,7 @@ public class LevelState extends State{
 					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(potion, currentSquare);
 					}
 				}
@@ -2902,6 +2917,7 @@ public class LevelState extends State{
 					if ( name.startsWith("Potion_")) {
 						
 						// player is close to the potion
+						this.entitiesToDelete3D.add(bgE);
 						currentRoom.deleteEntityForeground(potion, currentSquareRight);
 					}
 				}
@@ -2960,5 +2976,9 @@ public class LevelState extends State{
 	
 	public List<Door> getDoors(){
 		return this.doors;
+	}
+	
+	public List<Entity> getEntitiesToBeDeleted(){
+		return this.entitiesToDelete3D;
 	}
 }

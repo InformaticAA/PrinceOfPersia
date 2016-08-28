@@ -103,6 +103,7 @@ public class Game3D implements ApplicationListener {
 	private Player player;
 	private List<LooseFloor> falling_floor;
 	private List<Door> doors;
+	private List<Entity> entitiesToBeDeleted;
 	
 	
 	public Game3D(MenuState gameMenu, LevelState levelState){
@@ -236,6 +237,8 @@ public class Game3D implements ApplicationListener {
 				}
 			}
 		}
+		
+		checkEntitiesToBeDeleted();
 		
 		// updates camera's position
 		updateCamera();
@@ -458,6 +461,7 @@ public class Game3D implements ApplicationListener {
 		this.player = level.getPlayer();
 		this.doors = level.getDoors();
 		this.falling_floor = level.getFalling_floor();
+		this.entitiesToBeDeleted = level.getEntitiesToBeDeleted();
 	}
 	
 	public void initEnvironment(){
@@ -886,6 +890,23 @@ public class Game3D implements ApplicationListener {
 				changeEntityRoom(loose,loose.getRoom1(),loose.getRoom2(),loose.getRoom1()-1,loose.getRoom2());
 			}
 		}
+	}
+	
+	private void checkEntitiesToBeDeleted(){
+		for(Entity e : this.entitiesToBeDeleted){
+			for (int i = 0; i < NUM_ROWS; i++) {
+				for (int j = 0; j < NUM_COLS; j++) {
+					if (entities.get(i).get(j).get(e) != null) {
+						entities.get(i).get(j).remove(e);
+					}
+					if (entitiesFullLevel.get(i).get(j).get(e) != null) {
+						entitiesFullLevel.get(i).get(j).remove(e);
+					}
+				}
+			}
+		}
+		
+		entitiesToBeDeleted.clear();
 	}
 	
 	/**

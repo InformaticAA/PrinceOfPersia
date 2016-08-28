@@ -2949,4 +2949,16 @@ public class LevelState extends State{
 	public Level getCurrentLevel(){
 		return currentLevel;
 	}
+	
+	public Player getPlayer(){
+		return this.player;
+	}
+	
+	public List<LooseFloor> getFalling_floor(){
+		return this.falling_floor;
+	}
+	
+	public List<Door> getDoors(){
+		return this.doors;
+	}
 }

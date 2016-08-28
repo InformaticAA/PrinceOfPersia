@@ -46,8 +46,11 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 
 import data.Room;
+import entities.Door;
 import entities.Entity;
 import entities.FloorPanel;
+import entities.LooseFloor;
+import entities.Player;
 import input.Key;
 import states.LevelState;
 import states.MenuState;
@@ -96,6 +99,10 @@ public class Game3D implements ApplicationListener {
 	public List<List<Hashtable<Entity,ModelInstance>>> entities;
 	public List<List<Hashtable<Entity,ModelInstance>>> entitiesFullLevel;
 	public Hashtable<String,Model> entityModels;
+	
+	private Player player;
+	private List<LooseFloor> falling_floor;
+	private List<Door> doors;
 	
 	
 	public Game3D(MenuState gameMenu, LevelState levelState){
@@ -190,7 +197,7 @@ public class Game3D implements ApplicationListener {
 //								prevRow + ", " + prevCol +
 //								" -> " + currRow + ", " + currCol);
 
-			changeEntityRoom("Player");
+			changeEntityRoom(player);
 			
 			// TODO: cambiar habitacion de loosFloor solo cuando
 			// se necesite
@@ -443,6 +450,9 @@ public class Game3D implements ApplicationListener {
 	public void initLevel(){
 		level.setKeyList(keys);
 		level.init();
+		this.player = level.getPlayer();
+		this.doors = level.getDoors();
+		this.falling_floor = level.getFalling_floor();
 	}
 	
 	public void initEnvironment(){
@@ -774,7 +784,7 @@ public class Game3D implements ApplicationListener {
 	/**
 	 * Cambia la habitacion de una entidad
 	 */
-	private void changeEntityRoom(String entityName) {
+	private void changeEntityRoom(Entity entityToChange) {
 		
 		// obtiene las entidades de la habitacion anterior
 		Room[][] rooms = level.getCurrentLevel().getRooms();
@@ -786,9 +796,8 @@ public class Game3D implements ApplicationListener {
         roomEntities.addAll(room.getCharacters());
 		
         for(Entity entity : roomEntities){
-        	String entName = entity.getTypeOfEntity();
         	
-        	if (entName.contains(entityName)) {
+        	if (entity.equals(entityToChange)) {
         		
         		ModelInstance entityInstance = 
         				entities.get(prevRow).get(prevCol).get(entity);

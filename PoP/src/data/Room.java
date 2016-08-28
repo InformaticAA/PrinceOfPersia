@@ -238,6 +238,7 @@ public class Room {
 		
 		for(Entity bgE : bEntities){
 			if(bgE.getTypeOfEntity().equals("Door_normal") || bgE.getTypeOfEntity().equals("Door_final")){
+				((Door)bgE).setRoom(this.row, this.col);
 				doors.add((Door) bgE);
 			}
 		}

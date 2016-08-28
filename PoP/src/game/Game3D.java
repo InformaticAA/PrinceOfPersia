@@ -201,6 +201,7 @@ public class Game3D implements ApplicationListener {
 		
 		checkLooses();
 		checkPlayer();
+		checkDoors();
 		
 		// actualiza cada objeto en funcion de su movimiento
 		// (diferencia con la posicion anterior)
@@ -907,6 +908,18 @@ public class Game3D implements ApplicationListener {
 		}
 		
 		entitiesToBeDeleted.clear();
+	}
+	
+	private void checkDoors(){
+		for(Door d : this.doors){
+			if(d.getTypeOfEntity().contains("normal")){
+				if(d.getCurrentAnimation().isLastFrame()){
+					switch (d.getCurrentAnimation().getId()){
+					
+					}
+				}
+			}
+		}
 	}
 	
 	/**

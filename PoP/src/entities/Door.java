@@ -13,6 +13,8 @@ public class Door extends Entity{
 	private Sound closing_fast;
 	private Sound closed;
 	private long remaining_time;
+	private int roomRow;
+	private int roomCol;
 	
 	public final int MAX_TIME = 10 * 1000;
 	
@@ -192,5 +194,10 @@ public class Door extends Entity{
 	public boolean isOpenedFinal(){
 		System.out.println(this.getCurrentAnimation().getId());
 		return this.getCurrentAnimation().getId().equals("final_door_opened");
+	}
+	
+	public void setRoom(int roomRow, int roomCol){
+		this.roomRow = roomRow;
+		this.roomCol = roomCol;
 	}
 }

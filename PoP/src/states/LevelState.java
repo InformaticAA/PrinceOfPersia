@@ -215,7 +215,7 @@ public class LevelState extends State{
 		updateFallingFloor(elapsedTime);
 		updateDoors(elapsedTime);
 		checkPlayerSquare();
-		checkPlayerFinnish();
+		checkPlayerFinish();
 	}
 
 	@Override
@@ -2926,7 +2926,7 @@ public class LevelState extends State{
 		return potion;
 	}
 	
-	public void checkPlayerFinnish(){
+	public void checkPlayerFinish(){
 		
 		/* Obtains the square where the center point of the player is placed */
 		int[] playerCenter = player.getCenter();

@@ -566,6 +566,16 @@ public class Game3D implements ApplicationListener {
     			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
         entityModels.put("torch", torch);
         
+        // potion
+        Model potion = modelBuilder.createCone(64f/(2*SCALE), 40f/SCALE, DEPTH/8, 20,
+    			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+        entityModels.put("potion", potion);
+        
+        // sword
+        Model sword = modelBuilder.createBox(64f/(6*SCALE), 40f/SCALE, DEPTH/8,
+    			new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), Usage.Position | Usage.Normal);
+        entityModels.put("sword", sword);
+        
         
         // TODO: Definir modelos 3D para el resto de entidades
         // ...
@@ -713,6 +723,20 @@ public class Game3D implements ApplicationListener {
 			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			        		z = -DEPTH/3;
 			        		entityInstance = torchInstance;
+			        	}
+			        	else if(entityName.startsWith("Potion_")){
+			        		ModelInstance potionInstance = new ModelInstance(entityModels.get("potion"));
+			        		x = (float) (64 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(-186f/SCALE + sx * 126)) / SCALE;
+			        		z = 0;
+			        		entityInstance = potionInstance;
+			        	}
+			        	else if(entityName.equals("SwordFloor")){
+			        		ModelInstance swordFloorInstance = new ModelInstance(entityModels.get("sword"));
+			        		x = (float) (32 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = 0;
+			        		entityInstance = swordFloorInstance;
 			        	}
 			        	else if (entityName.contains("Player")){
 			        		ModelInstance playerInstance = new ModelInstance(entityModels.get("player"));

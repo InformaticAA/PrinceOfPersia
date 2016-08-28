@@ -58,9 +58,10 @@ import states.MenuState;
 public class Game3D implements ApplicationListener {
 	
 	// TODO: todavia en test (pero mola :D)
-	private final boolean FULL_LEVEL = false;
+	private final boolean FULL_LEVEL = true;
 	
 	private final int SCALE = 10;
+	private final int UI_HEIGHT = 16; 		// 16 = sin espacios entre habitaciones (se resta al offset)
 	private final long TARGET_TIME = 1000/60;
 	private final float DEPTH = 10f;
 	
@@ -599,8 +600,8 @@ public class Game3D implements ApplicationListener {
 
 		        			// when drawing complete level
 		        			if (FULL_LEVEL) {
-		        				x = x + (Game.WIDTH/SCALE * (j - 1) );
-		        				y = y + (Game.HEIGHT / SCALE) - (Game.HEIGHT / SCALE * (i - 1) );
+		        				x = x + (Game.WIDTH / SCALE) * (j - 1);
+		        				y = y + (Game.HEIGHT / SCALE) - ( ((Game.HEIGHT - UI_HEIGHT) / SCALE) * (i - 1) );
 		        			}
 		        			
 		        			entityInstance.transform.translate(x,y,z);
@@ -638,8 +639,43 @@ public class Game3D implements ApplicationListener {
         		// y la elimina de la anterior habitacion
         		addEntityToRoom(entity, entityInstance, currRow, currCol);
         		deleteEntityFromRoom(entity, prevRow, prevCol);
+
+        		if (FULL_LEVEL) {
+        			moveEntityToNextRoom(entityInstance);
+        		}
         	}
         }
+        
+	}
+	
+	private void moveEntityToNextRoom(ModelInstance entityInstance) {
+		float x = 0f;
+		float y = 0f;
+		
+		// comprueba hacia que habitacion se ha movido la entidad
+		if (currRow < prevRow) {
+			
+			// arriba
+			y = y + ((Game.HEIGHT - UI_HEIGHT) / SCALE);
+		}
+		else if (currRow > prevRow) {
+			
+			// abajo
+			y = y - ((Game.HEIGHT - UI_HEIGHT) / SCALE);
+		}
+		else if (currCol < prevCol) {
+			
+			// izquierda
+			x = x - (Game.WIDTH / SCALE);
+		}
+		else if (currCol > prevCol) {
+	
+			// derecha
+			x = x + (Game.WIDTH / SCALE);
+		}
+		
+		// aplica el offset calculado a la entidad
+		entityInstance.transform.translate(x,y,0f);
 	}
 	
 	private void deleteEntityFromRoom(Entity entity, int row, int col) {

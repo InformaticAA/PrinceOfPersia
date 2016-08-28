@@ -165,14 +165,24 @@ public class Game3D implements ApplicationListener {
 		
 		// asigna una ultima posicion a cada objeto
 		Map<Entity, int[]> lastPos = new HashMap<>();
-		for (Entity e : entities.get(currRow).get(currCol).keySet()) {
-			lastPos.put(e, e.getCenter());
+		for (int i = 0; i < NUM_ROWS; i++) {
+			for (int j = 0; j < NUM_COLS; j++) {
+				for (Entity e : entities.get(i).get(j).keySet()) {
+					lastPos.put(e, e.getCenter());
+				}
+			}
 		}
+		
+		
 		
 		// asigna una ultima posicion a cada objeto
 		Map<Entity, int[]> lastPosFullLevel = new HashMap<>();
-		for (Entity e : entitiesFullLevel.get(currRow).get(currCol).keySet()) {
-			lastPosFullLevel.put(e, e.getCenter());
+		for (int i = 0; i < NUM_ROWS; i++) {
+			for (int j = 0; j < NUM_COLS; j++) {
+				for (Entity e : entitiesFullLevel.get(i).get(j).keySet()) {
+					lastPosFullLevel.put(e, e.getCenter());
+				}
+			}
 		}
 		
 		
@@ -188,47 +198,42 @@ public class Game3D implements ApplicationListener {
 		currRow = level.getCurrentRoom().getRow() + 1;
 		currCol = level.getCurrentRoom().getCol() + 1;
 		
-		// comprueba si se ha cambiado de habitacion
-		if (currRow != prevRow || currCol != prevCol) {
-			// se ha cambiado de habitacion
-			
-			// cambia de habitacion al player
-//			System.out.println("3D: CAMBIO DE ROOM:" +
-//								prevRow + ", " + prevCol +
-//								" -> " + currRow + ", " + currCol);
-
-			changeEntityRoom(player);
-			
-			// TODO: cambiar habitacion de loosFloor solo cuando
-			// se necesite
-//			changeEntityRoom("looseFloor");
-		}
+		checkLooses();
+		checkPlayer();
 		
 		// actualiza cada objeto en funcion de su movimiento
 		// (diferencia con la posicion anterior)
-		for (Map.Entry<Entity, ModelInstance> entry : entities.get(currRow).get(currCol).entrySet()) {
-			Entity key = entry.getKey();
-			ModelInstance value = entry.getValue();
-
-			int[] last = lastPos.get(key);
-			if (last != null) {
-				float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
-				float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
-				value.transform.translate(x,y,0);
+		for (int i = 0; i < NUM_ROWS; i++) {
+			for (int j = 0; j < NUM_COLS; j++) {
+				for (Map.Entry<Entity, ModelInstance> entry : entities.get(i).get(j).entrySet()) {
+					Entity key = entry.getKey();
+					ModelInstance value = entry.getValue();
+		
+					int[] last = lastPos.get(key);
+					if (last != null) {
+						float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
+						float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
+						value.transform.translate(x,y,0);
+					}
+				}
 			}
 		}
 		
 		// actualiza cada objeto en funcion de su movimiento
 		// (diferencia con la posicion anterior)
-		for (Map.Entry<Entity, ModelInstance> entry : entitiesFullLevel.get(currRow).get(currCol).entrySet()) {
-			Entity key = entry.getKey();
-			ModelInstance value = entry.getValue();
-
-			int[] last = lastPosFullLevel.get(key);
-			if (last != null) {
-				float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
-				float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
-				value.transform.translate(x,y,0);
+		for (int i = 0; i < NUM_ROWS; i++) {
+			for (int j = 0; j < NUM_COLS; j++) {
+				for (Map.Entry<Entity, ModelInstance> entry : entitiesFullLevel.get(i).get(j).entrySet()) {
+					Entity key = entry.getKey();
+					ModelInstance value = entry.getValue();
+		
+					int[] last = lastPosFullLevel.get(key);
+					if (last != null) {
+						float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
+						float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
+						value.transform.translate(x,y,0);
+					}
+				}
 			}
 		}
 		
@@ -784,11 +789,11 @@ public class Game3D implements ApplicationListener {
 	/**
 	 * Cambia la habitacion de una entidad
 	 */
-	private void changeEntityRoom(Entity entityToChange) {
+	private void changeEntityRoom(Entity entityToChange, int currentRow, int currentCol, int previousRow, int previousCol) {
 		
 		// obtiene las entidades de la habitacion anterior
 		Room[][] rooms = level.getCurrentLevel().getRooms();
-		Room room = rooms[currRow - 1][currCol - 1];
+		Room room = rooms[currentRow - 1][currentCol - 1];
 		
 		List<Entity> roomEntities = new LinkedList<Entity>();
         roomEntities.addAll(room.getBackground());
@@ -800,46 +805,48 @@ public class Game3D implements ApplicationListener {
         	if (entity.equals(entityToChange)) {
         		
         		ModelInstance entityInstance = 
-        				entities.get(prevRow).get(prevCol).get(entity);
+        				entities.get(previousRow).get(previousCol).get(entity);
 
         		ModelInstance entityInstanceFullLevel = 
-        				entitiesFullLevel.get(prevRow).get(prevCol).get(entity);
+        				entitiesFullLevel.get(previousRow).get(previousCol).get(entity);
         		
         		// incluye la entidad en la nueva habitacion
         		// y la elimina de la anterior habitacion
-        		addEntityToRoomFullLevel(entity, entityInstanceFullLevel, currRow, currCol);
-        		addEntityToRoom(entity, entityInstance, currRow, currCol);
-        		deleteEntityFromRoom(entity, prevRow, prevCol);
+        		System.out.println(entity.getTypeOfEntity() + " - AÑADIR FULL LEVEL    (" + currentRow + " - " + currentCol + ")");
+        		addEntityToRoomFullLevel(entity, entityInstanceFullLevel, currentRow, currentCol);
+        		addEntityToRoom(entity, entityInstance, currentRow, currentCol);
+        		System.out.println("DELETE    (" + previousRow + " - " + previousCol + ")");
+        		deleteEntityFromRoom(entity, previousRow, previousCol);
 
 //        		if (FULL_LEVEL) {
-        			moveEntityToNextRoom(entityInstanceFullLevel);
+        			moveEntityToNextRoom(entityInstanceFullLevel, currentRow, currentCol, previousRow, previousCol);
 //        		}
         	}
         }
         
 	}
 	
-	private void moveEntityToNextRoom(ModelInstance entityInstance) {
+	private void moveEntityToNextRoom(ModelInstance entityInstance, int currentRow, int currentCol, int previousRow, int previousCol) {
 		float x = 0f;
 		float y = 0f;
 		
 		// comprueba hacia que habitacion se ha movido la entidad
-		if (currRow < prevRow) {
+		if (currentRow < previousRow) {
 			
 			// arriba
 			y = y + ((Game.HEIGHT - UI_HEIGHT) / SCALE);
 		}
-		else if (currRow > prevRow) {
+		else if (currentRow > previousRow) {
 			
 			// abajo
 			y = y - ((Game.HEIGHT - UI_HEIGHT) / SCALE);
 		}
-		else if (currCol < prevCol) {
+		else if (currentCol < previousCol) {
 			
 			// izquierda
 			x = x - (Game.WIDTH / SCALE);
 		}
-		else if (currCol > prevCol) {
+		else if (currentCol > previousCol) {
 	
 			// derecha
 			x = x + (Game.WIDTH / SCALE);
@@ -860,5 +867,35 @@ public class Game3D implements ApplicationListener {
 	
 	private void addEntityToRoomFullLevel(Entity entity, ModelInstance entityInstance, int row, int col) {
 		entitiesFullLevel.get(row).get(col).put(entity, entityInstance);
+	}
+	
+	private void checkPlayer(){
+		// comprueba si se ha cambiado de habitacion
+		if (currRow != prevRow || currCol != prevCol) {
+			// se ha cambiado de habitacion
+			
+			// cambia de habitacion al player
+
+			changeEntityRoom(player,currRow,currCol,prevRow,prevCol);
+		}
+	}
+	
+	private void checkLooses(){
+		for(LooseFloor loose : this.falling_floor){
+			if(!isEntityInRoom(loose, loose.getRoom1(), loose.getRoom2())){
+				changeEntityRoom(loose,loose.getRoom1(),loose.getRoom2(),loose.getRoom1()-1,loose.getRoom2());
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param entity entity to find in the room
+	 * @param row row index of the room
+	 * @param col col index of the room
+	 * @return true if the entity is in that room
+	 */
+	private boolean isEntityInRoom(Entity entity, int row, int col){
+		return entities.get(row).get(col).get(entity) != null;
 	}
 }

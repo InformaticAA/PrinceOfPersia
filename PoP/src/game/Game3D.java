@@ -65,6 +65,7 @@ public class Game3D implements ApplicationListener {
 	private final int SCALE = 10;
 	private final int UI_HEIGHT = 16; 		// 16 = sin espacios entre habitaciones (se resta al offset)
 	private final long TARGET_TIME = 1000/60;
+	private final float CAM_DISTANCE = 50f;
 	private final float DEPTH = 10f;
 	
 	private final int NUM_ROWS = 4;
@@ -281,9 +282,11 @@ public class Game3D implements ApplicationListener {
 	private void resetCamera() {
 		if (FULL_LEVEL) {
 			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
+					(Game.HEIGHT / SCALE) - ((Game.HEIGHT * (currRow - 1) ) / SCALE - (Game.HEIGHT/(2*SCALE))),
+					CAM_DISTANCE);
 			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+					(Game.HEIGHT / SCALE) - ((Game.HEIGHT * (currRow - 1) ) / SCALE - (Game.HEIGHT/(2*SCALE))),
+					0);
 		}
 		else {
 			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
@@ -295,9 +298,11 @@ public class Game3D implements ApplicationListener {
 		float z = cam.position.z;
 		if (FULL_LEVEL) {
 			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), z);
+					(Game.HEIGHT / SCALE) - ((Game.HEIGHT * (currRow - 1) ) / SCALE - (Game.HEIGHT/(2*SCALE))),
+					z);
 			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+					(Game.HEIGHT / SCALE) - ((Game.HEIGHT * (currRow - 1) ) / SCALE - (Game.HEIGHT/(2*SCALE))),
+					0);
 		}
 		else {
 			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), z);
@@ -405,7 +410,8 @@ public class Game3D implements ApplicationListener {
 			}
 		}
 		
-		// toggle free camera mode
+		// resets camera position to the current room center
+		// it does not fix it
 		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
 			resetCamera();
 		}
@@ -448,17 +454,9 @@ public class Game3D implements ApplicationListener {
 	public void initCam(){
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
-		if (FULL_LEVEL) {
-			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-							  (Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
-			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-						(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
-		}
-		else {
-			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
-			cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
-		}
-
+		// inicializa la posicion de la camara
+		resetCamera();
+		
 		cam.near = 1f;
 		cam.far = 500f;
 		cam.update();

@@ -58,7 +58,7 @@ import states.MenuState;
 public class Game3D implements ApplicationListener {
 	
 	// TODO: todavia en test (pero mola :D)
-	private final boolean FULL_LEVEL = true;
+	private boolean FULL_LEVEL = false;
 	
 	private final int SCALE = 10;
 	private final int UI_HEIGHT = 16; 		// 16 = sin espacios entre habitaciones (se resta al offset)
@@ -91,6 +91,7 @@ public class Game3D implements ApplicationListener {
 	public static LevelState level;
 	public static ConcurrentLinkedQueue<Key> keys;
 	public List<List<Hashtable<Entity,ModelInstance>>> entities;
+	public List<List<Hashtable<Entity,ModelInstance>>> entitiesFullLevel;
 	public Hashtable<String,Model> entityModels;
 	
 	
@@ -132,8 +133,8 @@ public class Game3D implements ApplicationListener {
 			objects  = new LinkedList<ModelInstance>();
 			for (int i = 0; i < NUM_ROWS; i++) {
 				for (int j = 0; j < NUM_COLS; j++) {
-					if (entities.get(i).get(j) != null) {
-						objects.addAll(entities.get(i).get(j).values());
+					if (entitiesFullLevel.get(i).get(j) != null) {
+						objects.addAll(entitiesFullLevel.get(i).get(j).values());
 					}
 				}
 			}
@@ -157,10 +158,12 @@ public class Game3D implements ApplicationListener {
 		Map<Entity, int[]> lastPos = new HashMap<>();
 		for (Entity e : entities.get(currRow).get(currCol).keySet()) {
 			lastPos.put(e, e.getCenter());
-			
-//			if (e.getTypeOfEntity().contains("Player")) {
-//				System.out.println("Player: " + e.getCenter()[0] + ", " + e.getCenter()[1]);
-//			}
+		}
+		
+		// asigna una ultima posicion a cada objeto
+		Map<Entity, int[]> lastPosFullLevel = new HashMap<>();
+		for (Entity e : entitiesFullLevel.get(currRow).get(currCol).keySet()) {
+			lastPosFullLevel.put(e, e.getCenter());
 		}
 		
 		
@@ -200,9 +203,20 @@ public class Game3D implements ApplicationListener {
 
 			int[] last = lastPos.get(key);
 			if (last != null) {
-				
-//				System.out.println("Ha entrado: " + key.getTypeOfEntity());
-				
+				float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
+				float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
+				value.transform.translate(x,y,0);
+			}
+		}
+		
+		// actualiza cada objeto en funcion de su movimiento
+		// (diferencia con la posicion anterior)
+		for (Map.Entry<Entity, ModelInstance> entry : entitiesFullLevel.get(currRow).get(currCol).entrySet()) {
+			Entity key = entry.getKey();
+			ModelInstance value = entry.getValue();
+
+			int[] last = lastPosFullLevel.get(key);
+			if (last != null) {
 				float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
 				float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
 				value.transform.translate(x,y,0);
@@ -284,6 +298,16 @@ public class Game3D implements ApplicationListener {
 			keys.add(new Key(false, KeyEvent.VK_SPACE));
 			space = false;
 		}
+		
+		// toggle full_level mode
+		if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+			if (FULL_LEVEL) {
+				FULL_LEVEL = false;
+			}
+			else {
+				FULL_LEVEL = true;
+			}
+		}
 	}
 	
 	@Override
@@ -346,14 +370,17 @@ public class Game3D implements ApplicationListener {
         ModelBuilder modelBuilder = new ModelBuilder();
         entityModels = new Hashtable<String, Model>();
         entities = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();
+        entitiesFullLevel = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();
         
         // inicializa el array de entidades
         for (int i = 0; i < NUM_ROWS; i++) {
         	
         	entities.add(i, new LinkedList<Hashtable<Entity, ModelInstance>>());
+        	entitiesFullLevel.add(i, new LinkedList<Hashtable<Entity, ModelInstance>>());
         	
         	for (int j = 0; j < NUM_COLS; j++) {
         		entities.get(i).add(j, new Hashtable<Entity, ModelInstance>());
+        		entitiesFullLevel.get(i).add(j, new Hashtable<Entity, ModelInstance>());
         	}
     	}
         
@@ -382,12 +409,12 @@ public class Game3D implements ApplicationListener {
         // loose floor
  		Model looseFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
      			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
-         entityModels.put("looseFloor", looseFloorModel);
+        entityModels.put("looseFloor", looseFloorModel);
          
         // opener
   		Model openerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
       			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
-          entityModels.put("opener", openerModel);
+        entityModels.put("opener", openerModel);
           
         // closer
 		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
@@ -397,7 +424,7 @@ public class Game3D implements ApplicationListener {
         // closer
  		Model spikeFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
      			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
-         entityModels.put("spike", spikeFloorModel);
+        entityModels.put("spike", spikeFloorModel);
     
         // wall stack
         Model stackMain = modelBuilder.createBox(64f/SCALE,120f/SCALE, DEPTH,
@@ -597,15 +624,19 @@ public class Game3D implements ApplicationListener {
 			        	
 			        	// asocia la nueva instancia 3D a su entidad
 		        		if (entityInstance != null) {
-
-		        			// when drawing complete level
-		        			if (FULL_LEVEL) {
-		        				x = x + (Game.WIDTH / SCALE) * (j - 1);
-		        				y = y + (Game.HEIGHT / SCALE) - ( ((Game.HEIGHT - UI_HEIGHT) / SCALE) * (i - 1) );
-		        			}
+		        			ModelInstance entityInstanceFullLevel = entityInstance.copy();
 		        			
+		        			// inicializa entidades para el modo de una habitacion
 		        			entityInstance.transform.translate(x,y,z);
 		        			entities.get(i).get(j).put(entity, entityInstance);
+
+		        			// when drawing complete level
+//		        			if (FULL_LEVEL) {
+		        				x = x + (Game.WIDTH / SCALE) * (j - 1);
+		        				y = y + (Game.HEIGHT / SCALE) - ( ((Game.HEIGHT - UI_HEIGHT) / SCALE) * (i - 1) );
+//		        			}
+	        				entityInstanceFullLevel.transform.translate(x,y,z);
+		        			entitiesFullLevel.get(i).get(j).put(entity, entityInstanceFullLevel);
 		        		}
 			        }
 	        	}
@@ -634,15 +665,19 @@ public class Game3D implements ApplicationListener {
         		
         		ModelInstance entityInstance = 
         				entities.get(prevRow).get(prevCol).get(entity);
+
+        		ModelInstance entityInstanceFullLevel = 
+        				entitiesFullLevel.get(prevRow).get(prevCol).get(entity);
         		
         		// incluye la entidad en la nueva habitacion
         		// y la elimina de la anterior habitacion
+        		addEntityToRoomFullLevel(entity, entityInstanceFullLevel, currRow, currCol);
         		addEntityToRoom(entity, entityInstance, currRow, currCol);
         		deleteEntityFromRoom(entity, prevRow, prevCol);
 
-        		if (FULL_LEVEL) {
-        			moveEntityToNextRoom(entityInstance);
-        		}
+//        		if (FULL_LEVEL) {
+        			moveEntityToNextRoom(entityInstanceFullLevel);
+//        		}
         	}
         }
         
@@ -680,9 +715,14 @@ public class Game3D implements ApplicationListener {
 	
 	private void deleteEntityFromRoom(Entity entity, int row, int col) {
 		entities.get(row).get(col).remove(entity);
+		entitiesFullLevel.get(row).get(col).remove(entity);
 	}
 	
 	private void addEntityToRoom(Entity entity, ModelInstance entityInstance, int row, int col) {
 		entities.get(row).get(col).put(entity, entityInstance);
+	}
+	
+	private void addEntityToRoomFullLevel(Entity entity, ModelInstance entityInstance, int row, int col) {
+		entitiesFullLevel.get(row).get(col).put(entity, entityInstance);
 	}
 }

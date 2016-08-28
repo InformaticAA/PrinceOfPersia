@@ -271,20 +271,38 @@ public class Game3D implements ApplicationListener {
 		else {
 			
 			// modo camara fija (centrada en la habitacion actual)
-			if (FULL_LEVEL) {
-				cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-						(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
-				cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-						(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
-			}
-			else {
-				cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
-				cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
-			}
+			resetFreeCamera();
 		}
 		
 		// aplica los cambios en la posicion de la camara
 		cam.update();
+	}
+	
+	private void resetCamera() {
+		if (FULL_LEVEL) {
+			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
+			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+		}
+		else {
+			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
+			cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
+		}
+	}
+	
+	private void resetFreeCamera() {
+		float z = cam.position.z;
+		if (FULL_LEVEL) {
+			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), z);
+			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+					(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+		}
+		else {
+			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), z);
+			cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
+		}
 	}
 	
 	private void manageKeys() {
@@ -370,6 +388,10 @@ public class Game3D implements ApplicationListener {
 			else {
 				FULL_LEVEL = true;
 			}
+			
+			if (FREE_CAM) {
+				resetFreeCamera();
+			}
 		}
 		
 		// toggle free camera mode
@@ -379,7 +401,13 @@ public class Game3D implements ApplicationListener {
 			}
 			else {
 				FREE_CAM = true;
+				resetFreeCamera();
 			}
+		}
+		
+		// toggle free camera mode
+		if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+			resetCamera();
 		}
 	}
 	

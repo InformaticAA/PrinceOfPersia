@@ -43,6 +43,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 
 import data.Room;
 import entities.Entity;
@@ -58,7 +59,8 @@ import states.MenuState;
 public class Game3D implements ApplicationListener {
 	
 	// TODO: todavia en test (pero mola :D)
-	private boolean FULL_LEVEL = false;
+	private boolean FULL_LEVEL = true;
+	private boolean FREE_CAM = false;
 	
 	private final int SCALE = 10;
 	private final int UI_HEIGHT = 16; 		// 16 = sin espacios entre habitaciones (se resta al offset)
@@ -146,7 +148,6 @@ public class Game3D implements ApplicationListener {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
  
-        camController.update();
         modelBatch.begin(cam);
         modelBatch.render(objects, lights);
         modelBatch.end();
@@ -222,6 +223,68 @@ public class Game3D implements ApplicationListener {
 				value.transform.translate(x,y,0);
 			}
 		}
+		
+		// updates camera's position
+		updateCamera();
+	}
+	
+	public void updateCamera() {
+		
+		// actualiza la posicion de la camara
+		if (FREE_CAM) {
+			
+			// modo camara libre
+			// saves last position of camera
+			Vector3 camMov = new Vector3(0,0,0);
+			Vector3 camNewPos = cam.position;
+			Vector3 lastPos = cam.position;
+			float speed = 1f;
+			float camX = 0;
+			float camY = 0;
+			float camZ = 0;
+			
+			/* key handling */
+			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+				camX = -speed;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+				camX = speed;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+				camY = speed;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+				camY = -speed;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+				camZ = -speed;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+				camZ = speed;
+			}
+			
+			// updates camera's position
+			camMov = new Vector3(camX,camY,camZ);
+			camNewPos = lastPos.add(camMov);
+			cam.position.set(camNewPos);
+		}
+		else {
+			
+			// modo camara fija (centrada en la habitacion actual)
+			if (FULL_LEVEL) {
+				cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+						(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
+				cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
+						(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+			}
+			else {
+				cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
+				cam.lookAt(Game.WIDTH/(2*SCALE),Game.HEIGHT/(2*SCALE),0);
+			}
+		}
+		
+		// aplica los cambios en la posicion de la camara
+		cam.update();
 	}
 	
 	private void manageKeys() {
@@ -308,6 +371,16 @@ public class Game3D implements ApplicationListener {
 				FULL_LEVEL = true;
 			}
 		}
+		
+		// toggle free camera mode
+		if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+			if (FREE_CAM) {
+				FREE_CAM = false;
+			}
+			else {
+				FREE_CAM = true;
+			}
+		}
 	}
 	
 	@Override
@@ -349,9 +422,9 @@ public class Game3D implements ApplicationListener {
 		
 		if (FULL_LEVEL) {
 			cam.position.set( (Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-							  (Game.HEIGHT * (currRow - 1) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
+							  (Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)), 50f);
 			cam.lookAt(	(Game.WIDTH * (currCol - 1) ) / SCALE + (Game.WIDTH/(2*SCALE)),
-				    	(Game.HEIGHT * (currRow - 1) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
+						(Game.HEIGHT * (currRow) ) / SCALE + (Game.HEIGHT/(2*SCALE)),0);
 		}
 		else {
 			cam.position.set(Game.WIDTH/(2*SCALE), Game.HEIGHT/(2*SCALE), 50f);
@@ -362,6 +435,10 @@ public class Game3D implements ApplicationListener {
 		cam.far = 500f;
 		cam.update();
 		camController = new CameraInputController(cam);
+		
+		// camera custom settings
+		camController.scrollFactor = 3f;
+		
 		Gdx.input.setInputProcessor(camController);
 	}
 	

@@ -653,18 +653,18 @@ public class Game3D implements ApplicationListener {
 			        		entityInstance = pillarInstance;
 			        	} 
 			        	else if(entityName.equals("DoorFrame_door_frame_right")){
-			        		ModelInstance doorFrameInstance = new ModelInstance(entityModels.get("doorFrame"));
+			        		ModelInstance doorFrameRightInstance = new ModelInstance(entityModels.get("doorFrame"));
 			        		x = (float) (128 - 32 + sy * 64) / SCALE;
 			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
 			        		z = -DEPTH/2;
-			        		entityInstance = doorFrameInstance;
+			        		entityInstance = doorFrameRightInstance;
 			        	} 
 			        	else if(entityName.equals("DoorFrame_door_frame_left")){
-//			        		ModelInstance pillarInstance = new ModelInstance(entityModels.get("doorFrame"));
-//			        		x = (float) (128 - 32 + sy * 64) / SCALE;
-//			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
-//			        		z = -DEPTH/3;
-//			        		entityInstance = pillarInstance;
+			        		ModelInstance doorFrameLeftInstance = new ModelInstance(entityModels.get("doorFrame"));
+			        		x = (float) (128 - 32 + sy * 64) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		z = DEPTH/2;
+			        		entityInstance = doorFrameLeftInstance;
 			        	} 
 			        	else if(entityName.equals("Door_normal")){
 			        		ModelInstance normalDoorInstance = new ModelInstance(entityModels.get("normalDoor"));

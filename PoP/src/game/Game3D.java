@@ -66,7 +66,7 @@ public class Game3D implements ApplicationListener {
 	// TODO: todavia en test (pero mola :D)
 	private boolean FULL_LEVEL = false;
 	private boolean FREE_CAM = false;
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	private final int SCALE = 10;
 	private final int UI_HEIGHT = 16; 		// 16 = sin espacios entre habitaciones (se resta al offset)
@@ -167,36 +167,28 @@ public class Game3D implements ApplicationListener {
         modelBatch.render(objects, lights);
         modelBatch.end();
         
-        // dibuja los sprites 2D
-        spriteBatch.begin();
-
-        float stateStart = 90f;
-        float stateWidth = 35f;
-        writeDebug("Debug mode:", Color.WHITE, 0f, 1);
-        if (DEBUG) writeDebug("ON", Color.GREEN, stateStart, 1);
-    	else writeDebug("OFF", Color.RED, stateStart, 1);
-        writeDebug("(Press 'T' to toggle)", Color.WHITE, stateStart + stateWidth, 1);
-        
         if (DEBUG) {
         	
         	// dibuja los valores de las variables de debug
+        	float stateStart = 90f;
+        	float stateWidth = 35f;
+        	writeDebug("Debug mode:", Color.WHITE, 0f, 1);
+        	if (DEBUG) writeDebug("ON", Color.GREEN, stateStart, 1);
+        	else writeDebug("OFF", Color.RED, stateStart, 1);
+        	writeDebug("(Press 'T' to toggle)", Color.WHITE, stateStart + stateWidth, 1);
         	
         	// camera mode debug
-//        	stateStart = 90f;
         	writeDebug("Free camera:", Color.WHITE, 0f, 2);
         	if (FREE_CAM) writeDebug("ON", Color.GREEN, stateStart, 2);
         	else writeDebug("OFF", Color.RED, stateStart, 2);
         	writeDebug("(Press 'C' to toggle)", Color.WHITE, stateStart + stateWidth, 2);
         	
         	// level mode debug
-//        	stateStart = 80f;
         	writeDebug("Full level:", Color.WHITE, 0f, 3);
         	if (FULL_LEVEL) writeDebug("ON", Color.GREEN, stateStart, 3);
         	else writeDebug("OFF", Color.RED, stateStart, 3);
         	writeDebug("(Press 'L' to toggle)", Color.WHITE, stateStart + stateWidth, 3);
         }
-        
-        spriteBatch.end();
 	}
 	
 	private void writeDebug(String string, Color color, float start, int line) {
@@ -208,8 +200,10 @@ public class Game3D implements ApplicationListener {
     	float y = Game.HEIGHT - (charHeight * (line - 1) );
     	
     	// calcula la nueva posicion
+    	spriteBatch.begin();
     	bmFont.setColor(color);
     	bmFont.draw(spriteBatch, string, start, y);
+    	spriteBatch.end();
 	}
 	
 	public void update() {

@@ -503,4 +503,8 @@ public class Character extends Entity {
 	}
 	
 	public void manageSword(String animation, int currentFrame, boolean newSword){}
+	
+	public SwordFighting getSword() {
+		return sword;
+	}
 }

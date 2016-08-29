@@ -19,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +49,13 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 
 import data.Room;
+import entities.Character;
 import entities.Door;
 import entities.Entity;
 import entities.FloorPanel;
 import entities.LooseFloor;
 import entities.Player;
+import entities.SwordFighting;
 import input.Key;
 import states.LevelState;
 import states.MenuState;
@@ -86,8 +89,8 @@ public class Game3D implements ApplicationListener {
 	private boolean space = true;
 	
 	// room variables
-	private int currRow = 1;
-	private int currCol = 7;
+	private int currRow = 2;
+	private int currCol = 1;
 	private int prevRow = currRow;
 	private int prevCol = currCol;
 	
@@ -208,6 +211,57 @@ public class Game3D implements ApplicationListener {
 	
 	public void update() {
 		
+		// comprueba si algun personaje lleva espada
+		List<Character> chars = level.getCurrentRoom().getCharacters();
+		for(Character c : chars){
+			
+			if (c.getCurrentAnimation().getId().contains("sword")) {
+				
+				// character is using the sword
+				SwordFighting sword = c.getSword();
+				if (sword != null) {
+					
+					int[] charCenter = c.getCenter();
+					float x = charCenter[0];
+					float y = charCenter[1];
+					
+					if (c.getOrientation().equals("left")) {
+//						x = x;
+					}
+					else {
+						x = x + 130f;
+					}
+					
+					int width = sword.getCurrentAnimation().getImage().getWidth();
+					int height = sword.getCurrentAnimation().getImage().getHeight();
+					
+					ModelInstance swordInstance = null;
+					
+					if (width >= height) {
+						swordInstance = new ModelInstance(entityModels.get("horSword"));
+					}
+					else {
+						swordInstance = new ModelInstance(entityModels.get("horSword"));
+					}
+					
+					swordInstance.transform.translate(x / SCALE, (Game.HEIGHT - y) / SCALE, 0f);
+					entities.get(currRow).get(currCol).put(sword, swordInstance);
+				}
+			}
+			else {
+
+				// Elimina la espada de la habitacion
+				Hashtable<Entity, ModelInstance> ents = entities.get(currRow).get(currCol);
+				Iterator<Entity> iter = ents.keySet().iterator();
+				while (iter.hasNext()) {
+					Entity e = iter.next();
+					if (e instanceof SwordFighting) {
+						iter.remove();
+					}
+				}
+			}
+		}
+		
 		// asigna una ultima posicion a cada objeto
 		Map<Entity, int[]> lastPos = new HashMap<>();
 		for (int i = 0; i < NUM_ROWS; i++) {
@@ -217,8 +271,6 @@ public class Game3D implements ApplicationListener {
 				}
 			}
 		}
-		
-		
 		
 		// asigna una ultima posicion a cada objeto
 		Map<Entity, int[]> lastPosFullLevel = new HashMap<>();
@@ -568,6 +620,16 @@ public class Game3D implements ApplicationListener {
         Model player = modelBuilder.createCylinder(DEPTH/2,80f/SCALE,DEPTH/2,20,
     			new Material(ColorAttribute.createDiffuse(Color.CYAN)), Usage.Position | Usage.Normal);
         entityModels.put("player", player);
+        
+        // vertical sword
+        Model vertSword = modelBuilder.createCylinder(3f/SCALE,50f/SCALE,3f/SCALE,20,
+    			new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position | Usage.Normal);
+        entityModels.put("vertSword", vertSword);
+        
+        // horizontal sword
+        Model horSword = modelBuilder.createCylinder(50f/SCALE,3f/SCALE,3f/SCALE,20,
+    			new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position | Usage.Normal);
+        entityModels.put("horSword", horSword);
         
         // enemy
         Model enemy = modelBuilder.createCylinder(DEPTH/2,80f/SCALE,DEPTH/2,20,

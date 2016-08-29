@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import entities.Door;
+import entities.SpikeFloor;
 
 public class Level {
 
@@ -107,6 +108,18 @@ public class Level {
 			}
 		}
 		return doors;
+	}
+	
+	public List<SpikeFloor> getSpikeFloors(){
+		List<SpikeFloor> spikes = new LinkedList<SpikeFloor>();
+		for (int i = 0; i < rooms.length; i++) {
+			for (int j = 0; j < rooms[0].length; j++) {
+				if (rooms[i][j] != null) {
+					spikes.addAll(rooms[i][j].getSpikeFloors());
+				}
+			}
+		}
+		return spikes;
 	}
 	
 }

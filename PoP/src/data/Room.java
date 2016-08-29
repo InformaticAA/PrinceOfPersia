@@ -7,6 +7,7 @@ import java.util.List;
 import entities.Character;
 import entities.Door;
 import entities.Entity;
+import entities.SpikeFloor;
 
 public class Room {
 
@@ -244,6 +245,19 @@ public class Room {
 		}
 		
 		return doors;
+	}
+	
+	public List<SpikeFloor> getSpikeFloors(){
+		List<SpikeFloor> spikes = new LinkedList<SpikeFloor>();
+		List<Entity> bEntities = this.getBackground();
+		
+		for(Entity bgE : bEntities){
+			if(bgE.getTypeOfEntity().equals("SpikeFloor")){
+				spikes.add((SpikeFloor) bgE);
+			}
+		}
+		
+		return spikes;
 	}
 	
 	public void deleteCharacter(Entity character){

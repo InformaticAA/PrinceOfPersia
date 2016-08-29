@@ -56,6 +56,7 @@ public class LevelState extends State{
 	private List<LooseFloor> falling_floor;
 	private List<Door> doors;
 	private List<Entity> entitiesToDelete3D;
+	private List<SpikeFloor> spikeFloors;
 	
 	private Music win_song;
 	private Music death_song;
@@ -122,6 +123,7 @@ public class LevelState extends State{
 			currentLevel = loader.loadLevel(INITIAL_LEVEL);
 			currentRoom = currentLevel.getRoom(1, 7);
 			doors = currentLevel.getDoors();
+			spikeFloors = currentLevel.getSpikeFloors();
 
 //			player = new Player(400,110,loader, INITIAL_HEALTH, "left"); // primer piso
 			player = new Player(140,240,loader, INITIAL_HEALTH, "right"); // segundo piso
@@ -2976,6 +2978,10 @@ public class LevelState extends State{
 	
 	public List<Door> getDoors(){
 		return this.doors;
+	}
+	
+	public List<SpikeFloor> getSpikes(){
+		return this.spikeFloors;
 	}
 	
 	public List<Entity> getEntitiesToBeDeleted(){

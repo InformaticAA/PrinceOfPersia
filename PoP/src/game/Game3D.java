@@ -104,6 +104,9 @@ public class Game3D implements ApplicationListener {
 	public List<List<Hashtable<Entity,ModelInstance>>> entitiesFullLevel;
 	public Hashtable<String,Model> entityModels;
 	
+	public Hashtable<Entity,ModelInstance> closed_doors;
+	public Hashtable<Entity,ModelInstance> closed_doorsFullLevel;
+	
 	private Player player;
 	private List<LooseFloor> falling_floor;
 	private List<Door> doors;
@@ -549,6 +552,8 @@ public class Game3D implements ApplicationListener {
         entityModels = new Hashtable<String, Model>();
         entities = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();
         entitiesFullLevel = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();
+        closed_doors = new Hashtable<Entity,ModelInstance>();
+        closed_doorsFullLevel = new Hashtable<Entity,ModelInstance>();
         
         // inicializa el array de entidades
         for (int i = 0; i < NUM_ROWS; i++) {
@@ -831,7 +836,7 @@ public class Game3D implements ApplicationListener {
 		        			// inicializa entidades para el modo de una habitacion
 		        			entityInstance.transform.translate(x,y,z);
 		        			entities.get(i).get(j).put(entity, entityInstance);
-
+		        			
 		        			// when drawing complete level
 //		        			if (FULL_LEVEL) {
 		        				x = x + (Game.WIDTH / SCALE) * (j - 1);
@@ -839,6 +844,11 @@ public class Game3D implements ApplicationListener {
 //		        			}
 	        				entityInstanceFullLevel.transform.translate(x,y,z);
 		        			entitiesFullLevel.get(i).get(j).put(entity, entityInstanceFullLevel);
+		        			
+		        			if(entity.getTypeOfEntity().equals("Door_normal")){
+		        				closed_doors.put(entity, entityInstance.copy());
+		        				closed_doorsFullLevel.put(entity, entityInstanceFullLevel.copy());
+		        			}
 		        		}
 			        }
 	        	}
@@ -998,6 +1008,15 @@ public class Game3D implements ApplicationListener {
 							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, -120f/(20*SCALE), 0);
 						}
 						break;
+						
+					case "door_closed":
+						if(d.hasToBeClosed()){
+							d.HasNotToBeClosed();
+							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).put(d,this.closed_doors.get(d).copy());
+							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).put(d,this.closed_doorsFullLevel.get(d).copy());
+						}
+						break;
+						
 					default:
 						
 						break;

@@ -15,6 +15,7 @@ public class Door extends Entity{
 	private long remaining_time;
 	private int roomRow;
 	private int roomCol;
+	private boolean hasToBeClosed;
 	
 	public final int MAX_TIME = 10 * 1000;
 	
@@ -29,6 +30,7 @@ public class Door extends Entity{
 		closing_fast = loader.getSound("gate closing fast");
 		closed = loader.getSound("gate stop");
 		remaining_time = -1000;
+		hasToBeClosed = false;
 		
 		boundingBoxColor = Color.GREEN;
 		
@@ -184,7 +186,7 @@ public class Door extends Entity{
 	}
 	
 	public void closeDoor(){
-		System.out.println("CERRRRRAMOS");
+		this.hasToBeClosed = true;
 		if(!this.getCurrentAnimation().getId().equals("door_closed")){
 			this.setCurrentAnimation("door_closed", FRAME_DURATION);
 			closing_fast.play();
@@ -207,6 +209,14 @@ public class Door extends Entity{
 
 	public int getRoomCol() {
 		return roomCol;
+	}
+	
+	public boolean hasToBeClosed(){
+		return this.hasToBeClosed;
+	}
+	
+	public void HasNotToBeClosed(){
+		this.hasToBeClosed = false;
 	}
 	
 }

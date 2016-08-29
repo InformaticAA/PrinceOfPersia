@@ -34,6 +34,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -62,8 +64,9 @@ import states.MenuState;
 public class Game3D implements ApplicationListener {
 	
 	// TODO: todavia en test (pero mola :D)
-	private boolean FULL_LEVEL = true;
+	private boolean FULL_LEVEL = false;
 	private boolean FREE_CAM = false;
+	private boolean DEBUG = true;
 	
 	private final int SCALE = 10;
 	private final int UI_HEIGHT = 16; 		// 16 = sin espacios entre habitaciones (se resta al offset)
@@ -92,6 +95,7 @@ public class Game3D implements ApplicationListener {
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
 	public ModelBatch modelBatch;
+	public SpriteBatch spriteBatch;
 	public Texture texture;
 	public static MenuState menu;
 	public static LevelState level;
@@ -154,12 +158,58 @@ public class Game3D implements ApplicationListener {
 			objects = entities.get(currRow).get(currCol).values();
 		}
 
+		// limpia la pantalla
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
  
+        // dibuja los modelos 3D
         modelBatch.begin(cam);
         modelBatch.render(objects, lights);
         modelBatch.end();
+        
+        // dibuja los sprites 2D
+        spriteBatch.begin();
+
+        float stateStart = 90f;
+        float stateWidth = 35f;
+        writeDebug("Debug mode:", Color.WHITE, 0f, 1);
+        if (DEBUG) writeDebug("ON", Color.GREEN, stateStart, 1);
+    	else writeDebug("OFF", Color.RED, stateStart, 1);
+        writeDebug("(Press 'T' to toggle)", Color.WHITE, stateStart + stateWidth, 1);
+        
+        if (DEBUG) {
+        	
+        	// dibuja los valores de las variables de debug
+        	
+        	// camera mode debug
+//        	stateStart = 90f;
+        	writeDebug("Free camera:", Color.WHITE, 0f, 2);
+        	if (FREE_CAM) writeDebug("ON", Color.GREEN, stateStart, 2);
+        	else writeDebug("OFF", Color.RED, stateStart, 2);
+        	writeDebug("(Press 'C' to toggle)", Color.WHITE, stateStart + stateWidth, 2);
+        	
+        	// level mode debug
+//        	stateStart = 80f;
+        	writeDebug("Full level:", Color.WHITE, 0f, 3);
+        	if (FULL_LEVEL) writeDebug("ON", Color.GREEN, stateStart, 3);
+        	else writeDebug("OFF", Color.RED, stateStart, 3);
+        	writeDebug("(Press 'L' to toggle)", Color.WHITE, stateStart + stateWidth, 3);
+        }
+        
+        spriteBatch.end();
+	}
+	
+	private void writeDebug(String string, Color color, float start, int line) {
+		
+		// variables
+		BitmapFont bmFont;
+    	bmFont = new BitmapFont();
+    	float charHeight = 18f;
+    	float y = Game.HEIGHT - (charHeight * (line - 1) );
+    	
+    	// calcula la nueva posicion
+    	bmFont.setColor(color);
+    	bmFont.draw(spriteBatch, string, start, y);
 	}
 	
 	public void update() {
@@ -401,6 +451,16 @@ public class Game3D implements ApplicationListener {
 			space = false;
 		}
 		
+		// toggles debug mode
+		if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+			if (DEBUG) {
+				DEBUG = false;
+			}
+			else {
+				DEBUG = true;
+			}
+		}
+		
 		// toggle full_level mode
 		if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
 			if (FULL_LEVEL) {
@@ -490,6 +550,7 @@ public class Game3D implements ApplicationListener {
 	
 	public void initModels(){
 		modelBatch = new ModelBatch();
+		spriteBatch = new SpriteBatch();
         ModelBuilder modelBuilder = new ModelBuilder();
         entityModels = new Hashtable<String, Model>();
         entities = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();

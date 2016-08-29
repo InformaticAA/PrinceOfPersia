@@ -970,10 +970,32 @@ public class Game3D implements ApplicationListener {
 			if(d.getTypeOfEntity().contains("normal")){
 				if(d.getCurrentAnimation().isLastFrame()){
 					switch (d.getCurrentAnimation().getId()){
+					case "door_opening":
+						if(d.getCurrentAnimation().isLastFrame()){
+							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, 120f/(16*SCALE), 0);
+							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, 120f/(16*SCALE), 0);
+						}
+						break;
+						
 					case "door_half_opening":
-						if(d.getCurrentAnimation().getCurrentFrame() == 1 && d.getCurrentAnimation().isLastFrame()){
-							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.scale(1f, 0.5f, 1f);
-							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.scale(1f, 0.5f, 1f);
+						if(d.getCurrentAnimation().isLastFrame()){
+							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, 120f/(20*SCALE), 0);
+							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, 120f/(20*SCALE), 0);
+						}
+						break;
+						
+					case "door_closing":
+						if(d.getCurrentAnimation().getCurrentFrame() != 0 && d.getCurrentAnimation().isLastFrame()){
+							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, -120f/(16*SCALE), 0);
+							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, -120f/(16*SCALE), 0);
+						}
+						
+						break;
+						
+					case "door_half_closing":
+						if(d.getCurrentAnimation().isLastFrame()){
+							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, -120f/(20*SCALE), 0);
+							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.translate(0, -120f/(20*SCALE), 0);
 						}
 						break;
 					default:

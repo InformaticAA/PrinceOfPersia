@@ -976,7 +976,15 @@ public class Game3D implements ApplicationListener {
 			if(d.getTypeOfEntity().contains("normal")){
 				if(d.getCurrentAnimation().isLastFrame()){
 					switch (d.getCurrentAnimation().getId()){
-					
+					case "door_half_opening":
+						if(d.getCurrentAnimation().getCurrentFrame() == 1 && d.getCurrentAnimation().isLastFrame()){
+							entities.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.scale(1f, 0.5f, 1f);
+							entitiesFullLevel.get(d.getRoomRow() + 1).get(d.getRoomCol() + 1).get(d).transform.scale(1f, 0.5f, 1f);
+						}
+						break;
+					default:
+						
+						break;
 					}
 				}
 			}

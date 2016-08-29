@@ -200,4 +200,13 @@ public class Door extends Entity{
 		this.roomRow = roomRow;
 		this.roomCol = roomCol;
 	}
+
+	public int getRoomRow() {
+		return roomRow;
+	}
+
+	public int getRoomCol() {
+		return roomCol;
+	}
+	
 }

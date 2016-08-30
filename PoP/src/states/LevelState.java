@@ -100,6 +100,11 @@ public class LevelState extends State{
 		texts = new LinkedList<Text>();
 		counter = 0;
 		
+		win_song.stop();
+		death_song.stop();
+		end_song.stop();
+		credits_song.stop();
+		
 //		// TESTING ENEMY
 //		currentLevel = loader.loadLevel(INITIAL_LEVEL);
 //		currentRoom = currentLevel.getRoom(1, 9);

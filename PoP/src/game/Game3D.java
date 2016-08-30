@@ -90,8 +90,8 @@ public class Game3D implements ApplicationListener {
 	private boolean space = true;
 	
 	// room variables
-	private int currRow = 2;
-	private int currCol = 1;
+	private int currRow;
+	private int currCol;
 	private int prevRow = currRow;
 	private int prevCol = currCol;
 	
@@ -117,6 +117,8 @@ public class Game3D implements ApplicationListener {
 	private List<Door> doors;
 	private List<Entity> entitiesToBeDeleted;
 	
+	private boolean restart;
+	
 	public Game3D(MenuState gameMenu, LevelState levelState){
 		menu = gameMenu;
 		level = levelState;
@@ -141,62 +143,68 @@ public class Game3D implements ApplicationListener {
 		initEnvironment();
 		initCam();
 		initModels();
+		this.restart = false;
 	}
 
 	@Override
 	public void render() {
 		update();
 		
-		Collection<ModelInstance> objects;
+		if(!restart){
 		
-		if (FULL_LEVEL) {
+			Collection<ModelInstance> objects;
 			
-			// Obtain all entities from all rooms so it can render them all at once
-			objects  = new LinkedList<ModelInstance>();
-			for (int i = 0; i < NUM_ROWS; i++) {
-				for (int j = 0; j < NUM_COLS; j++) {
-					if (entitiesFullLevel.get(i).get(j) != null) {
-						objects.addAll(entitiesFullLevel.get(i).get(j).values());
+			if (FULL_LEVEL) {
+				
+				// Obtain all entities from all rooms so it can render them all at once
+				objects  = new LinkedList<ModelInstance>();
+				for (int i = 0; i < NUM_ROWS; i++) {
+					for (int j = 0; j < NUM_COLS; j++) {
+						if (entitiesFullLevel.get(i).get(j) != null) {
+							objects.addAll(entitiesFullLevel.get(i).get(j).values());
+						}
 					}
 				}
 			}
+			else {
+				objects = entities.get(currRow).get(currCol).values();
+			}
+	
+			// limpia la pantalla
+	        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+	 
+	        // dibuja los modelos 3D
+	        modelBatch.begin(cam);
+	        modelBatch.render(objects, lights);
+	        modelBatch.render(playerOrientation, lights);
+	        modelBatch.end();
+	        
+	        if (DEBUG) {
+	        	
+	        	// dibuja los valores de las variables de debug
+	        	float stateStart = 90f;
+	        	float stateWidth = 35f;
+	        	writeDebug("Debug mode:", Color.WHITE, 0f, 1);
+	        	if (DEBUG) writeDebug("ON", Color.GREEN, stateStart, 1);
+	        	else writeDebug("OFF", Color.RED, stateStart, 1);
+	        	writeDebug("(Press 'T' to toggle)", Color.WHITE, stateStart + stateWidth, 1);
+	        	
+	        	// camera mode debug
+	        	writeDebug("Free camera:", Color.WHITE, 0f, 2);
+	        	if (FREE_CAM) writeDebug("ON", Color.GREEN, stateStart, 2);
+	        	else writeDebug("OFF", Color.RED, stateStart, 2);
+	        	writeDebug("(Press 'C' to toggle)", Color.WHITE, stateStart + stateWidth, 2);
+	        	
+	        	// level mode debug
+	        	writeDebug("Full level:", Color.WHITE, 0f, 3);
+	        	if (FULL_LEVEL) writeDebug("ON", Color.GREEN, stateStart, 3);
+	        	else writeDebug("OFF", Color.RED, stateStart, 3);
+	        	writeDebug("(Press 'L' to toggle)", Color.WHITE, stateStart + stateWidth, 3);
+	        }
+		} else{
+			restart = false;
 		}
-		else {
-			objects = entities.get(currRow).get(currCol).values();
-		}
-
-		// limpia la pantalla
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
- 
-        // dibuja los modelos 3D
-        modelBatch.begin(cam);
-        modelBatch.render(objects, lights);
-        modelBatch.render(playerOrientation, lights);
-        modelBatch.end();
-        
-        if (DEBUG) {
-        	
-        	// dibuja los valores de las variables de debug
-        	float stateStart = 90f;
-        	float stateWidth = 35f;
-        	writeDebug("Debug mode:", Color.WHITE, 0f, 1);
-        	if (DEBUG) writeDebug("ON", Color.GREEN, stateStart, 1);
-        	else writeDebug("OFF", Color.RED, stateStart, 1);
-        	writeDebug("(Press 'T' to toggle)", Color.WHITE, stateStart + stateWidth, 1);
-        	
-        	// camera mode debug
-        	writeDebug("Free camera:", Color.WHITE, 0f, 2);
-        	if (FREE_CAM) writeDebug("ON", Color.GREEN, stateStart, 2);
-        	else writeDebug("OFF", Color.RED, stateStart, 2);
-        	writeDebug("(Press 'C' to toggle)", Color.WHITE, stateStart + stateWidth, 2);
-        	
-        	// level mode debug
-        	writeDebug("Full level:", Color.WHITE, 0f, 3);
-        	if (FULL_LEVEL) writeDebug("ON", Color.GREEN, stateStart, 3);
-        	else writeDebug("OFF", Color.RED, stateStart, 3);
-        	writeDebug("(Press 'L' to toggle)", Color.WHITE, stateStart + stateWidth, 3);
-        }
 	}
 	
 	private void writeDebug(String string, Color color, float start, int line) {
@@ -215,145 +223,146 @@ public class Game3D implements ApplicationListener {
 	}
 	
 	public void update() {
-		
-		// comprueba si algun personaje lleva espada
-		List<Character> chars = level.getCurrentRoom().getCharacters();
-		for(Character c : chars){
-			
-			int[] charCenter = c.getCenter();
-			float x = charCenter[0];
-			float y = charCenter[1];
-
-			if (c.getCurrentAnimation().getId().contains("sword")) {
-				
-				// character is using the sword
-				SwordFighting sword = c.getSword();
-				if (sword != null) {
-					if (c.getOrientation().equals("left")) {
-//						x = x;
-					}
-					else {
-						x = x + 130f;
-					}
-					
-					ModelInstance swordInstance = new ModelInstance(entityModels.get("sword"));
-					swordInstance.transform.translate(x / SCALE, (Game.HEIGHT - y) / SCALE, 0f);
-					entities.get(currRow).get(currCol).put(sword, swordInstance);
-				}
-			}
-			else {
-
-				// Elimina la espada de la habitacion
-				Hashtable<Entity, ModelInstance> ents = entities.get(currRow).get(currCol);
-				Iterator<Entity> iter = ents.keySet().iterator();
-				while (iter.hasNext()) {
-					Entity e = iter.next();
-					if (e instanceof SwordFighting) {
-						iter.remove();
-					}
-				}
-			}
-			
-			// coloca un cono en la cabeza de cada personaje para conocer
-			// su orientacion
-			ModelInstance orientationInstance = new ModelInstance(entityModels.get("orientation"));
-			
-			if (FULL_LEVEL) {
-				orientationInstance.transform.translate( (x + 60f) / SCALE, (Game.HEIGHT - y + 80f) / SCALE, 0f);
-			}
-			else {
-				orientationInstance.transform.translate( (x + 60f) / SCALE, (Game.HEIGHT - y + 60f) / SCALE, 0f);
-			}
-			if (c.getOrientation().equals("left")) {
-				orientationInstance.transform.rotate(new Vector3(0,0,1), 90f);
-			}
-			else {
-				orientationInstance.transform.rotate(new Vector3(0,0,1), -90f);
-			}
-			playerOrientation = orientationInstance;
-		}
-		
-		if (chars.size() == 0) {
-			playerOrientation = null;
-		}
-		
-		// asigna una ultima posicion a cada objeto
-		Map<Entity, int[]> lastPos = new HashMap<>();
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLS; j++) {
-				for (Entity e : entities.get(i).get(j).keySet()) {
-					lastPos.put(e, e.getCenter());
-				}
-			}
-		}
-		
-		// asigna una ultima posicion a cada objeto
-		Map<Entity, int[]> lastPosFullLevel = new HashMap<>();
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLS; j++) {
-				for (Entity e : entitiesFullLevel.get(i).get(j).keySet()) {
-					lastPosFullLevel.put(e, e.getCenter());
-				}
-			}
-		}
-		
-		
 		// gestiona la entrada de teclas del usuario
 		manageKeys();
-
-		// prev room
-		prevRow = currRow;
-		prevCol = currCol;
-
-		// actualiza la logica del juego 2D
-		level.update(TARGET_TIME);
-		currRow = level.getCurrentRoom().getRow() + 1;
-		currCol = level.getCurrentRoom().getCol() + 1;
 		
-		checkLooses();
-		checkPlayer();
-		checkDoors();
+		if(!restart){
 		
-		// actualiza cada objeto en funcion de su movimiento
-		// (diferencia con la posicion anterior)
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLS; j++) {
-				for (Map.Entry<Entity, ModelInstance> entry : entities.get(i).get(j).entrySet()) {
-					Entity key = entry.getKey();
-					ModelInstance value = entry.getValue();
-		
-					int[] last = lastPos.get(key);
-					if (last != null) {
-						float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
-						float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
-						value.transform.translate(x,y,0);
+			// comprueba si algun personaje lleva espada
+			List<Character> chars = level.getCurrentRoom().getCharacters();
+			for(Character c : chars){
+				
+				int[] charCenter = c.getCenter();
+				float x = charCenter[0];
+				float y = charCenter[1];
+	
+				if (c.getCurrentAnimation().getId().contains("sword")) {
+					
+					// character is using the sword
+					SwordFighting sword = c.getSword();
+					if (sword != null) {
+						if (c.getOrientation().equals("left")) {
+	//						x = x;
+						}
+						else {
+							x = x + 130f;
+						}
+						
+						ModelInstance swordInstance = new ModelInstance(entityModels.get("sword"));
+						swordInstance.transform.translate(x / SCALE, (Game.HEIGHT - y) / SCALE, 0f);
+						entities.get(currRow).get(currCol).put(sword, swordInstance);
+					}
+				}
+				else {
+	
+					// Elimina la espada de la habitacion
+					Hashtable<Entity, ModelInstance> ents = entities.get(currRow).get(currCol);
+					Iterator<Entity> iter = ents.keySet().iterator();
+					while (iter.hasNext()) {
+						Entity e = iter.next();
+						if (e instanceof SwordFighting) {
+							iter.remove();
+						}
+					}
+				}
+				
+				// coloca un cono en la cabeza de cada personaje para conocer
+				// su orientacion
+				ModelInstance orientationInstance = new ModelInstance(entityModels.get("orientation"));
+				
+				if (FULL_LEVEL) {
+					orientationInstance.transform.translate( (x + 60f) / SCALE, (Game.HEIGHT - y + 80f) / SCALE, 0f);
+				}
+				else {
+					orientationInstance.transform.translate( (x + 60f) / SCALE, (Game.HEIGHT - y + 60f) / SCALE, 0f);
+				}
+				if (c.getOrientation().equals("left")) {
+					orientationInstance.transform.rotate(new Vector3(0,0,1), 90f);
+				}
+				else {
+					orientationInstance.transform.rotate(new Vector3(0,0,1), -90f);
+				}
+				playerOrientation = orientationInstance;
+			}
+			
+			if (chars.size() == 0) {
+				playerOrientation = null;
+			}
+			
+			// asigna una ultima posicion a cada objeto
+			Map<Entity, int[]> lastPos = new HashMap<>();
+			for (int i = 0; i < NUM_ROWS; i++) {
+				for (int j = 0; j < NUM_COLS; j++) {
+					for (Entity e : entities.get(i).get(j).keySet()) {
+						lastPos.put(e, e.getCenter());
 					}
 				}
 			}
-		}
-		
-		// actualiza cada objeto en funcion de su movimiento
-		// (diferencia con la posicion anterior)
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLS; j++) {
-				for (Map.Entry<Entity, ModelInstance> entry : entitiesFullLevel.get(i).get(j).entrySet()) {
-					Entity key = entry.getKey();
-					ModelInstance value = entry.getValue();
-		
-					int[] last = lastPosFullLevel.get(key);
-					if (last != null) {
-						float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
-						float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
-						value.transform.translate(x,y,0);
+			
+			// asigna una ultima posicion a cada objeto
+			Map<Entity, int[]> lastPosFullLevel = new HashMap<>();
+			for (int i = 0; i < NUM_ROWS; i++) {
+				for (int j = 0; j < NUM_COLS; j++) {
+					for (Entity e : entitiesFullLevel.get(i).get(j).keySet()) {
+						lastPosFullLevel.put(e, e.getCenter());
 					}
 				}
 			}
+			
+			// prev room
+			prevRow = currRow;
+			prevCol = currCol;
+	
+			// actualiza la logica del juego 2D
+			level.update(TARGET_TIME);
+			currRow = level.getCurrentRoom().getRow() + 1;
+			currCol = level.getCurrentRoom().getCol() + 1;
+			
+			checkLooses();
+			checkPlayer();
+			checkDoors();
+			
+			// actualiza cada objeto en funcion de su movimiento
+			// (diferencia con la posicion anterior)
+			for (int i = 0; i < NUM_ROWS; i++) {
+				for (int j = 0; j < NUM_COLS; j++) {
+					for (Map.Entry<Entity, ModelInstance> entry : entities.get(i).get(j).entrySet()) {
+						Entity key = entry.getKey();
+						ModelInstance value = entry.getValue();
+			
+						int[] last = lastPos.get(key);
+						if (last != null) {
+							float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
+							float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
+							value.transform.translate(x,y,0);
+						}
+					}
+				}
+			}
+			
+			// actualiza cada objeto en funcion de su movimiento
+			// (diferencia con la posicion anterior)
+			for (int i = 0; i < NUM_ROWS; i++) {
+				for (int j = 0; j < NUM_COLS; j++) {
+					for (Map.Entry<Entity, ModelInstance> entry : entitiesFullLevel.get(i).get(j).entrySet()) {
+						Entity key = entry.getKey();
+						ModelInstance value = entry.getValue();
+			
+						int[] last = lastPosFullLevel.get(key);
+						if (last != null) {
+							float x = (float) (key.getCenter()[0] - last[0]) / SCALE;
+							float y = (float) -(key.getCenter()[1] - last[1]) / SCALE;
+							value.transform.translate(x,y,0);
+						}
+					}
+				}
+			}
+			
+			checkEntitiesToBeDeleted();
+			
+			// updates camera's position
+			updateCamera();
 		}
-		
-		checkEntitiesToBeDeleted();
-		
-		// updates camera's position
-		updateCamera();
 	}
 	
 	public void updateCamera() {
@@ -504,11 +513,14 @@ public class Game3D implements ApplicationListener {
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
 				|| !space) {
 			if(Gdx.input.isKeyPressed(Input.Keys.SPACE)){
-				keys.add(new Key(true, KeyEvent.VK_SPACE));
+				if(player.isDead()){
+					this.initLevel();
+					this.initModels();
+					this.restart = true;
+				}
 				space = true;
 			}
 		} else if (space) {
-			keys.add(new Key(false, KeyEvent.VK_SPACE));
 			space = false;
 		}
 		
@@ -584,6 +596,10 @@ public class Game3D implements ApplicationListener {
 		this.doors = level.getDoors();
 		this.falling_floor = level.getFalling_floor();
 		this.entitiesToBeDeleted = level.getEntitiesToBeDeleted();
+		currRow = 1;
+		currCol = 7;
+		prevRow = currRow;
+		prevCol = currCol;
 	}
 	
 	public void initEnvironment(){
@@ -958,7 +974,6 @@ public class Game3D implements ApplicationListener {
 //        		}
         	}
         }
-        
 	}
 	
 	private void moveEntityToNextRoom(ModelInstance entityInstance, int currentRow, int currentCol, int previousRow, int previousCol) {

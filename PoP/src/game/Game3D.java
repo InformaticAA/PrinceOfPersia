@@ -110,6 +110,7 @@ public class Game3D implements ApplicationListener {
 	
 	public Hashtable<Entity,ModelInstance> closed_doors;
 	public Hashtable<Entity,ModelInstance> closed_doorsFullLevel;
+	public ModelInstance playerOrientation;
 	
 	private Player player;
 	private List<LooseFloor> falling_floor;
@@ -171,6 +172,7 @@ public class Game3D implements ApplicationListener {
         // dibuja los modelos 3D
         modelBatch.begin(cam);
         modelBatch.render(objects, lights);
+        modelBatch.render(playerOrientation, lights);
         modelBatch.end();
         
         if (DEBUG) {
@@ -218,16 +220,15 @@ public class Game3D implements ApplicationListener {
 		List<Character> chars = level.getCurrentRoom().getCharacters();
 		for(Character c : chars){
 			
+			int[] charCenter = c.getCenter();
+			float x = charCenter[0];
+			float y = charCenter[1];
+
 			if (c.getCurrentAnimation().getId().contains("sword")) {
 				
 				// character is using the sword
 				SwordFighting sword = c.getSword();
 				if (sword != null) {
-					
-					int[] charCenter = c.getCenter();
-					float x = charCenter[0];
-					float y = charCenter[1];
-					
 					if (c.getOrientation().equals("left")) {
 //						x = x;
 					}
@@ -235,18 +236,7 @@ public class Game3D implements ApplicationListener {
 						x = x + 130f;
 					}
 					
-					int width = sword.getCurrentAnimation().getImage().getWidth();
-					int height = sword.getCurrentAnimation().getImage().getHeight();
-					
-					ModelInstance swordInstance = null;
-					
-					if (width >= height) {
-						swordInstance = new ModelInstance(entityModels.get("horSword"));
-					}
-					else {
-						swordInstance = new ModelInstance(entityModels.get("horSword"));
-					}
-					
+					ModelInstance swordInstance = new ModelInstance(entityModels.get("sword"));
 					swordInstance.transform.translate(x / SCALE, (Game.HEIGHT - y) / SCALE, 0f);
 					entities.get(currRow).get(currCol).put(sword, swordInstance);
 				}
@@ -263,6 +253,28 @@ public class Game3D implements ApplicationListener {
 					}
 				}
 			}
+			
+			// coloca un cono en la cabeza de cada personaje para conocer
+			// su orientacion
+			ModelInstance orientationInstance = new ModelInstance(entityModels.get("orientation"));
+			
+			if (FULL_LEVEL) {
+				orientationInstance.transform.translate( (x + 60f) / SCALE, (Game.HEIGHT - y + 80f) / SCALE, 0f);
+			}
+			else {
+				orientationInstance.transform.translate( (x + 60f) / SCALE, (Game.HEIGHT - y + 60f) / SCALE, 0f);
+			}
+			if (c.getOrientation().equals("left")) {
+				orientationInstance.transform.rotate(new Vector3(0,0,1), 90f);
+			}
+			else {
+				orientationInstance.transform.rotate(new Vector3(0,0,1), -90f);
+			}
+			playerOrientation = orientationInstance;
+		}
+		
+		if (chars.size() == 0) {
+			playerOrientation = null;
 		}
 		
 		// asigna una ultima posicion a cada objeto
@@ -623,18 +635,18 @@ public class Game3D implements ApplicationListener {
         
         // player
         Model player = modelBuilder.createCylinder(DEPTH/2,80f/SCALE,DEPTH/2,20,
-    			new Material(ColorAttribute.createDiffuse(Color.CYAN)), Usage.Position | Usage.Normal);
+    			new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position | Usage.Normal);
         entityModels.put("player", player);
         
-        // vertical sword
-        Model vertSword = modelBuilder.createCylinder(3f/SCALE,50f/SCALE,3f/SCALE,20,
+        // playerOrientation
+        Model orientation = modelBuilder.createCone(15f/SCALE,25f/SCALE,15f/SCALE,20,
     			new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position | Usage.Normal);
-        entityModels.put("vertSword", vertSword);
+        entityModels.put("orientation", orientation);
         
-        // horizontal sword
-        Model horSword = modelBuilder.createCylinder(50f/SCALE,3f/SCALE,3f/SCALE,20,
+        // sword
+        Model sword = modelBuilder.createCylinder(70f/SCALE,5f/SCALE,5f/SCALE,20,
     			new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position | Usage.Normal);
-        entityModels.put("horSword", horSword);
+        entityModels.put("sword", sword);
         
         // enemy
         Model enemy = modelBuilder.createCylinder(DEPTH/2,80f/SCALE,DEPTH/2,20,
@@ -716,15 +728,6 @@ public class Game3D implements ApplicationListener {
     			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("spikes", spikes);
         
-        // sword
-        Model sword = modelBuilder.createBox(64f/(6*SCALE), 40f/SCALE, DEPTH/8,
-    			new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)), Usage.Position | Usage.Normal);
-        entityModels.put("sword", sword);
-        
-        
-        // TODO: Definir modelos 3D para el resto de entidades
-        // ...
-		
         // Crea instancias 3D de cada entidad en cada habitacion
         Room[][] rooms = level.getCurrentLevel().getRooms();
         for (int i = 1; i <= NUM_ROWS - 1; i++) {
@@ -879,7 +882,7 @@ public class Game3D implements ApplicationListener {
 			        	else if(entityName.equals("SwordFloor")){
 			        		ModelInstance swordFloorInstance = new ModelInstance(entityModels.get("sword"));
 			        		x = (float) (32 + sy * 64) / SCALE;
-			        		y = (Game.HEIGHT - (float)(6 - 63 + sx * 126)) / SCALE;
+			        		y = (Game.HEIGHT - (float)(6 - 5 + sx * 126)) / SCALE;
 			        		z = 0;
 			        		entityInstance = swordFloorInstance;
 			        	}

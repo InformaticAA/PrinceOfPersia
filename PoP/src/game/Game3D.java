@@ -655,32 +655,32 @@ public class Game3D implements ApplicationListener {
         
         // left floor
 		Model leftFloorModel = modelBuilder.createBox(32f/SCALE,6f/SCALE, DEPTH,
-    			new Material(ColorAttribute.createDiffuse(Color.YELLOW)), Usage.Position | Usage.Normal);
+    			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("leftFloor", leftFloorModel);
         
         // right floor
         Model rightFloorModel = modelBuilder.createBox(32f/SCALE,6f/SCALE, DEPTH,
-    			new Material(ColorAttribute.createDiffuse(Color.YELLOW)), Usage.Position | Usage.Normal);
+    			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("rightFloor", rightFloorModel);
         
         // loose floor
  		Model looseFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
-     			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+     			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("looseFloor", looseFloorModel);
          
         // opener
   		Model openerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
-      			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
+      			new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("opener", openerModel);
           
         // closer
 		Model closerModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
-    			new Material(ColorAttribute.createDiffuse(Color.ORANGE)), Usage.Position | Usage.Normal);
+    			new Material(ColorAttribute.createDiffuse(Color.GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("closer", closerModel);
         
         // closer
  		Model spikeFloorModel = modelBuilder.createBox(64f/SCALE,6f/SCALE - 1f/SCALE, DEPTH,
-     			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
+     			new Material(ColorAttribute.createDiffuse(Color.FIREBRICK)), Usage.Position | Usage.Normal);
         entityModels.put("spike", spikeFloorModel);
     
         // wall stack
@@ -690,7 +690,7 @@ public class Game3D implements ApplicationListener {
 		
         // base stack
         Model stackBase = modelBuilder.createBox(64f/SCALE,6f/SCALE, DEPTH,
-    			new Material(ColorAttribute.createDiffuse(Color.YELLOW)), Usage.Position | Usage.Normal);
+    			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
         entityModels.put("stackBase", stackBase);
         
         // pillar
@@ -722,11 +722,6 @@ public class Game3D implements ApplicationListener {
         Model potion = modelBuilder.createCone(64f/(2*SCALE), 40f/SCALE, DEPTH/8, 20,
     			new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
         entityModels.put("potion", potion);
-        
-        // potion
-        Model spikes = modelBuilder.createCone(64f/(2*SCALE), 40f/SCALE, DEPTH/8, 20,
-    			new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)), Usage.Position | Usage.Normal);
-        entityModels.put("spikes", spikes);
         
         // Crea instancias 3D de cada entidad en cada habitacion
         Room[][] rooms = level.getCurrentLevel().getRooms();

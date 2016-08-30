@@ -110,14 +110,11 @@ public class Game3D implements ApplicationListener {
 	
 	public Hashtable<Entity,ModelInstance> closed_doors;
 	public Hashtable<Entity,ModelInstance> closed_doorsFullLevel;
-	public Hashtable<Entity,ModelInstance> spikes;
-	public Hashtable<Entity,ModelInstance> spikesFullLevel;
 	
 	private Player player;
 	private List<LooseFloor> falling_floor;
 	private List<Door> doors;
 	private List<Entity> entitiesToBeDeleted;
-	private List<SpikeFloor> spikeFloors;
 	
 	public Game3D(MenuState gameMenu, LevelState levelState){
 		menu = gameMenu;
@@ -160,12 +157,6 @@ public class Game3D implements ApplicationListener {
 					if (entitiesFullLevel.get(i).get(j) != null) {
 						objects.addAll(entitiesFullLevel.get(i).get(j).values());
 					}
-				}
-			}
-			
-			for(SpikeFloor s : this.spikeFloors){
-				if(s.isActivated()){
-					objects.add(this.spikesFullLevel.get(s));
 				}
 			}
 		}
@@ -579,7 +570,6 @@ public class Game3D implements ApplicationListener {
 		level.init();
 		this.player = level.getPlayer();
 		this.doors = level.getDoors();
-		this.spikeFloors = level.getSpikes();
 		this.falling_floor = level.getFalling_floor();
 		this.entitiesToBeDeleted = level.getEntitiesToBeDeleted();
 	}
@@ -616,8 +606,6 @@ public class Game3D implements ApplicationListener {
         entitiesFullLevel = new LinkedList<List<Hashtable<Entity, ModelInstance>>>();
         closed_doors = new Hashtable<Entity,ModelInstance>();
         closed_doorsFullLevel = new Hashtable<Entity,ModelInstance>();
-        spikes = new Hashtable<Entity,ModelInstance>();
-    	spikesFullLevel = new Hashtable<Entity,ModelInstance>();
         
         // inicializa el array de entidades
         for (int i = 0; i < NUM_ROWS; i++) {
@@ -928,20 +916,6 @@ public class Game3D implements ApplicationListener {
 		        				closed_doors.put(entity, entityInstance.copy());
 		        				closed_doorsFullLevel.put(entity, entityInstanceFullLevel.copy());
 		        			} 
-		        			else if(entity.getTypeOfEntity().equals("SpikeFloor")){
-		        				entityInstance = new ModelInstance(entityModels.get("spikes"));
-		        				x = (float) (64 + sy * 64) / SCALE;
-				        		y = (Game.HEIGHT - (float)(-186f/SCALE + sx * 126)) / SCALE;
-				        		z = 0;
-				        		entityInstanceFullLevel = entityInstance.copy();
-				        		entityInstance.transform.translate(x,y,z);
-				        		this.spikes.put(entity, entityInstance);
-				        		
-				        		x = x + (Game.WIDTH / SCALE) * (j - 1);
-		        				y = y + (Game.HEIGHT / SCALE) - ( ((Game.HEIGHT - UI_HEIGHT) / SCALE) * (i - 1) );
-		        				entityInstanceFullLevel.transform.translate(x,y,z);
-				        		this.spikesFullLevel.put(entity, entityInstanceFullLevel);
-		        			}
 		        		}
 			        }
 	        	}

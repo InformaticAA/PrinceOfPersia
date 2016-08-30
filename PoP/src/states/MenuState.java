@@ -8,17 +8,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
+import entities.Clock;
+import entities.Princess;
 import entities.Torch;
 import framework.Loader;
 import framework.RunningFromJar;
 import framework.Writter;
 import game.Game;
+import game.Game3D;
 import input.Key;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.Sound;
 import kuusisto.tinysound.TinySound;
 import map.Background;
-import game.Game3D;
 
 public class MenuState extends State{
 	
@@ -34,6 +36,8 @@ public class MenuState extends State{
 	private Music menu;
 	
 	private Torch t1,t2;
+	private Princess princess;
+	private Clock clock;
 	
 	private boolean ddd;
 	
@@ -57,6 +61,8 @@ public class MenuState extends State{
 				menu = TinySound.loadMusic(loader.getFile("Music/intro_theme.ogg"));
 				t1 = new Torch(232,265,loader,true);
 				t2 = new Torch(468,265,loader,true);
+				princess = new Princess(260,350,loader);
+				clock = new Clock(350,350,loader);
 				ddd = false;
 			}
 			else {
@@ -73,6 +79,8 @@ public class MenuState extends State{
 				menu = TinySound.loadMusic(new File("resources/Music/intro_theme.ogg"));
 				t1 = new Torch(232,265,loader,true);
 				t2 = new Torch(468,265,loader,true);
+				princess = new Princess(280,334,loader);
+				clock = new Clock(390,334,loader);
 				ddd = false;
 			}
 			
@@ -92,6 +100,7 @@ public class MenuState extends State{
 			manageKeys();
 			t1.update(elapsedTime);
 			t2.update(elapsedTime);
+			clock.update(elapsedTime);
 		}
 	}
 
@@ -110,6 +119,9 @@ public class MenuState extends State{
 		
 		t1.drawSelf(g);
 		t2.drawSelf(g);
+		
+		princess.drawSelf(g);
+		clock.drawSelf(g);
 		
 		g.drawImage(sword, 
 				Game.WIDTH/2 - options[currentChoice].getWidth()/2 - sword.getWidth() - 10*Game.SCALE,

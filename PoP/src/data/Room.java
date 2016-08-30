@@ -247,19 +247,6 @@ public class Room {
 		return doors;
 	}
 	
-	public List<SpikeFloor> getSpikeFloors(){
-		List<SpikeFloor> spikes = new LinkedList<SpikeFloor>();
-		List<Entity> bEntities = this.getBackground();
-		
-		for(Entity bgE : bEntities){
-			if(bgE.getTypeOfEntity().equals("SpikeFloor")){
-				spikes.add((SpikeFloor) bgE);
-			}
-		}
-		
-		return spikes;
-	}
-	
 	public void deleteCharacter(Entity character){
 		this.characters.remove(character);
 	}

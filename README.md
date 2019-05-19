@@ -6,4 +6,4 @@ Project created for the subject "Videojuegos" of the University of Zaragoza.
 
 Authors:<br />
 -Alejandro Márquez (alejandromarquez94@gmail.com) <br />
--Alejandro Royo (donrondon40@gmail.com)
+-Alejandro Royo (alejandroroyo16@gmail.com)
